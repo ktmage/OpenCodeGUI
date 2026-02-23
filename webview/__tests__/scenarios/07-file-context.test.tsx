@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -46,25 +46,26 @@ describe("07 ファイルコンテキスト", () => {
   });
 
   // Selecting a file shows a chip and closes the picker
-  it("ファイルを選択するとチップが表示されピッカーが閉じる", async () => {
-    await setupWithFiles();
-    const user = userEvent.setup();
+  describe("ファイルを選択したとき", () => {
+    beforeEach(async () => {
+      await setupWithFiles();
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Add context"));
+      const items = screen.getAllByText("main.ts");
+      const pickerItem = items.find((el) => el.closest(".file-picker-item"));
+      await user.click(pickerItem!.closest(".file-picker-item")!);
+    });
 
-    await user.click(screen.getByTitle("Add context"));
+    // Chip is shown
+    it("チップが表示される", () => {
+      const chips = document.querySelectorAll(".attached-file-chip");
+      expect(chips.length).toBe(1);
+    });
 
-    // main.ts をクリック
-    const items = screen.getAllByText("main.ts");
-    // ファイルピッカー内のアイテムをクリック
-    const pickerItem = items.find((el) => el.closest(".file-picker-item"));
-    expect(pickerItem).toBeTruthy();
-    await user.click(pickerItem!.closest(".file-picker-item")!);
-
-    // チップが表示される
-    const chips = document.querySelectorAll(".attached-file-chip");
-    expect(chips.length).toBe(1);
-
-    // ピッカーが閉じている
-    expect(screen.queryByPlaceholderText("Search files...")).not.toBeInTheDocument();
+    // Picker is closed
+    it("ピッカーが閉じる", () => {
+      expect(screen.queryByPlaceholderText("Search files...")).not.toBeInTheDocument();
+    });
   });
 
   // Chip remove button detaches the file
@@ -116,25 +117,28 @@ describe("07 ファイルコンテキスト", () => {
   });
 
   // Selecting from # popup removes the # portion and attaches the file
-  it("# からファイル選択でテキストから # 部分が除去されファイルが添付される", async () => {
-    await setupWithFiles();
-    const user = userEvent.setup();
+  describe("# からファイル選択時", () => {
+    let textarea: HTMLElement;
 
-    const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
-    await user.type(textarea, "Look at #");
+    beforeEach(async () => {
+      await setupWithFiles();
+      const user = userEvent.setup();
+      textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+      await user.type(textarea, "Look at #");
+      const popup = document.querySelector(".hash-popup");
+      const popupItem = popup!.querySelector(".hash-popup-item");
+      await user.click(popupItem!);
+    });
 
-    // ポップアップからファイルを選択
-    const popup = document.querySelector(".hash-popup");
-    expect(popup).toBeTruthy();
-    const popupItem = popup!.querySelector(".hash-popup-item");
-    expect(popupItem).toBeTruthy();
-    await user.click(popupItem!);
+    // Hash portion is removed from text
+    it("テキストから # 部分が除去される", () => {
+      expect(textarea).toHaveValue("Look at ");
+    });
 
-    // テキストから "#" が除去される
-    expect(textarea).toHaveValue("Look at ");
-
-    // チップが表示される
-    expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
+    // File chip is shown
+    it("ファイルチップが表示される", () => {
+      expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
+    });
   });
 
   // Sending message with attached files includes files in the payload

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -47,25 +47,34 @@ describe("03 メッセージング", () => {
   });
 
   // Received messages are displayed
-  it("messages 受信でメッセージが表示される", async () => {
-    await setupActiveSession();
+  describe("messages 受信時", () => {
+    beforeEach(async () => {
+      await setupActiveSession();
 
-    const userMsg = createMessage({ id: "m1", sessionID: "s1", role: "user" });
-    const userPart = createTextPart("User question", { messageID: "m1" });
-    const assistantMsg = createMessage({ id: "m2", sessionID: "s1", role: "assistant" });
-    const assistantPart = createTextPart("Assistant answer", { messageID: "m2" });
+      const userMsg = createMessage({ id: "m1", sessionID: "s1", role: "user" });
+      const userPart = createTextPart("User question", { messageID: "m1" });
+      const assistantMsg = createMessage({ id: "m2", sessionID: "s1", role: "assistant" });
+      const assistantPart = createTextPart("Assistant answer", { messageID: "m2" });
 
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [
-        { info: userMsg, parts: [userPart] },
-        { info: assistantMsg, parts: [assistantPart] },
-      ],
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s1",
+        messages: [
+          { info: userMsg, parts: [userPart] },
+          { info: assistantMsg, parts: [assistantPart] },
+        ],
+      });
     });
 
-    expect(screen.getByText("User question")).toBeInTheDocument();
-    expect(screen.getByText("Assistant answer")).toBeInTheDocument();
+    // User message is shown
+    it("ユーザーメッセージが表示される", () => {
+      expect(screen.getByText("User question")).toBeInTheDocument();
+    });
+
+    // Assistant message is shown
+    it("アシスタントメッセージが表示される", () => {
+      expect(screen.getByText("Assistant answer")).toBeInTheDocument();
+    });
   });
 
   // message.updated event appends a new message
@@ -99,41 +108,53 @@ describe("03 メッセージング", () => {
   });
 
   // session.status busy shows StreamingIndicator and stop button
-  it("session.status busy で StreamingIndicator と停止ボタンが表示される", async () => {
-    await setupActiveSession();
+  describe("session.status busy のとき", () => {
+    beforeEach(async () => {
+      await setupActiveSession();
 
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.status", properties: { status: { type: "busy" } } } as any,
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.status", properties: { status: { type: "busy" } } } as any,
+      });
     });
 
-    // StreamingIndicator が表示される（dotアニメーション）
-    const dots = document.querySelectorAll(".streaming-dot");
-    expect(dots.length).toBe(3);
+    // StreamingIndicator shows 3 dots
+    it("StreamingIndicator のドットが3つ表示される", () => {
+      const dots = document.querySelectorAll(".streaming-dot");
+      expect(dots.length).toBe(3);
+    });
 
-    // 停止ボタンが表示される
-    expect(screen.getByTitle("Stop")).toBeInTheDocument();
+    // Stop button is shown
+    it("停止ボタンが表示される", () => {
+      expect(screen.getByTitle("Stop")).toBeInTheDocument();
+    });
   });
 
   // session.status idle restores send button
-  it("session.status idle で送信ボタンに戻る", async () => {
-    await setupActiveSession();
+  describe("session.status idle に戻したとき", () => {
+    beforeEach(async () => {
+      await setupActiveSession();
 
-    // busy にする
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.status", properties: { status: { type: "busy" } } } as any,
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.status", properties: { status: { type: "busy" } } } as any,
+      });
+
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.status", properties: { status: { type: "idle" } } } as any,
+      });
     });
-    expect(screen.getByTitle("Stop")).toBeInTheDocument();
 
-    // idle に戻す
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.status", properties: { status: { type: "idle" } } } as any,
+    // Send button is shown
+    it("送信ボタンが表示される", () => {
+      expect(screen.getByTitle("Send")).toBeInTheDocument();
     });
 
-    expect(screen.getByTitle("Send")).toBeInTheDocument();
-    expect(screen.queryByTitle("Stop")).not.toBeInTheDocument();
+    // Stop button is hidden
+    it("停止ボタンが非表示になる", () => {
+      expect(screen.queryByTitle("Stop")).not.toBeInTheDocument();
+    });
   });
 
   // Clicking stop button sends abort
@@ -155,84 +176,103 @@ describe("03 メッセージング", () => {
   });
 
   // message.removed event deletes the message
-  it("message.removed イベントでメッセージが削除される", async () => {
-    await setupActiveSession();
+  describe("message.removed イベント受信時", () => {
+    beforeEach(async () => {
+      await setupActiveSession();
 
-    const msg1 = createMessage({ id: "m1", sessionID: "s1", role: "user" });
-    const part1 = createTextPart("Keep this", { messageID: "m1" });
-    const msg2 = createMessage({ id: "m2", sessionID: "s1", role: "assistant" });
-    const part2 = createTextPart("Remove this", { messageID: "m2" });
+      const msg1 = createMessage({ id: "m1", sessionID: "s1", role: "user" });
+      const part1 = createTextPart("Keep this", { messageID: "m1" });
+      const msg2 = createMessage({ id: "m2", sessionID: "s1", role: "assistant" });
+      const part2 = createTextPart("Remove this", { messageID: "m2" });
 
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [
-        { info: msg1, parts: [part1] },
-        { info: msg2, parts: [part2] },
-      ],
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s1",
+        messages: [
+          { info: msg1, parts: [part1] },
+          { info: msg2, parts: [part2] },
+        ],
+      });
+
+      await sendExtMessage({
+        type: "event",
+        event: { type: "message.removed", properties: { messageID: "m2" } } as any,
+      });
     });
 
-    expect(screen.getByText("Remove this")).toBeInTheDocument();
-
-    await sendExtMessage({
-      type: "event",
-      event: { type: "message.removed", properties: { messageID: "m2" } } as any,
+    // Removed message is no longer shown
+    it("削除されたメッセージが非表示になる", () => {
+      expect(screen.queryByText("Remove this")).not.toBeInTheDocument();
     });
 
-    expect(screen.queryByText("Remove this")).not.toBeInTheDocument();
-    expect(screen.getByText("Keep this")).toBeInTheDocument();
+    // Remaining message is still shown
+    it("残りのメッセージはそのまま表示される", () => {
+      expect(screen.getByText("Keep this")).toBeInTheDocument();
+    });
   });
 
   // Messages from a different session are ignored
-  it("別セッションの messages は無視される", async () => {
-    await setupActiveSession();
+  describe("別セッションの messages 受信時", () => {
+    beforeEach(async () => {
+      await setupActiveSession();
 
-    // アクティブセッション s1 のメッセージを設定
-    const msg = createMessage({ id: "m1", sessionID: "s1", role: "user" });
-    const part = createTextPart("Original message", { messageID: "m1" });
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [{ info: msg, parts: [part] }],
+      const msg = createMessage({ id: "m1", sessionID: "s1", role: "user" });
+      const part = createTextPart("Original message", { messageID: "m1" });
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s1",
+        messages: [{ info: msg, parts: [part] }],
+      });
+
+      const otherMsg = createMessage({ id: "m99", sessionID: "s2", role: "user" });
+      const otherPart = createTextPart("Other session message", { messageID: "m99" });
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s2",
+        messages: [{ info: otherMsg, parts: [otherPart] }],
+      });
     });
-    expect(screen.getByText("Original message")).toBeInTheDocument();
 
-    // 別セッション s2 の messages を送信
-    const otherMsg = createMessage({ id: "m99", sessionID: "s2", role: "user" });
-    const otherPart = createTextPart("Other session message", { messageID: "m99" });
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s2",
-      messages: [{ info: otherMsg, parts: [otherPart] }],
+    // Original session messages remain
+    it("元セッションのメッセージはそのまま", () => {
+      expect(screen.getByText("Original message")).toBeInTheDocument();
     });
 
-    // s1 のメッセージはそのまま、s2 のメッセージは表示されない
-    expect(screen.getByText("Original message")).toBeInTheDocument();
-    expect(screen.queryByText("Other session message")).not.toBeInTheDocument();
+    // Other session messages are not shown
+    it("他セッションのメッセージは表示されない", () => {
+      expect(screen.queryByText("Other session message")).not.toBeInTheDocument();
+    });
   });
 
   // message.part.updated with non-existent messageID is ignored
-  it("message.part.updated で存在しない messageID のパートは無視される", async () => {
-    await setupActiveSession();
+  describe("存在しない messageID で message.part.updated 受信時", () => {
+    beforeEach(async () => {
+      await setupActiveSession();
 
-    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
-    const part = createTextPart("Existing", { messageID: "m1" });
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [{ info: msg, parts: [part] }],
+      const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+      const part = createTextPart("Existing", { messageID: "m1" });
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s1",
+        messages: [{ info: msg, parts: [part] }],
+      });
+
+      const orphanPart = createTextPart("Orphan", { messageID: "nonexistent" });
+      await sendExtMessage({
+        type: "event",
+        event: { type: "message.part.updated", properties: { part: orphanPart } } as any,
+      });
     });
 
-    // 存在しない messageID でパート更新
-    const orphanPart = createTextPart("Orphan", { messageID: "nonexistent" });
-    await sendExtMessage({
-      type: "event",
-      event: { type: "message.part.updated", properties: { part: orphanPart } } as any,
+    // Existing message remains
+    it("既存メッセージに影響がない", () => {
+      expect(screen.getByText("Existing")).toBeInTheDocument();
     });
 
-    // 元のメッセージに影響なし、orphan は表示されない
-    expect(screen.getByText("Existing")).toBeInTheDocument();
-    expect(screen.queryByText("Orphan")).not.toBeInTheDocument();
+    // Orphan part is not shown
+    it("孤立パートは表示されない", () => {
+      expect(screen.queryByText("Orphan")).not.toBeInTheDocument();
+    });
   });
 
   // sendMessage includes selectedModel

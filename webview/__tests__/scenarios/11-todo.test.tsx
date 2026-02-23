@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderApp, sendExtMessage } from "../helpers";
@@ -34,31 +34,52 @@ async function setupWithTodos(todos: Array<{ content: string; status: string; pr
 // 11 Todo
 describe("11 Todo", () => {
   // TodoHeader is shown from todowrite output
-  it("todowrite 出力から TodoHeader が表示される", async () => {
-    await setupWithTodos([
-      { content: "First task", status: "completed" },
-      { content: "Second task", status: "in-progress" },
-      { content: "Third task", status: "pending" },
-    ]);
+  describe("todowrite 出力から TodoHeader 表示時", () => {
+    beforeEach(async () => {
+      await setupWithTodos([
+        { content: "First task", status: "completed" },
+        { content: "Second task", status: "in-progress" },
+        { content: "Third task", status: "pending" },
+      ]);
+    });
 
-    // TodoHeader のカウント表示
-    expect(screen.getByText("1/3")).toBeInTheDocument();
-    expect(screen.getByText("To Do")).toBeInTheDocument();
+    // Shows count
+    it("カウントが表示される", () => {
+      expect(screen.getByText("1/3")).toBeInTheDocument();
+    });
+
+    // Shows To Do label
+    it("To Do ラベルが表示される", () => {
+      expect(screen.getByText("To Do")).toBeInTheDocument();
+    });
   });
 
   // Expanding shows the todo list contents
-  it("展開で Todo 一覧の内容が表示される", async () => {
-    await setupWithTodos([
-      { content: "Implement feature", status: "completed" },
-      { content: "Write tests", status: "in-progress", priority: "high" },
-    ]);
+  describe("展開時の Todo 一覧", () => {
+    beforeEach(async () => {
+      await setupWithTodos([
+        { content: "Implement feature", status: "completed" },
+        { content: "Write tests", status: "in-progress", priority: "high" },
+      ]);
 
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Toggle to-do list"));
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Toggle to-do list"));
+    });
 
-    expect(screen.getByText("Implement feature")).toBeInTheDocument();
-    expect(screen.getByText("Write tests")).toBeInTheDocument();
-    expect(screen.getByText("high")).toBeInTheDocument();
+    // Shows first todo
+    it("最初の Todo が表示される", () => {
+      expect(screen.getByText("Implement feature")).toBeInTheDocument();
+    });
+
+    // Shows second todo
+    it("2番目の Todo が表示される", () => {
+      expect(screen.getByText("Write tests")).toBeInTheDocument();
+    });
+
+    // Shows priority label
+    it("優先度ラベルが表示される", () => {
+      expect(screen.getByText("high")).toBeInTheDocument();
+    });
   });
 
   // TodoHeader is hidden when there are no todos

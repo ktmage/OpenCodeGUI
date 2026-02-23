@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage, setPersistedState } from "../../vscode-api";
@@ -110,28 +110,29 @@ describe("09 設定", () => {
   });
 
   // toolConfig message sets paths and shows config links in the panel
-  it("toolConfig メッセージで paths が設定され設定パネルにリンクが表示される", async () => {
-    renderApp();
-    const session = createSession({ id: "s1" });
-    await sendExtMessage({ type: "activeSession", session });
+  describe("toolConfig メッセージ受信後の設定パネル", () => {
+    beforeEach(async () => {
+      renderApp();
+      const session = createSession({ id: "s1" });
+      await sendExtMessage({ type: "activeSession", session });
 
-    // toolConfig なしで設定パネルを開く
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Settings"));
+      await sendExtMessage({
+        type: "toolConfig",
+        paths: { home: "/h", config: "/c", state: "/s", directory: "/d" },
+      });
 
-    // パスリンクがない
-    expect(screen.queryByText("Project Config")).not.toBeInTheDocument();
-
-    // 閉じて toolConfig を受信
-    await user.click(screen.getByTitle("Settings"));
-    await sendExtMessage({
-      type: "toolConfig",
-      paths: { home: "/h", config: "/c", state: "/s", directory: "/d" },
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Settings"));
     });
 
-    // 再度開くとリンクが表示される
-    await user.click(screen.getByTitle("Settings"));
-    expect(screen.getByText("Project Config")).toBeInTheDocument();
-    expect(screen.getByText("Global Config")).toBeInTheDocument();
+    // Shows Project Config link
+    it("Project Config リンクが表示される", () => {
+      expect(screen.getByText("Project Config")).toBeInTheDocument();
+    });
+
+    // Shows Global Config link
+    it("Global Config リンクが表示される", () => {
+      expect(screen.getByText("Global Config")).toBeInTheDocument();
+    });
   });
 });

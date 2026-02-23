@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -116,40 +116,77 @@ describe("06 モデル選択", () => {
   });
 
   // Clicking provider name toggles model list fold/unfold
-  it("プロバイダー名クリックでモデル一覧が折りたたまれる", async () => {
-    await setupWithProviders();
-    const user = userEvent.setup();
+  describe("プロバイダー名クリックでモデル一覧の折りたたみ", () => {
+    // After folding, models are hidden
+    describe("折りたたんだとき", () => {
+      beforeEach(async () => {
+        await setupWithProviders();
+        const user = userEvent.setup();
+        await user.click(screen.getByText("Claude 4 Opus"));
+        await user.click(screen.getByText("Anthropic"));
+      });
 
-    // モデルパネルを開く
-    await user.click(screen.getByText("Claude 4 Opus"));
-    expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
+      // Models are hidden
+      it("モデルが非表示になる", () => {
+        expect(screen.queryByText("Claude 4 Sonnet")).not.toBeInTheDocument();
+      });
 
-    // Anthropic プロバイダーヘッダーをクリックして折りたたむ
-    await user.click(screen.getByText("Anthropic"));
-    expect(screen.queryByText("Claude 4 Sonnet")).not.toBeInTheDocument();
+      // After unfolding, models are shown again
+      describe("再度クリックしたとき", () => {
+        beforeEach(async () => {
+          const user = userEvent.setup();
+          await user.click(screen.getByText("Anthropic"));
+        });
 
-    // もう一度クリックで展開
-    await user.click(screen.getByText("Anthropic"));
-    expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
+        // Models are shown
+        it("モデルが再表示される", () => {
+          expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
+        });
+      });
+    });
   });
 
   // "Show all providers" toggle shows/hides disconnected providers
-  it("Show all providers トグルで未接続プロバイダーが表示・非表示される", async () => {
-    await setupWithProviders();
-    const user = userEvent.setup();
+  describe("Show all providers トグル", () => {
+    // Initially disconnected providers are hidden
+    describe("初期状態", () => {
+      beforeEach(async () => {
+        await setupWithProviders();
+        const user = userEvent.setup();
+        await user.click(screen.getByText("Claude 4 Opus"));
+      });
 
-    await user.click(screen.getByText("Claude 4 Opus"));
+      // Disconnected providers are hidden
+      it("未接続プロバイダーが非表示", () => {
+        expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
+      });
 
-    // 初期状態では接続済みのみ → OpenAI は非表示
-    expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
+      // After clicking Show all, disconnected providers appear
+      describe("Show all クリック後", () => {
+        beforeEach(async () => {
+          const user = userEvent.setup();
+          await user.click(screen.getByTitle("Show all providers"));
+        });
 
-    // Show all をクリック
-    await user.click(screen.getByTitle("Show all providers"));
-    expect(screen.getByText("OpenAI")).toBeInTheDocument();
+        // Disconnected providers are shown
+        it("未接続プロバイダーが表示される", () => {
+          expect(screen.getByText("OpenAI")).toBeInTheDocument();
+        });
 
-    // Connected only をクリックして戻す
-    await user.click(screen.getByTitle("Hide disconnected providers"));
-    expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
+        // After clicking Connected only, disconnected providers are hidden again
+        describe("Connected only クリック後", () => {
+          beforeEach(async () => {
+            const user = userEvent.setup();
+            await user.click(screen.getByTitle("Hide disconnected providers"));
+          });
+
+          // Disconnected providers are hidden again
+          it("未接続プロバイダーが再び非表示になる", () => {
+            expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
+          });
+        });
+      });
+    });
   });
 
   // Dropdown closes after model selection

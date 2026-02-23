@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -35,18 +35,22 @@ async function setupConversation() {
 // 04 Message editing and checkpoints
 describe("04 メッセージ編集とチェックポイント", () => {
   // Clicking a user message enters edit mode
-  it("ユーザーメッセージをクリックすると編集モードになる", async () => {
-    await setupConversation();
-    const user = userEvent.setup();
+  describe("ユーザーメッセージをクリックしたとき", () => {
+    beforeEach(async () => {
+      await setupConversation();
+      const user = userEvent.setup();
+      await user.click(screen.getByText("First question"));
+    });
 
-    // ユーザーメッセージのバブルをクリック
-    const bubble = screen.getByText("First question");
-    await user.click(bubble);
+    // Edit textarea is shown
+    it("テキストエリアが表示される", () => {
+      expect(screen.getByDisplayValue("First question")).toBeInTheDocument();
+    });
 
-    // テキストエリアが表示される
-    const editTextarea = screen.getByDisplayValue("First question");
-    expect(editTextarea).toBeInTheDocument();
-    expect(editTextarea.tagName).toBe("TEXTAREA");
+    // The element is a textarea
+    it("要素が TEXTAREA である", () => {
+      expect(screen.getByDisplayValue("First question").tagName).toBe("TEXTAREA");
+    });
   });
 
   // Submitting edited text with Enter sends editAndResend
@@ -73,19 +77,25 @@ describe("04 メッセージ編集とチェックポイント", () => {
   });
 
   // Escape cancels editing
-  it("Escape で編集がキャンセルされる", async () => {
-    await setupConversation();
-    const user = userEvent.setup();
+  describe("Escape で編集キャンセル時", () => {
+    beforeEach(async () => {
+      await setupConversation();
+      const user = userEvent.setup();
+      await user.click(screen.getByText("First question"));
+      const editTextarea = screen.getByDisplayValue("First question");
+      await user.type(editTextarea, " extra");
+      await user.keyboard("{Escape}");
+    });
 
-    await user.click(screen.getByText("First question"));
+    // Edit textarea is removed
+    it("編集テキストエリアが消える", () => {
+      expect(screen.queryByDisplayValue("First question extra")).not.toBeInTheDocument();
+    });
 
-    const editTextarea = screen.getByDisplayValue("First question");
-    await user.type(editTextarea, " extra");
-    await user.keyboard("{Escape}");
-
-    // 編集モードが終了し、元のテキストが表示される
-    expect(screen.queryByDisplayValue("First question extra")).not.toBeInTheDocument();
-    expect(screen.getByText("First question")).toBeInTheDocument();
+    // Original text is restored
+    it("元のテキストが復元される", () => {
+      expect(screen.getByText("First question")).toBeInTheDocument();
+    });
   });
 
   // Checkpoint separator is shown between assistant and user messages
@@ -97,24 +107,29 @@ describe("04 メッセージ編集とチェックポイント", () => {
   });
 
   // Clicking checkpoint sends revertToMessage and prefills the input
-  it("チェックポイントをクリックすると revertToMessage が送信されテキストがプリフィルされる", async () => {
-    await setupConversation();
-    const user = userEvent.setup();
+  describe("チェックポイントクリック時", () => {
+    beforeEach(async () => {
+      await setupConversation();
+      const user = userEvent.setup();
+      await user.click(screen.getByText("Retry from here"));
+    });
 
-    await user.click(screen.getByText("Retry from here"));
+    // Sends revertToMessage
+    it("revertToMessage が送信される", () => {
+      expect(postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "revertToMessage",
+          sessionId: "s1",
+          messageId: "m3",
+        }),
+      );
+    });
 
-    expect(postMessage).toHaveBeenCalledWith(
-      expect.objectContaining({
-        type: "revertToMessage",
-        sessionId: "s1",
-        // ユーザーメッセージ (m3) の ID でリバート
-        messageId: "m3",
-      }),
-    );
-
-    // 入力欄に「Second question」がプリフィルされる
-    const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
-    expect(textarea).toHaveValue("Second question");
+    // Prefills the input with the reverted message text
+    it("入力欄にテキストがプリフィルされる", () => {
+      const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+      expect(textarea).toHaveValue("Second question");
+    });
   });
 
   // Editing the first message sends editAndResend with its own messageId

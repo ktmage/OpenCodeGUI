@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
-import { screen, within } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
 import { renderApp, sendExtMessage } from "../helpers";
@@ -16,12 +16,21 @@ async function setupWithSessions(sessions: ReturnType<typeof createSession>[]) {
 
 // 02 Session lifecycle
 describe("02 セッションライフサイクル", () => {
-  // Shows EmptyState when there are no sessions
-  it("セッションなし → EmptyState が表示される", () => {
-    renderApp();
+  // No sessions → EmptyState
+  describe("セッションなしの場合", () => {
+    beforeEach(() => {
+      renderApp();
+    });
 
-    expect(screen.getByText("Start a new conversation to get started.")).toBeInTheDocument();
-    expect(screen.getByText("New Chat")).toBeInTheDocument();
+    // Shows getting started message
+    it("開始メッセージが表示される", () => {
+      expect(screen.getByText("Start a new conversation to get started.")).toBeInTheDocument();
+    });
+
+    // Shows New Chat button
+    it("New Chat ボタンが表示される", () => {
+      expect(screen.getByText("New Chat")).toBeInTheDocument();
+    });
   });
 
   // New Chat button in EmptyState sends createSession
@@ -64,39 +73,72 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // Opens and closes session list
-  it("セッションリストの開閉", async () => {
-    const sessions = [createSession({ title: "Session A" }), createSession({ title: "Session B" })];
-    await setupWithSessions(sessions);
+  describe("セッションリストの開閉", () => {
+    let user: ReturnType<typeof userEvent.setup>;
 
-    const user = userEvent.setup();
+    beforeEach(async () => {
+      const sessions = [createSession({ title: "Session A" }), createSession({ title: "Session B" })];
+      await setupWithSessions(sessions);
+      user = userEvent.setup();
+    });
 
-    // 初期状態ではリストは非表示
-    expect(screen.queryByText("Session A")).not.toBeInTheDocument();
+    // Initially the list is hidden
+    it("初期状態ではリストは非表示", () => {
+      expect(screen.queryByText("Session A")).not.toBeInTheDocument();
+    });
 
-    // トグルボタンをクリックして開く
-    await user.click(screen.getByTitle("Sessions"));
-    expect(screen.getByText("Session A")).toBeInTheDocument();
-    expect(screen.getByText("Session B")).toBeInTheDocument();
+    // After clicking toggle button
+    describe("トグルボタンクリック後", () => {
+      beforeEach(async () => {
+        await user.click(screen.getByTitle("Sessions"));
+      });
 
-    // もう一度クリックして閉じる
-    await user.click(screen.getByTitle("Sessions"));
-    expect(screen.queryByText("Session A")).not.toBeInTheDocument();
+      // Session A is displayed
+      it("Session A が表示される", () => {
+        expect(screen.getByText("Session A")).toBeInTheDocument();
+      });
+
+      // Session B is displayed
+      it("Session B が表示される", () => {
+        expect(screen.getByText("Session B")).toBeInTheDocument();
+      });
+
+      // After clicking toggle again
+      describe("もう一度クリック後", () => {
+        beforeEach(async () => {
+          await user.click(screen.getByTitle("Sessions"));
+        });
+
+        // List closes
+        it("リストが閉じる", () => {
+          expect(screen.queryByText("Session A")).not.toBeInTheDocument();
+        });
+      });
+    });
   });
 
   // Selecting a session sends selectSession and closes the list
-  it("セッション選択で selectSession が送信されリストが閉じる", async () => {
-    const session = createSession({ title: "Target Session" });
-    await setupWithSessions([session]);
+  describe("セッション選択時", () => {
+    let session: ReturnType<typeof createSession>;
 
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Sessions"));
-    vi.mocked(postMessage).mockClear();
+    beforeEach(async () => {
+      session = createSession({ title: "Target Session" });
+      await setupWithSessions([session]);
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Sessions"));
+      vi.mocked(postMessage).mockClear();
+      await user.click(screen.getByText("Target Session"));
+    });
 
-    await user.click(screen.getByText("Target Session"));
+    // Sends selectSession
+    it("selectSession が送信される", () => {
+      expect(postMessage).toHaveBeenCalledWith({ type: "selectSession", sessionId: session.id });
+    });
 
-    expect(postMessage).toHaveBeenCalledWith({ type: "selectSession", sessionId: session.id });
-    // リストが閉じている
-    expect(screen.queryByText("Target Session")).not.toBeInTheDocument();
+    // Closes the session list
+    it("リストが閉じる", () => {
+      expect(screen.queryByText("Target Session")).not.toBeInTheDocument();
+    });
   });
 
   // Deleting a session sends deleteSession
@@ -114,106 +156,146 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // session.created event adds a new session
-  it("session.created イベントでセッションが追加される", async () => {
-    renderApp();
+  describe("session.created イベント受信時", () => {
+    beforeEach(async () => {
+      renderApp();
+      const existingSession = createSession({ title: "Existing" });
+      await sendExtMessage({ type: "sessions", sessions: [existingSession] });
 
-    const existingSession = createSession({ title: "Existing" });
-    await sendExtMessage({ type: "sessions", sessions: [existingSession] });
+      const newSession = createSession({ title: "New Session" });
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.created", properties: { info: newSession } } as any,
+      });
 
-    const newSession = createSession({ title: "New Session" });
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.created", properties: { info: newSession } } as any,
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Sessions"));
     });
 
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Sessions"));
+    // New session is displayed
+    it("新しいセッションが表示される", () => {
+      expect(screen.getByText("New Session")).toBeInTheDocument();
+    });
 
-    expect(screen.getByText("New Session")).toBeInTheDocument();
-    expect(screen.getByText("Existing")).toBeInTheDocument();
+    // Existing session remains
+    it("既存のセッションも表示される", () => {
+      expect(screen.getByText("Existing")).toBeInTheDocument();
+    });
   });
 
   // session.deleted event removes the session
-  it("session.deleted イベントでセッションが削除される", async () => {
-    const session = createSession({ title: "Will Be Deleted" });
-    await setupWithSessions([session]);
+  describe("session.deleted イベント受信時", () => {
+    beforeEach(async () => {
+      const session = createSession({ title: "Will Be Deleted" });
+      await setupWithSessions([session]);
 
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.deleted", properties: { info: session } } as any,
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.deleted", properties: { info: session } } as any,
+      });
+
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Sessions"));
     });
 
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Sessions"));
+    // Deleted session is removed
+    it("削除されたセッションが表示されない", () => {
+      expect(screen.queryByText("Will Be Deleted")).not.toBeInTheDocument();
+    });
 
-    expect(screen.queryByText("Will Be Deleted")).not.toBeInTheDocument();
-    expect(screen.getByText("No sessions")).toBeInTheDocument();
+    // Shows empty state
+    it("No sessions が表示される", () => {
+      expect(screen.getByText("No sessions")).toBeInTheDocument();
+    });
   });
 
   // session.updated event updates the title
-  it("session.updated イベントでタイトルが更新される", async () => {
-    const session = createSession({ title: "Original Title" });
-    renderApp();
-    await sendExtMessage({ type: "sessions", sessions: [session] });
-    await sendExtMessage({ type: "activeSession", session });
+  describe("session.updated イベントでタイトル更新時", () => {
+    beforeEach(async () => {
+      const session = createSession({ title: "Original Title" });
+      renderApp();
+      await sendExtMessage({ type: "sessions", sessions: [session] });
+      await sendExtMessage({ type: "activeSession", session });
 
-    expect(screen.getByText("Original Title")).toBeInTheDocument();
+      // Precondition: original title is shown
+      expect(screen.getByText("Original Title")).toBeInTheDocument();
 
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.updated", properties: { info: { ...session, title: "Updated Title" } } } as any,
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.updated", properties: { info: { ...session, title: "Updated Title" } } } as any,
+      });
     });
 
-    expect(screen.getByText("Updated Title")).toBeInTheDocument();
+    // Title is updated
+    it("タイトルが更新される", () => {
+      expect(screen.getByText("Updated Title")).toBeInTheDocument();
+    });
   });
 
   // Setting activeSession to null returns to EmptyState and clears messages
-  it("activeSession を null にすると EmptyState に戻り messages がクリアされる", async () => {
-    renderApp();
-    const session = createSession({ id: "s1", title: "Active" });
-    await sendExtMessage({ type: "activeSession", session });
+  describe("activeSession を null に設定した場合", () => {
+    beforeEach(async () => {
+      renderApp();
+      const session = createSession({ id: "s1", title: "Active" });
+      await sendExtMessage({ type: "activeSession", session });
 
-    // メッセージを設定
-    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
-    const part = createTextPart("Some response", { messageID: "m1" });
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [{ info: msg, parts: [part] }],
+      const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+      const part = createTextPart("Some response", { messageID: "m1" });
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s1",
+        messages: [{ info: msg, parts: [part] }],
+      });
+
+      // Precondition: message is displayed
+      expect(screen.getByText("Some response")).toBeInTheDocument();
+
+      await sendExtMessage({ type: "activeSession", session: null });
     });
-    expect(screen.getByText("Some response")).toBeInTheDocument();
 
-    // activeSession を null に
-    await sendExtMessage({ type: "activeSession", session: null });
+    // Returns to EmptyState
+    it("EmptyState に戻る", () => {
+      expect(screen.getByText("New Chat")).toBeInTheDocument();
+    });
 
-    // EmptyState に戻る
-    expect(screen.getByText("New Chat")).toBeInTheDocument();
-    expect(screen.queryByText("Some response")).not.toBeInTheDocument();
+    // Messages are cleared
+    it("メッセージがクリアされる", () => {
+      expect(screen.queryByText("Some response")).not.toBeInTheDocument();
+    });
   });
 
   // session.updated updates title in both header and session list
-  it("session.updated でアクティブセッションのタイトルがヘッダーとセッション一覧の両方で更新される", async () => {
-    const session = createSession({ id: "s1", title: "Before Update" });
-    renderApp();
-    await sendExtMessage({ type: "sessions", sessions: [session] });
-    await sendExtMessage({ type: "activeSession", session });
+  describe("session.updated でアクティブセッションのタイトル更新時", () => {
+    let user: ReturnType<typeof userEvent.setup>;
 
-    // ヘッダーに表示
-    expect(screen.getByText("Before Update")).toBeInTheDocument();
+    beforeEach(async () => {
+      const session = createSession({ id: "s1", title: "Before Update" });
+      renderApp();
+      await sendExtMessage({ type: "sessions", sessions: [session] });
+      await sendExtMessage({ type: "activeSession", session });
 
-    // session.updated イベント
-    await sendExtMessage({
-      type: "event",
-      event: { type: "session.updated", properties: { info: { ...session, title: "After Update" } } } as any,
+      // Precondition: original title is shown in header
+      expect(screen.getByText("Before Update")).toBeInTheDocument();
+
+      await sendExtMessage({
+        type: "event",
+        event: { type: "session.updated", properties: { info: { ...session, title: "After Update" } } } as any,
+      });
+
+      user = userEvent.setup();
     });
 
-    // ヘッダーが更新
-    expect(screen.getByText("After Update")).toBeInTheDocument();
+    // Header is updated
+    it("ヘッダーが更新される", () => {
+      expect(screen.getByText("After Update")).toBeInTheDocument();
+    });
 
-    // セッション一覧でも更新されている
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Sessions"));
-    expect(screen.getAllByText("After Update").length).toBeGreaterThanOrEqual(1);
+    // Session list is also updated
+    it("セッション一覧でも更新される", async () => {
+      await user.click(screen.getByTitle("Sessions"));
+
+      expect(screen.getAllByText("After Update").length).toBeGreaterThanOrEqual(1);
+    });
   });
 
   // Shows "No sessions" when session list is empty
@@ -227,18 +309,31 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // Displays session summary (files/additions/deletions)
-  it("セッションのサマリー（files/additions/deletions）が表示される", async () => {
-    const session = createSession({
-      title: "With Summary",
-      summary: { files: 3, additions: 42, deletions: 7 },
-    } as any);
-    await setupWithSessions([session]);
+  describe("セッションのサマリー表示", () => {
+    beforeEach(async () => {
+      const session = createSession({
+        title: "With Summary",
+        summary: { files: 3, additions: 42, deletions: 7 },
+      } as any);
+      await setupWithSessions([session]);
 
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Sessions"));
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Sessions"));
+    });
 
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByText("+42")).toBeInTheDocument();
-    expect(screen.getByText("-7")).toBeInTheDocument();
+    // Shows file count
+    it("ファイル数が表示される", () => {
+      expect(screen.getByText("3")).toBeInTheDocument();
+    });
+
+    // Shows additions
+    it("追加行数が表示される", () => {
+      expect(screen.getByText("+42")).toBeInTheDocument();
+    });
+
+    // Shows deletions
+    it("削除行数が表示される", () => {
+      expect(screen.getByText("-7")).toBeInTheDocument();
+    });
   });
 });

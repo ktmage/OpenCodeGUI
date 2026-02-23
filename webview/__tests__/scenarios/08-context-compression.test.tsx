@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -91,21 +91,25 @@ describe("08 コンテキストとコンプレッション", () => {
   });
 
   // Token usage is recalculated after message.removed
-  it("message.removed 後にトークン使用量が再計算される", async () => {
-    await setupWithTokenUsage();
+  describe("message.removed 後のトークン使用量再計算", () => {
+    beforeEach(async () => {
+      await setupWithTokenUsage();
 
-    // 初期状態: 80000 / 200000 = 40%
-    expect(screen.getByTitle("Context: 40% used")).toBeInTheDocument();
-
-    // msg1 (50000 tokens) を削除
-    await sendExtMessage({
-      type: "event",
-      event: { type: "message.removed", properties: { messageID: "m1" } } as any,
+      await sendExtMessage({
+        type: "event",
+        event: { type: "message.removed", properties: { messageID: "m1" } } as any,
+      });
     });
 
-    // 30000 / 200000 = 15%
-    expect(screen.getByTitle("Context: 15% used")).toBeInTheDocument();
-    expect(screen.queryByTitle("Context: 40% used")).not.toBeInTheDocument();
+    // New percentage is shown
+    it("新しい使用率が表示される", () => {
+      expect(screen.getByTitle("Context: 15% used")).toBeInTheDocument();
+    });
+
+    // Old percentage is no longer shown
+    it("古い使用率が非表示になる", () => {
+      expect(screen.queryByTitle("Context: 40% used")).not.toBeInTheDocument();
+    });
   });
 
   // ContextIndicator is hidden when inputTokens is 0
@@ -174,60 +178,80 @@ describe("08 コンテキストとコンプレッション", () => {
   });
 
   // Popup shows token details
-  it("ポップアップでトークン詳細が表示される", async () => {
-    const session = await setupWithTokenUsage();
-    const user = userEvent.setup();
+  describe("ポップアップ表示時", () => {
+    beforeEach(async () => {
+      await setupWithTokenUsage();
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Context: 40% used"));
+    });
 
-    await user.click(screen.getByTitle("Context: 40% used"));
+    // Shows heading
+    it("タイトルが表示される", () => {
+      expect(screen.getByText("Context Window Usage")).toBeInTheDocument();
+    });
 
-    // ポップアップにトークン情報が表示される
-    expect(screen.getByText("Context Window Usage")).toBeInTheDocument();
-    expect(screen.getByText("Input tokens")).toBeInTheDocument();
-    expect(screen.getByText("Context limit")).toBeInTheDocument();
+    // Shows Input tokens label
+    it("Input tokens ラベルが表示される", () => {
+      expect(screen.getByText("Input tokens")).toBeInTheDocument();
+    });
+
+    // Shows Context limit label
+    it("Context limit ラベルが表示される", () => {
+      expect(screen.getByText("Context limit")).toBeInTheDocument();
+    });
   });
 
   // Compressing state shows "Compressing..." text and disabled button
-  it("圧縮中は Compressing テキストとボタン disabled", async () => {
-    renderApp();
+  describe("圧縮中の状態", () => {
+    let compressBtn: HTMLElement;
 
-    const provider = createProvider("anthropic", {
-      "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+    beforeEach(async () => {
+      renderApp();
+
+      const provider = createProvider("anthropic", {
+        "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+      });
+      await sendExtMessage({
+        type: "providers",
+        providers: [provider],
+        allProviders: createAllProvidersData(["anthropic"], [
+          { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
+        ]),
+        default: { general: "anthropic/claude-4-opus" },
+        configModel: "anthropic/claude-4-opus",
+      });
+
+      const session = createSession({ id: "s1", time: { created: Date.now(), updated: Date.now(), compacting: Date.now() } } as any);
+      await sendExtMessage({ type: "activeSession", session });
+
+      const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+      const textPart = createTextPart("Response", { messageID: "m1" });
+      const stepFinish = {
+        id: "sf1",
+        type: "step-finish" as const,
+        messageID: "m1",
+        tokens: { input: 50000, output: 1000 },
+        time: { created: Date.now(), updated: Date.now() },
+      };
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "s1",
+        messages: [{ info: msg, parts: [textPart, stepFinish as any] }],
+      });
+
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Context: 25% used"));
+      compressBtn = screen.getByText("Compressing...");
     });
-    await sendExtMessage({
-      type: "providers",
-      providers: [provider],
-      allProviders: createAllProvidersData(["anthropic"], [
-        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-      ]),
-      default: { general: "anthropic/claude-4-opus" },
-      configModel: "anthropic/claude-4-opus",
+
+    // Shows Compressing label
+    it("Compressing ラベルが表示される", () => {
+      expect(compressBtn).toBeInTheDocument();
     });
 
-    // compacting フラグ付きセッション
-    const session = createSession({ id: "s1", time: { created: Date.now(), updated: Date.now(), compacting: Date.now() } } as any);
-    await sendExtMessage({ type: "activeSession", session });
-
-    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
-    const textPart = createTextPart("Response", { messageID: "m1" });
-    const stepFinish = {
-      id: "sf1",
-      type: "step-finish" as const,
-      messageID: "m1",
-      tokens: { input: 50000, output: 1000 },
-      time: { created: Date.now(), updated: Date.now() },
-    };
-    await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [{ info: msg, parts: [textPart, stepFinish as any] }],
+    // Button is disabled
+    it("ボタンが disabled になる", () => {
+      expect(compressBtn).toBeDisabled();
     });
-
-    const user = userEvent.setup();
-    await user.click(screen.getByTitle("Context: 25% used"));
-
-    // Compressing ラベルとボタン disabled
-    const compressBtn = screen.getByText("Compressing...");
-    expect(compressBtn).toBeInTheDocument();
-    expect(compressBtn).toBeDisabled();
   });
 });

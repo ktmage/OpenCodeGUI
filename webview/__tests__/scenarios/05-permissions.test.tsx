@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -27,26 +27,43 @@ async function setupWithPermission() {
 // 05 Permissions
 describe("05 パーミッション", () => {
   // permission.updated event shows PermissionView
-  it("permission.updated イベントで PermissionView が表示される", async () => {
-    await setupWithPermission();
+  describe("permission.updated イベント受信時", () => {
+    beforeEach(async () => {
+      await setupWithPermission();
 
-    await sendExtMessage({
-      type: "event",
-      event: {
-        type: "permission.updated",
-        properties: {
-          id: "perm-1",
-          title: "Allow file write to src/main.ts?",
-          messageID: "m1",
-          sessionID: "s1",
-        },
-      } as any,
+      await sendExtMessage({
+        type: "event",
+        event: {
+          type: "permission.updated",
+          properties: {
+            id: "perm-1",
+            title: "Allow file write to src/main.ts?",
+            messageID: "m1",
+            sessionID: "s1",
+          },
+        } as any,
+      });
     });
 
-    expect(screen.getByText("Allow file write to src/main.ts?")).toBeInTheDocument();
-    expect(screen.getByText("Allow")).toBeInTheDocument();
-    expect(screen.getByText("Once")).toBeInTheDocument();
-    expect(screen.getByText("Deny")).toBeInTheDocument();
+    // Shows the permission title
+    it("パーミッションタイトルが表示される", () => {
+      expect(screen.getByText("Allow file write to src/main.ts?")).toBeInTheDocument();
+    });
+
+    // Shows Allow button
+    it("Allow ボタンが表示される", () => {
+      expect(screen.getByText("Allow")).toBeInTheDocument();
+    });
+
+    // Shows Once button
+    it("Once ボタンが表示される", () => {
+      expect(screen.getByText("Once")).toBeInTheDocument();
+    });
+
+    // Shows Deny button
+    it("Deny ボタンが表示される", () => {
+      expect(screen.getByText("Deny")).toBeInTheDocument();
+    });
   });
 
   // Allow button sends replyPermission with "always"

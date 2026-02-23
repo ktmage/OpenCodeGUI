@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderApp, sendExtMessage } from "../helpers";
@@ -29,47 +29,93 @@ async function setupWithReasoningPart(partOverrides: Record<string, unknown> = {
 // 12 Reasoning display (ReasoningPartView)
 describe("12 思考表示（ReasoningPartView）", () => {
   // In-progress reasoning part shows spinner and "Thinking..."
-  it("進行中のリーズニングパートでスピナーと「Thinking…」が表示される", async () => {
-    // time.end が undefined → 進行中
-    await setupWithReasoningPart({ time: { created: Date.now() } });
+  describe("進行中のリーズニングパート", () => {
+    let part: Element | null;
 
-    expect(screen.getByText("Thinking…")).toBeInTheDocument();
-    // active クラスが付与されている
-    const part = screen.getByText("Thinking…").closest(".reasoning-part");
-    expect(part).toHaveClass("active");
-    // spinner SVG が存在する
-    expect(part!.querySelector(".tool-part-spinner")).toBeInTheDocument();
+    beforeEach(async () => {
+      await setupWithReasoningPart({ time: { created: Date.now() } });
+      part = screen.getByText("Thinking\u2026").closest(".reasoning-part");
+    });
+
+    // Shows Thinking label
+    it("Thinking\u2026 が表示される", () => {
+      expect(screen.getByText("Thinking\u2026")).toBeInTheDocument();
+    });
+
+    // Has active class
+    it("active クラスが付与される", () => {
+      expect(part).toHaveClass("active");
+    });
+
+    // Shows spinner
+    it("スピナーが表示される", () => {
+      expect(part!.querySelector(".tool-part-spinner")).toBeInTheDocument();
+    });
   });
 
   // Completed reasoning part shows "Thought"
-  it("完了したリーズニングパートで「Thought」が表示される", async () => {
-    await setupWithReasoningPart({ time: { created: Date.now(), end: Date.now() } });
+  describe("完了したリーズニングパート", () => {
+    let part: Element | null;
 
-    expect(screen.getByText("Thought")).toBeInTheDocument();
-    const part = screen.getByText("Thought").closest(".reasoning-part");
-    expect(part).toHaveClass("complete");
-    // spinner が存在しない
-    expect(part!.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
+    beforeEach(async () => {
+      await setupWithReasoningPart({ time: { created: Date.now(), end: Date.now() } });
+      part = screen.getByText("Thought").closest(".reasoning-part");
+    });
+
+    // Shows Thought label
+    it("Thought が表示される", () => {
+      expect(screen.getByText("Thought")).toBeInTheDocument();
+    });
+
+    // Has complete class
+    it("complete クラスが付与される", () => {
+      expect(part).toHaveClass("complete");
+    });
+
+    // No spinner
+    it("スピナーが表示されない", () => {
+      expect(part!.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
+    });
   });
 
   // Clicking header expands/collapses thought content
-  it("ヘッダクリックで思考内容が展開・折りたたみされる", async () => {
-    await setupWithReasoningPart({
-      text: "Step 1: analyze the problem",
-      time: { created: Date.now(), end: Date.now() },
+  describe("ヘッダクリックで思考内容の展開・折りたたみ", () => {
+    beforeEach(async () => {
+      await setupWithReasoningPart({
+        text: "Step 1: analyze the problem",
+        time: { created: Date.now(), end: Date.now() },
+      });
     });
 
-    const user = userEvent.setup();
-    // 初期状態では本文は非表示
-    expect(screen.queryByText("Step 1: analyze the problem")).not.toBeInTheDocument();
+    // Initially collapsed
+    it("初期状態では本文が非表示", () => {
+      expect(screen.queryByText("Step 1: analyze the problem")).not.toBeInTheDocument();
+    });
 
-    // クリックで展開
-    const header = screen.getByTitle("Toggle thought details");
-    await user.click(header);
-    expect(screen.getByText("Step 1: analyze the problem")).toBeInTheDocument();
+    // Expands on click
+    describe("展開時", () => {
+      beforeEach(async () => {
+        const user = userEvent.setup();
+        await user.click(screen.getByTitle("Toggle thought details"));
+      });
 
-    // 再クリックで折りたたみ
-    await user.click(header);
-    expect(screen.queryByText("Step 1: analyze the problem")).not.toBeInTheDocument();
+      // Shows content
+      it("本文が表示される", () => {
+        expect(screen.getByText("Step 1: analyze the problem")).toBeInTheDocument();
+      });
+
+      // Collapses on second click
+      describe("再クリック時", () => {
+        beforeEach(async () => {
+          const user = userEvent.setup();
+          await user.click(screen.getByTitle("Toggle thought details"));
+        });
+
+        // Hides content
+        it("本文が非表示になる", () => {
+          expect(screen.queryByText("Step 1: analyze the problem")).not.toBeInTheDocument();
+        });
+      });
+    });
   });
 });

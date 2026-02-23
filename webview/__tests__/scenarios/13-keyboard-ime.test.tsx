@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { postMessage } from "../../vscode-api";
@@ -51,23 +51,28 @@ describe("13 キーボード・IME ハンドリング", () => {
   });
 
   // Shift+Enter inserts newline without sending
-  it("Shift+Enter で送信されず改行が入力される", async () => {
-    await setupInputReady();
+  describe("Shift+Enter 入力時", () => {
+    let textarea: HTMLElement;
 
-    const user = userEvent.setup();
-    const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+    beforeEach(async () => {
+      await setupInputReady();
+      const user = userEvent.setup();
+      textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+      await user.type(textarea, "line1{Shift>}{Enter}{/Shift}line2");
+    });
 
-    // テキストを入力して Shift+Enter
-    await user.type(textarea, "line1{Shift>}{Enter}{/Shift}line2");
+    // Does not send
+    it("sendMessage が呼ばれない", () => {
+      const sendCalls = vi.mocked(postMessage).mock.calls.filter(
+        (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
+      );
+      expect(sendCalls).toHaveLength(0);
+    });
 
-    // sendMessage は呼ばれない
-    const sendCalls = vi.mocked(postMessage).mock.calls.filter(
-      (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
-    );
-    expect(sendCalls).toHaveLength(0);
-
-    // textarea にテキストが残っている
-    expect(textarea).toHaveValue("line1\nline2");
+    // Newline is inserted
+    it("改行が入力される", () => {
+      expect(textarea).toHaveValue("line1\nline2");
+    });
   });
 
   // Enter does not send while isBusy
