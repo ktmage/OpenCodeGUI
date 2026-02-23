@@ -327,7 +327,7 @@ export function ToolPartView({ part }: Props) {
 
   return (
     <div className={`tool-part ${state.status}`}>
-      <div className="tool-part-header" onClick={() => setExpanded((s) => !s)}>
+      <div className="tool-part-header" onClick={() => setExpanded((s) => !s)} title={t["tool.toggleDetails"]}>
         <span className="tool-part-icon">
           {isActive ? (
             <svg className="tool-part-spinner" width="16" height="16" viewBox="0 0 16 16" fill="none">

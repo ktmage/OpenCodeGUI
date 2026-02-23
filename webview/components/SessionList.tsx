@@ -35,6 +35,7 @@ export function SessionList({
               key={session.id}
               className={`session-item ${session.id === activeSessionId ? "active" : ""}`}
               onClick={() => onSelect(session.id)}
+              title={session.title || t["session.select"]}
             >
               <span className="session-item-title">
                 {session.title || t["session.untitled"]}

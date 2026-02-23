@@ -300,7 +300,7 @@ export function InputArea({
               <button
                 className="context-file-button"
                 onClick={() => addFile(activeEditorFile)}
-                title={`Add ${activeEditorFile.filePath}`}
+                title={t["input.addFile"](activeEditorFile.filePath)}
               >
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M14 7v1H8v6H7V8H1V7h6V1h1v6h6z" />

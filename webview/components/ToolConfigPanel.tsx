@@ -76,7 +76,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
     <div className="tool-config-panel" ref={panelRef}>
       <div className="tool-config-header">
         <span className="tool-config-title">{t["config.title"]}</span>
-        <button className="tool-config-close" onClick={onClose}>
+        <button className="tool-config-close" onClick={onClose} title={t["config.close"]}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 8.707l3.646 3.647.708-.707L8.707 8l3.647-3.646-.707-.708L8 7.293 4.354 3.646l-.708.708L7.293 8l-3.647 3.646.708.708L8 8.707z" />
           </svg>

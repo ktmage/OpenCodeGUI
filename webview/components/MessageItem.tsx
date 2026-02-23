@@ -146,12 +146,13 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
 
 /** Thinking/Reasoning パートの折りたたみ表示 */
 function ReasoningPartView({ part }: { part: ReasoningPartType }) {
+  const t = useLocale();
   const [expanded, setExpanded] = useState(false);
   const isComplete = !!part.time?.end;
 
   return (
     <div className={`reasoning-part ${isComplete ? "complete" : "active"}`}>
-      <div className="reasoning-part-header" onClick={() => setExpanded((s) => !s)}>
+      <div className="reasoning-part-header" onClick={() => setExpanded((s) => !s)} title={t["message.toggleThought"]}>
         <span className="reasoning-part-icon">
           {isComplete ? (
             <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">

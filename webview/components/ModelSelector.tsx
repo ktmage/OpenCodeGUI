@@ -104,7 +104,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
       <button
         className="model-selector-button"
         onClick={() => setOpen((s) => !s)}
-        title="Select model"
+        title={t["model.selectModel"]}
       >
         <span className="model-selector-label">{selectedModelName}</span>
         <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">

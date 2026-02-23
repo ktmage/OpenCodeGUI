@@ -17,6 +17,7 @@ export const ja: typeof en = {
   "input.noFiles": "ファイルが見つかりません",
   "input.remove": "削除",
   "input.placeholder": "OpenCode に質問... (# でファイルを添付)",
+  "input.addFile": (name: string) => `${name} を追加`,
   "input.openTerminal": "ターミナルで開く",
   "input.configureTools": "ツール & MCP 設定",
   "input.stop": "停止",
@@ -29,6 +30,7 @@ export const ja: typeof en = {
   "message.send": "送信",
   "message.thought": "思考",
   "message.thinking": "思考中…",
+  "message.toggleThought": "思考の詳細を切り替え",
 
   // MessagesArea
   "checkpoint.revertTitle": "ここまで巻き戻す",
@@ -43,6 +45,7 @@ export const ja: typeof en = {
   "session.noSessions": "セッションなし",
   "session.untitled": "無題",
   "session.delete": "削除",
+  "session.select": "セッションを選択",
 
   // ToolPartView - category labels
   "tool.read": "読み取り",
@@ -51,6 +54,7 @@ export const ja: typeof en = {
   "tool.run": "実行",
   "tool.search": "検索",
   "tool.tool": "ツール",
+  "tool.toggleDetails": "詳細を切り替え",
   "tool.completed": (done: number, total: number) => `${done}/${total} 完了`,
   "tool.moreLines": (n: number) => `… 他 ${n} 行`,
   "tool.addLines": (n: number) => `+${n} 行`,
@@ -65,6 +69,7 @@ export const ja: typeof en = {
 
   // TodoHeader
   "todo.label": "ToDo",
+  "todo.toggleList": "ToDoリストを切り替え",
 
   // ContextIndicator
   "context.title": (percent: number) => `コンテキスト: ${percent}% 使用中`,
@@ -86,6 +91,8 @@ export const ja: typeof en = {
   "config.noToolsOrMcp": "利用可能なツールや MCP サーバーがありません",
   "config.projectConfig": "プロジェクト設定",
   "config.globalConfig": "グローバル設定",
+
+  "config.close": "閉じる",
 
   // Language setting
   "config.language": "言語",

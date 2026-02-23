@@ -15,6 +15,7 @@ export const en = {
   "input.noFiles": "No files found",
   "input.remove": "Remove",
   "input.placeholder": "Ask OpenCode... (type # to attach files)",
+  "input.addFile": (name: string) => `Add ${name}`,
   "input.openTerminal": "Open in terminal",
   "input.configureTools": "Configure tools & MCP",
   "input.stop": "Stop",
@@ -27,6 +28,7 @@ export const en = {
   "message.send": "Send",
   "message.thought": "Thought",
   "message.thinking": "Thinking…",
+  "message.toggleThought": "Toggle thought details",
 
   // MessagesArea
   "checkpoint.revertTitle": "Revert to this point",
@@ -41,6 +43,7 @@ export const en = {
   "session.noSessions": "No sessions",
   "session.untitled": "Untitled",
   "session.delete": "Delete",
+  "session.select": "Select session",
 
   // ToolPartView - category labels
   "tool.read": "Read",
@@ -49,6 +52,7 @@ export const en = {
   "tool.run": "Run",
   "tool.search": "Search",
   "tool.tool": "Tool",
+  "tool.toggleDetails": "Toggle details",
   "tool.completed": (done: number, total: number) => `${done}/${total} completed`,
   "tool.moreLines": (n: number) => `… +${n} more lines`,
   "tool.addLines": (n: number) => `+${n} lines`,
@@ -63,6 +67,7 @@ export const en = {
 
   // TodoHeader
   "todo.label": "To Do",
+  "todo.toggleList": "Toggle to-do list",
 
   // ContextIndicator
   "context.title": (percent: number) => `Context: ${percent}% used`,
@@ -84,6 +89,8 @@ export const en = {
   "config.noToolsOrMcp": "No tools or MCP servers available",
   "config.projectConfig": "Project Config",
   "config.globalConfig": "Global Config",
+
+  "config.close": "Close",
 
   // Language setting
   "config.language": "Language",
