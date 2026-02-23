@@ -268,7 +268,16 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         break;
       }
       case "openConfigFile": {
-        const uri = vscode.Uri.file(message.filePath);
+        const filePath = message.filePath;
+        const uri = vscode.Uri.file(filePath);
+        try {
+          await vscode.workspace.fs.stat(uri);
+        } catch {
+          // ファイルが存在しない場合は初期内容で作成する
+          const dir = vscode.Uri.file(filePath.substring(0, filePath.lastIndexOf("/")));
+          await vscode.workspace.fs.createDirectory(dir);
+          await vscode.workspace.fs.writeFile(uri, Buffer.from('{\n  "$schema": "https://opencode.ai/config.json"\n}\n'));
+        }
         const doc = await vscode.workspace.openTextDocument(uri);
         await vscode.window.showTextDocument(doc);
         break;

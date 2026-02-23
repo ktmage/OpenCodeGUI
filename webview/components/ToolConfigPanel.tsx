@@ -153,19 +153,19 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
         <div className="tool-config-footer">
           <button
             className="tool-config-link"
-            onClick={() => onOpenConfigFile(`${paths.directory}/.opencode/config.json`)}
+            onClick={() => onOpenConfigFile(`${paths.directory}/opencode.json`)}
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M13.85 4.44l-3.28-3.3-.71.7 2.57 2.59H1.5v1h10.93l-2.57 2.58.71.7 3.28-3.28.36-.49-.36-.5zM2.15 11.56l3.28 3.3.71-.7-2.57-2.59H14.5v-1H3.57l2.57-2.58-.71-.7-3.28 3.28-.36.49.36.5z" />
+              <path d="M13.71 4.29l-3-3A1 1 0 0 0 10 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5a1 1 0 0 0-.29-.71zM12 14H4V2h5v3a1 1 0 0 0 1 1h3v8z" />
             </svg>
             Project Config
           </button>
           <button
             className="tool-config-link"
-            onClick={() => onOpenConfigFile(`${paths.config}/config.json`)}
+            onClick={() => onOpenConfigFile(`${paths.config}/opencode.json`)}
           >
             <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M13.85 4.44l-3.28-3.3-.71.7 2.57 2.59H1.5v1h10.93l-2.57 2.58.71.7 3.28-3.28.36-.49-.36-.5zM2.15 11.56l3.28 3.3.71-.7-2.57-2.59H14.5v-1H3.57l2.57-2.58-.71-.7-3.28 3.28-.36.49.36.5z" />
+              <path d="M13.71 4.29l-3-3A1 1 0 0 0 10 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5a1 1 0 0 0-.29-.71zM12 14H4V2h5v3a1 1 0 0 0 1 1h3v8z" />
             </svg>
             Global Config
           </button>
