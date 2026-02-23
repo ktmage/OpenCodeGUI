@@ -537,6 +537,7 @@ body {
 
 .input-textarea {
   flex: 1;
+  width: 100%;
   background: none;
   border: none;
   outline: none;
@@ -1135,7 +1136,7 @@ body {
 .tool-config-panel {
   position: absolute;
   bottom: calc(100% + 4px);
-  right: 0;
+  left: 0;
   width: 300px;
   max-height: 400px;
   background-color: var(--vscode-editorWidget-background, var(--vscode-sideBar-background));
