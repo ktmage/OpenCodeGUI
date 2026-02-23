@@ -80,6 +80,7 @@ export const en = {
   // ToolConfigPanel
   "config.connected": "Connected",
   "config.disabled": "Disabled",
+  "config.enabled": "Enabled",
   "config.error": "Error",
   "config.needsAuth": "Needs Auth",
   "config.needsRegistration": "Needs Registration",

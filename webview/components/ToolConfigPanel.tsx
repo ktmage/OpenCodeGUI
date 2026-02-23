@@ -8,8 +8,6 @@ type Props = {
   toolSettings: Record<string, boolean>;
   mcpStatus: Record<string, McpStatus>;
   paths: { home: string; config: string; state: string; directory: string } | null;
-  onToggleTool: (toolId: string, enabled: boolean) => void;
-  onToggleMcp: (name: string, connect: boolean) => void;
   onOpenConfigFile: (filePath: string) => void;
   onClose: () => void;
   localeSetting: LocaleSetting;
@@ -36,7 +34,7 @@ function mcpStatusClass(status: McpStatus): string {
   }
 }
 
-export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onToggleTool, onToggleMcp, onOpenConfigFile, onClose, localeSetting, onLocaleSettingChange }: Props) {
+export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onOpenConfigFile, onClose, localeSetting, onLocaleSettingChange }: Props) {
   const t = useLocale();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +54,12 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
   // ツールを MCP ツールとビルトインで分類
   const mcpToolsByServer = new Map<string, string[]>();
   const builtinTools: string[] = [];
-  for (const id of toolIds) {
+  // toolIds（有効なツール）と toolSettings で明示的に無効化されたツールを統合
+  const allToolIds = new Set(toolIds);
+  for (const id of Object.keys(toolSettings)) {
+    allToolIds.add(id);
+  }
+  for (const id of allToolIds) {
     let matched = false;
     for (const name of mcpNames) {
       if (id.startsWith(`${name}_`) || id.startsWith(`${name}/`)) {
@@ -94,30 +97,23 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
               const tools = mcpToolsByServer.get(name) ?? [];
               return (
                 <div key={name} className="tool-config-mcp-item">
-                  <label className="tool-config-toggle">
-                    <input
-                      type="checkbox"
-                      checked={isConnected}
-                      onChange={() => onToggleMcp(name, !isConnected)}
-                    />
+                  <div className="tool-config-status-row">
                     <span className="tool-config-mcp-name">{name}</span>
                     <span className={`tool-config-mcp-status ${mcpStatusClass(status)}`}>
                       {mcpStatusLabel(status, t)}
                     </span>
-                  </label>
+                  </div>
                   {isConnected && tools.length > 0 && (
                     <div className="tool-config-mcp-tools">
                       {tools.map((id) => {
                         const enabled = toolSettings[id] !== false;
                         return (
-                          <label key={id} className="tool-config-toggle tool-config-tool-item">
-                            <input
-                              type="checkbox"
-                              checked={enabled}
-                              onChange={() => onToggleTool(id, !enabled)}
-                            />
+                          <div key={id} className="tool-config-status-row tool-config-tool-item">
                             <span className="tool-config-tool-name">{id}</span>
-                          </label>
+                            <span className={`tool-config-tool-badge ${enabled ? "badge-enabled" : "badge-disabled"}`}>
+                              {enabled ? t["config.enabled"] : t["config.disabled"]}
+                            </span>
+                          </div>
                         );
                       })}
                     </div>
@@ -135,14 +131,12 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
             {builtinTools.map((id) => {
               const enabled = toolSettings[id] !== false;
               return (
-                <label key={id} className="tool-config-toggle tool-config-tool-item">
-                  <input
-                    type="checkbox"
-                    checked={enabled}
-                    onChange={() => onToggleTool(id, !enabled)}
-                  />
+                <div key={id} className="tool-config-status-row tool-config-tool-item">
                   <span className="tool-config-tool-name">{id}</span>
-                </label>
+                  <span className={`tool-config-tool-badge ${enabled ? "badge-enabled" : "badge-disabled"}`}>
+                    {enabled ? t["config.enabled"] : t["config.disabled"]}
+                  </span>
+                </div>
               );
             })}
           </div>

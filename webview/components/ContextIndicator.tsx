@@ -40,6 +40,9 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
   const ratio = Math.min(inputTokens / contextLimit, 1);
   const percent = Math.round(ratio * 100);
 
+  // 0% の場合はボタン自体を非表示
+  if (percent === 0) return null;
+
   // 円形プログレスリング (SVG)
   const size = 22;
   const strokeWidth = 2.5;
@@ -51,7 +54,7 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
   const color =
     percent >= 80
       ? "var(--vscode-editorWarning-foreground)"
-      : "var(--vscode-descriptionForeground)";
+      : "var(--vscode-textLink-foreground)";
 
   return (
     <div className="context-indicator-container" ref={containerRef}>
@@ -85,7 +88,6 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
           />
         </svg>
-        <span className="context-indicator-percent" style={{ color }}>{percent}%</span>
       </button>
 
       {showPopup && (

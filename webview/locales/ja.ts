@@ -82,6 +82,7 @@ export const ja: typeof en = {
   // ToolConfigPanel
   "config.connected": "接続済み",
   "config.disabled": "無効",
+  "config.enabled": "有効",
   "config.error": "エラー",
   "config.needsAuth": "認証が必要",
   "config.needsRegistration": "登録が必要",

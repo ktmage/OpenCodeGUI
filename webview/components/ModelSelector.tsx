@@ -107,9 +107,11 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
         title={t["model.selectModel"]}
       >
         <span className="model-selector-label">{selectedModelName}</span>
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 10.5l-5-5h10l-5 5z" />
-        </svg>
+        <span className={`chevron-icon ${open ? "expanded" : ""}`}>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
+          </svg>
+        </span>
       </button>
       {open && (
         <div className="model-panel">
@@ -123,8 +125,10 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                     className={`model-panel-section-title ${!provider.connected ? "disconnected" : ""}`}
                     onClick={() => toggleProvider(provider.id)}
                   >
-                    <span className="model-panel-section-chevron">
-                      {isCollapsed ? "▸" : "▾"}
+                    <span className={`chevron-icon ${isCollapsed ? "" : "expanded"}`}>
+                      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
+                      </svg>
                     </span>
                     <span className="model-panel-section-name">{provider.name}</span>
                     {!provider.connected && (

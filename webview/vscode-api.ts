@@ -77,8 +77,6 @@ export type WebviewToExtMessage =
   | { type: "revertToMessage"; sessionId: string; messageId: string }
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "getToolConfig" }
-  | { type: "toggleTool"; toolId: string; enabled: boolean }
-  | { type: "toggleMcp"; name: string; connect: boolean }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "ready" };

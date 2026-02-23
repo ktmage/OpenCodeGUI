@@ -38,8 +38,6 @@ export type WebviewToExtMessage =
   | { type: "revertToMessage"; sessionId: string; messageId: string }
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "getToolConfig" }
-  | { type: "toggleTool"; toolId: string; enabled: boolean }
-  | { type: "toggleMcp"; name: string; connect: boolean }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "ready" };
@@ -231,48 +229,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           toolSettings: config.tools ?? {},
           mcpStatus,
           paths,
-        });
-        break;
-      }
-      case "toggleTool": {
-        const config = await this.connection.getConfig();
-        const tools = { ...config.tools, [message.toolId]: message.enabled };
-        await this.connection.updateConfig({ tools });
-        // 更新後のデータを返す
-        const [updatedToolIds, updatedConfig, updatedMcpStatus, updatedPaths] = await Promise.all([
-          this.connection.getToolIds(),
-          this.connection.getConfig(),
-          this.connection.getMcpStatus(),
-          this.connection.getPath(),
-        ]);
-        this.postMessage({
-          type: "toolConfig",
-          toolIds: updatedToolIds,
-          toolSettings: updatedConfig.tools ?? {},
-          mcpStatus: updatedMcpStatus,
-          paths: updatedPaths,
-        });
-        break;
-      }
-      case "toggleMcp": {
-        if (message.connect) {
-          await this.connection.connectMcp(message.name);
-        } else {
-          await this.connection.disconnectMcp(message.name);
-        }
-        // 更新後のステータスを返す
-        const [newToolIds, newConfig, newMcpStatus, newPaths] = await Promise.all([
-          this.connection.getToolIds(),
-          this.connection.getConfig(),
-          this.connection.getMcpStatus(),
-          this.connection.getPath(),
-        ]);
-        this.postMessage({
-          type: "toolConfig",
-          toolIds: newToolIds,
-          toolSettings: newConfig.tools ?? {},
-          mcpStatus: newMcpStatus,
-          paths: newPaths,
         });
         break;
       }

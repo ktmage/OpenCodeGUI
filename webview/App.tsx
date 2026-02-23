@@ -277,14 +277,6 @@ export function App() {
     postMessage({ type: "getToolConfig" });
   }, []);
 
-  const handleToggleTool = useCallback((toolId: string, enabled: boolean) => {
-    postMessage({ type: "toggleTool", toolId, enabled });
-  }, []);
-
-  const handleToggleMcp = useCallback((name: string, connect: boolean) => {
-    postMessage({ type: "toggleMcp", name, connect });
-  }, []);
-
   const handleOpenConfigFile = useCallback((filePath: string) => {
     postMessage({ type: "openConfigFile", filePath });
   }, []);
@@ -414,8 +406,6 @@ export function App() {
             toolSettings={toolSettings}
             mcpStatus={mcpStatus}
             openCodePaths={openCodePaths}
-            onToggleTool={handleToggleTool}
-            onToggleMcp={handleToggleMcp}
             onOpenConfigFile={handleOpenConfigFile}
             onOpenToolConfig={handleOpenToolConfig}
             onOpenTerminal={handleOpenTerminal}
