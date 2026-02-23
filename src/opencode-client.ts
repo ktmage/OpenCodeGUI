@@ -30,6 +30,10 @@ export class OpenCodeConnection {
   private listeners: Set<EventListener> = new Set();
   public workspaceFolder: string | undefined;
 
+  get serverUrl(): string | undefined {
+    return this.server?.url;
+  }
+
   async connect(): Promise<void> {
     // ポート 0 を指定し、OS に空きポートを自動割り当てさせる。
     // 固定ポートだと前回のデバッグセッションで残ったプロセスと競合する。

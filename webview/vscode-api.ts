@@ -43,6 +43,7 @@ export type WebviewToExtMessage =
   | { type: "toggleTool"; toolId: string; enabled: boolean }
   | { type: "toggleMcp"; name: string; connect: boolean }
   | { type: "openConfigFile"; filePath: string }
+  | { type: "openTerminal" }
   | { type: "ready" };
 
 interface VsCodeApi {

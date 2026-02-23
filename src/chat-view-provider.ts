@@ -40,6 +40,7 @@ export type WebviewToExtMessage =
   | { type: "toggleTool"; toolId: string; enabled: boolean }
   | { type: "toggleMcp"; name: string; connect: boolean }
   | { type: "openConfigFile"; filePath: string }
+  | { type: "openTerminal" }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -270,6 +271,21 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         const uri = vscode.Uri.file(message.filePath);
         const doc = await vscode.workspace.openTextDocument(uri);
         await vscode.window.showTextDocument(doc);
+        break;
+      }
+      case "openTerminal": {
+        const serverUrl = this.connection.serverUrl;
+        if (!serverUrl) break;
+        const args = ["attach", serverUrl];
+        if (this.activeSession) {
+          args.push("--session", this.activeSession.id);
+        }
+        const terminal = vscode.window.createTerminal({
+          name: "OpenCode",
+          cwd: this.connection.workspaceFolder,
+        });
+        terminal.show();
+        terminal.sendText(`opencode ${args.map((a) => JSON.stringify(a)).join(" ")}`);
         break;
       }
     }

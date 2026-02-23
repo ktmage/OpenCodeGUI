@@ -266,6 +266,10 @@ export function App() {
     postMessage({ type: "openConfigFile", filePath });
   }, []);
 
+  const handleOpenTerminal = useCallback(() => {
+    postMessage({ type: "openTerminal" });
+  }, []);
+
   // ユーザーメッセージを編集して再送信する
   const handleEditAndResend = useCallback(
     (messageId: string, text: string) => {
@@ -363,6 +367,7 @@ export function App() {
             onToggleMcp={handleToggleMcp}
             onOpenConfigFile={handleOpenConfigFile}
             onOpenToolConfig={handleOpenToolConfig}
+            onOpenTerminal={handleOpenTerminal}
           />
         </>
       ) : (

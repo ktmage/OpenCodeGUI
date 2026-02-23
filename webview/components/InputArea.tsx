@@ -30,13 +30,14 @@ type Props = {
   onToggleMcp: (name: string, connect: boolean) => void;
   onOpenConfigFile: (filePath: string) => void;
   onOpenToolConfig: () => void;
+  onOpenTerminal: () => void;
 };
 
 export function InputArea({
   onSend, onAbort, isBusy, providers, selectedModel, onModelSelect,
   openEditors, workspaceFiles, inputTokens, contextLimit, onCompress, isCompressing,
   prefillText, onPrefillConsumed,
-  toolIds, toolSettings, mcpStatus, openCodePaths, onToggleTool, onToggleMcp, onOpenConfigFile, onOpenToolConfig,
+  toolIds, toolSettings, mcpStatus, openCodePaths, onToggleTool, onToggleMcp, onOpenConfigFile, onOpenToolConfig, onOpenTerminal,
 }: Props) {
   const [text, setText] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<FileAttachment[]>([]);
@@ -354,6 +355,15 @@ export function InputArea({
               selectedModel={selectedModel}
               onSelect={onModelSelect}
             />
+            <button
+              className="tool-config-button"
+              onClick={onOpenTerminal}
+              title="Open in terminal"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M1 3.5l4.5 4.5L1 12.5l1 1 5.5-5.5L2 2.5l-1 1zM8 13h7v-1H8v1z" />
+              </svg>
+            </button>
             <button
               className="tool-config-button"
               onClick={() => { onOpenToolConfig(); setShowToolConfig((s) => !s); }}
