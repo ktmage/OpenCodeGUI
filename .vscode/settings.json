@@ -1,0 +1,42 @@
+{
+  "chat.tools.terminal.autoApprove": {
+    "/.*/": true,
+    "/^git push.*(--force|-f)/": false,
+    "git reset --hard": false,
+    "git clean": false,
+    "/^git branch.*(--delete|-[dD])/": false,
+    "/docker (system|volume|network|image|container|builder) prune/": false,
+    "/npm publish/": false,
+    "/gem push/": false,
+    "kamal deploy": false,
+    "kamal rollback": false,
+    "kamal app exec": false,
+    "kamal accessory exec": false,
+    "sudo": false,
+    "rm -rf /": false,
+    "chmod": false,
+    "chown": false,
+    "killall": false
+  },
+  "chat.tools.terminal.enableAutoApprove": true,
+  "chat.tools.terminal.ignoreDefaultAutoApproveRules": true,
+  "chat.tools.urls.autoApprove": {
+    "https://*.github.com": true,
+    "https://*.githubusercontent.com": true,
+    "https://*.stackoverflow.com": true,
+    "https://*.ruby-lang.org": true,
+    "https://*.rubyonrails.org": true,
+    "https://rubygems.org/*": true,
+    "https://*.mozilla.org": true,
+    "https://*.npmjs.com": true,
+    "https://*.vitejs.dev": true,
+    "https://*.wikipedia.org": true,
+    "https://*.netlify.app": true,
+    "https://*.hotwired.dev": true,
+    "https://*.opencode.ai": true
+  },
+  "chat.instructionsFilesLocations": {
+    ".ktmage/instructions": true,
+    ".ktmage/project/instructions": true
+  }
+}
