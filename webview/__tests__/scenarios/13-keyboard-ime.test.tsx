@@ -26,7 +26,7 @@ async function setupInputReady() {
 // Keyboard and IME handling
 describe("キーボード・IME ハンドリング", () => {
   // Enter during IME composition does not send
-  it("IME 変換中に Enter を押しても送信されない", async () => {
+  it("IME 変換中に Enter を押しても送信されないこと", async () => {
     await setupInputReady();
 
     const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
@@ -51,7 +51,7 @@ describe("キーボード・IME ハンドリング", () => {
   });
 
   // Shift+Enter inserts newline without sending
-  context("Shift+Enter 入力時", () => {
+  context("Shift+Enter を入力した場合", () => {
     let textarea: HTMLElement;
 
     beforeEach(async () => {
@@ -62,7 +62,7 @@ describe("キーボード・IME ハンドリング", () => {
     });
 
     // Does not send
-    it("sendMessage が呼ばれない", () => {
+    it("sendMessage が呼ばれないこと", () => {
       const sendCalls = vi.mocked(postMessage).mock.calls.filter(
         (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
       );
@@ -70,13 +70,13 @@ describe("キーボード・IME ハンドリング", () => {
     });
 
     // Newline is inserted
-    it("改行が入力される", () => {
+    it("改行が入力されること", () => {
       expect(textarea).toHaveValue("line1\nline2");
     });
   });
 
   // Enter does not send while isBusy
-  it("isBusy 状態で Enter を押しても送信されない", async () => {
+  it("isBusy 状態で Enter を押しても送信されないこと", async () => {
     await setupInputReady();
 
     const user = userEvent.setup();

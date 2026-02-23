@@ -54,14 +54,14 @@ async function setupWithProviders() {
 // Model selection
 describe("モデル選択", () => {
   // Selected model name is shown on the button
-  it("選択中のモデル名がボタンに表示される", async () => {
+  it("選択中のモデル名がボタンに表示されること", async () => {
     await setupWithProviders();
 
     expect(screen.getByText("Claude 4 Opus")).toBeInTheDocument();
   });
 
   // Clicking opens the model panel
-  it("クリックでモデルパネルが開く", async () => {
+  it("クリックでモデルパネルが開くこと", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
 
@@ -72,7 +72,7 @@ describe("モデル選択", () => {
   });
 
   // Selecting a model sends setModel
-  it("モデル選択で setModel が送信される", async () => {
+  it("モデル選択で setModel が送信されること", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
 
@@ -86,7 +86,7 @@ describe("モデル選択", () => {
   });
 
   // modelUpdated message updates the selected model
-  it("modelUpdated 受信で選択モデルが更新される", async () => {
+  it("modelUpdated 受信で選択モデルが更新されること", async () => {
     await setupWithProviders();
 
     await sendExtMessage({
@@ -100,7 +100,7 @@ describe("モデル選択", () => {
   });
 
   // Disconnected providers show "Not connected" badge
-  it("未接続プロバイダーは Not connected バッジが表示される", async () => {
+  it("未接続プロバイダーは Not connected バッジが表示されること", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
 
@@ -116,9 +116,9 @@ describe("モデル選択", () => {
   });
 
   // Clicking provider name toggles model list fold/unfold
-  context("プロバイダー名クリックでモデル一覧の折りたたみ", () => {
+  context("プロバイダー名をクリックした場合", () => {
     // After folding, models are hidden
-    context("折りたたんだとき", () => {
+    context("折りたたんだ場合", () => {
       beforeEach(async () => {
         await setupWithProviders();
         const user = userEvent.setup();
@@ -127,19 +127,19 @@ describe("モデル選択", () => {
       });
 
       // Models are hidden
-      it("モデルが非表示になる", () => {
+      it("モデルが非表示になること", () => {
         expect(screen.queryByText("Claude 4 Sonnet")).not.toBeInTheDocument();
       });
 
       // After unfolding, models are shown again
-      context("再度クリックしたとき", () => {
+      context("再度クリックした場合", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByText("Anthropic"));
         });
 
         // Models are shown
-        it("モデルが再表示される", () => {
+        it("モデルが再表示されること", () => {
           expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
         });
       });
@@ -147,9 +147,9 @@ describe("モデル選択", () => {
   });
 
   // "Show all providers" toggle shows/hides disconnected providers
-  context("Show all providers トグル", () => {
+  context("Show all providers をトグルする場合", () => {
     // Initially disconnected providers are hidden
-    context("初期状態", () => {
+    context("初期状態の場合", () => {
       beforeEach(async () => {
         await setupWithProviders();
         const user = userEvent.setup();
@@ -157,31 +157,31 @@ describe("モデル選択", () => {
       });
 
       // Disconnected providers are hidden
-      it("未接続プロバイダーが非表示", () => {
+      it("未接続プロバイダーが非表示こと", () => {
         expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
       });
 
       // After clicking Show all, disconnected providers appear
-      context("Show all クリック後", () => {
+      context("Show all をクリックした場合", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByTitle("Show all providers"));
         });
 
         // Disconnected providers are shown
-        it("未接続プロバイダーが表示される", () => {
+        it("未接続プロバイダーが表示されること", () => {
           expect(screen.getByText("OpenAI")).toBeInTheDocument();
         });
 
         // After clicking Connected only, disconnected providers are hidden again
-        context("Connected only クリック後", () => {
+        context("Connected only をクリックした場合", () => {
           beforeEach(async () => {
             const user = userEvent.setup();
             await user.click(screen.getByTitle("Hide disconnected providers"));
           });
 
           // Disconnected providers are hidden again
-          it("未接続プロバイダーが再び非表示になる", () => {
+          it("未接続プロバイダーが再び非表示になること", () => {
             expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
           });
         });
@@ -190,7 +190,7 @@ describe("モデル選択", () => {
   });
 
   // Dropdown closes after model selection
-  it("モデル選択後にドロップダウンが閉じる", async () => {
+  it("モデル選択後にドロップダウンが閉じること", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
 
@@ -204,7 +204,7 @@ describe("モデル選択", () => {
   });
 
   // Shows "Select model" when selectedModel is null
-  it("selectedModel が null のとき Select model が表示される", async () => {
+  it("selectedModel が null のとき Select model が表示されること", async () => {
     renderApp();
 
     // プロバイダーなしで activeSession を設定

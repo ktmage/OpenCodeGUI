@@ -35,7 +35,7 @@ async function setupConversation() {
 // Message editing and checkpoints
 describe("メッセージ編集とチェックポイント", () => {
   // Clicking a user message enters edit mode
-  context("ユーザーメッセージをクリックしたとき", () => {
+  context("ユーザーメッセージをクリックした場合", () => {
     beforeEach(async () => {
       await setupConversation();
       const user = userEvent.setup();
@@ -43,18 +43,18 @@ describe("メッセージ編集とチェックポイント", () => {
     });
 
     // Edit textarea is shown
-    it("テキストエリアが表示される", () => {
+    it("テキストエリアが表示されること", () => {
       expect(screen.getByDisplayValue("First question")).toBeInTheDocument();
     });
 
     // The element is a textarea
-    it("要素が TEXTAREA である", () => {
+    it("要素が TEXTAREA であること", () => {
       expect(screen.getByDisplayValue("First question").tagName).toBe("TEXTAREA");
     });
   });
 
   // Submitting edited text with Enter sends editAndResend
-  it("編集テキストを Enter で送信すると editAndResend が送信される", async () => {
+  it("編集テキストを Enter で送信すると editAndResend が送信されること", async () => {
     await setupConversation();
     const user = userEvent.setup();
 
@@ -77,7 +77,7 @@ describe("メッセージ編集とチェックポイント", () => {
   });
 
   // Escape cancels editing
-  context("Escape で編集キャンセル時", () => {
+  context("Escape で編集をキャンセルした場合", () => {
     beforeEach(async () => {
       await setupConversation();
       const user = userEvent.setup();
@@ -88,18 +88,18 @@ describe("メッセージ編集とチェックポイント", () => {
     });
 
     // Edit textarea is removed
-    it("編集テキストエリアが消える", () => {
+    it("編集テキストエリアが消えること", () => {
       expect(screen.queryByDisplayValue("First question extra")).not.toBeInTheDocument();
     });
 
     // Original text is restored
-    it("元のテキストが復元される", () => {
+    it("元のテキストが復元されること", () => {
       expect(screen.getByText("First question")).toBeInTheDocument();
     });
   });
 
   // Checkpoint separator is shown between assistant and user messages
-  it("アシスタント→ユーザーの間にチェックポイント区切り線が表示される", async () => {
+  it("アシスタント→ユーザーの間にチェックポイント区切り線が表示されること", async () => {
     await setupConversation();
 
     // チェックポイントボタンが表示される
@@ -107,7 +107,7 @@ describe("メッセージ編集とチェックポイント", () => {
   });
 
   // Clicking checkpoint sends revertToMessage and prefills the input
-  context("チェックポイントクリック時", () => {
+  context("チェックポイントをクリックした場合", () => {
     beforeEach(async () => {
       await setupConversation();
       const user = userEvent.setup();
@@ -115,7 +115,7 @@ describe("メッセージ編集とチェックポイント", () => {
     });
 
     // Sends revertToMessage
-    it("revertToMessage が送信される", () => {
+    it("revertToMessage が送信されること", () => {
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           type: "revertToMessage",
@@ -126,14 +126,14 @@ describe("メッセージ編集とチェックポイント", () => {
     });
 
     // Prefills the input with the reverted message text
-    it("入力欄にテキストがプリフィルされる", () => {
+    it("入力欄にテキストがプリフィルされること", () => {
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       expect(textarea).toHaveValue("Second question");
     });
   });
 
   // Editing the first message sends editAndResend with its own messageId
-  it("最初のメッセージの編集では messageId 自体で editAndResend が送信される", async () => {
+  it("最初のメッセージの編集では messageId 自体で editAndResend が送信されること", async () => {
     await setupConversation();
     const user = userEvent.setup();
 
@@ -156,7 +156,7 @@ describe("メッセージ編集とチェックポイント", () => {
   });
 
   // Empty text prevents edit submission
-  it("空テキストでは編集送信されない", async () => {
+  it("空テキストでは編集送信されないこと", async () => {
     await setupConversation();
     const user = userEvent.setup();
 
@@ -171,7 +171,7 @@ describe("メッセージ編集とチェックポイント", () => {
   });
 
   // Attached files in user messages are shown as chips
-  it("ユーザーメッセージの添付ファイルがチップとして表示される", async () => {
+  it("ユーザーメッセージの添付ファイルがチップとして表示されること", async () => {
     renderApp();
     const session = createSession({ id: "s1", title: "Chat" });
     await sendExtMessage({ type: "activeSession", session });

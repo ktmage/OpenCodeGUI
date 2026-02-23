@@ -63,7 +63,7 @@ async function setupWithTokenUsage() {
 // Context and compression
 describe("コンテキストとコンプレッション", () => {
   // ContextIndicator is shown based on token usage
-  it("トークン使用量に応じて ContextIndicator が表示される", async () => {
+  it("トークン使用量に応じて ContextIndicator が表示されること", async () => {
     await setupWithTokenUsage();
 
     // 80000 / 200000 = 40%
@@ -72,7 +72,7 @@ describe("コンテキストとコンプレッション", () => {
   });
 
   // Compress button sends compressSession
-  it("圧縮ボタンで compressSession が送信される", async () => {
+  it("圧縮ボタンで compressSession が送信されること", async () => {
     const session = await setupWithTokenUsage();
     const user = userEvent.setup();
 
@@ -91,7 +91,7 @@ describe("コンテキストとコンプレッション", () => {
   });
 
   // Token usage is recalculated after message.removed
-  context("message.removed 後のトークン使用量再計算", () => {
+  context("message.removed 後にトークン使用量を再計算した場合", () => {
     beforeEach(async () => {
       await setupWithTokenUsage();
 
@@ -102,18 +102,18 @@ describe("コンテキストとコンプレッション", () => {
     });
 
     // New percentage is shown
-    it("新しい使用率が表示される", () => {
+    it("新しい使用率が表示されること", () => {
       expect(screen.getByTitle("Context: 15% used")).toBeInTheDocument();
     });
 
     // Old percentage is no longer shown
-    it("古い使用率が非表示になる", () => {
+    it("古い使用率が非表示になること", () => {
       expect(screen.queryByTitle("Context: 40% used")).not.toBeInTheDocument();
     });
   });
 
   // ContextIndicator is hidden when inputTokens is 0
-  it("inputTokens が 0 の場合 ContextIndicator が表示されない", async () => {
+  it("inputTokens が 0 の場合 ContextIndicator が表示されないこと", async () => {
     renderApp();
 
     const provider = createProvider("anthropic", {
@@ -137,7 +137,7 @@ describe("コンテキストとコンプレッション", () => {
   });
 
   // Warning color is applied at 80%+ usage
-  it("使用率 80% 以上で警告色になる", async () => {
+  it("使用率 80% 以上で警告色になること", async () => {
     renderApp();
 
     const provider = createProvider("anthropic", {
@@ -178,7 +178,7 @@ describe("コンテキストとコンプレッション", () => {
   });
 
   // Popup shows token details
-  context("ポップアップ表示時", () => {
+  context("ポップアップを表示した場合", () => {
     beforeEach(async () => {
       await setupWithTokenUsage();
       const user = userEvent.setup();
@@ -186,23 +186,23 @@ describe("コンテキストとコンプレッション", () => {
     });
 
     // Shows heading
-    it("タイトルが表示される", () => {
+    it("タイトルが表示されること", () => {
       expect(screen.getByText("Context Window Usage")).toBeInTheDocument();
     });
 
     // Shows Input tokens label
-    it("Input tokens ラベルが表示される", () => {
+    it("Input tokens ラベルが表示されること", () => {
       expect(screen.getByText("Input tokens")).toBeInTheDocument();
     });
 
     // Shows Context limit label
-    it("Context limit ラベルが表示される", () => {
+    it("Context limit ラベルが表示されること", () => {
       expect(screen.getByText("Context limit")).toBeInTheDocument();
     });
   });
 
   // Compressing state shows "Compressing..." text and disabled button
-  context("圧縮中の状態", () => {
+  context("圧縮中の場合", () => {
     let compressBtn: HTMLElement;
 
     beforeEach(async () => {
@@ -245,12 +245,12 @@ describe("コンテキストとコンプレッション", () => {
     });
 
     // Shows Compressing label
-    it("Compressing ラベルが表示される", () => {
+    it("Compressing ラベルが表示されること", () => {
       expect(compressBtn).toBeInTheDocument();
     });
 
     // Button is disabled
-    it("ボタンが disabled になる", () => {
+    it("ボタンが disabled になること", () => {
       expect(compressBtn).toBeDisabled();
     });
   });

@@ -21,7 +21,7 @@ async function setupWithToolPart(toolPart: unknown) {
 // Tool display
 describe("ツール表示", () => {
   // "read" category tool shows "Read" label
-  context("read カテゴリのツール表示時", () => {
+  context("read カテゴリのツールを表示した場合", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -34,18 +34,18 @@ describe("ツール表示", () => {
     });
 
     // Shows Read label
-    it("Read ラベルが表示される", () => {
+    it("Read ラベルが表示されること", () => {
       expect(screen.getByText("Read")).toBeInTheDocument();
     });
 
     // Shows file path
-    it("ファイルパスが表示される", () => {
+    it("ファイルパスが表示されること", () => {
       expect(screen.getByText("src/main.ts")).toBeInTheDocument();
     });
   });
 
   // "edit" category tool shows diff view when expanded
-  context("edit カテゴリのツール展開時", () => {
+  context("edit カテゴリのツールを表示した場合", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -67,12 +67,12 @@ describe("ツール表示", () => {
     });
 
     // Shows Edit label
-    it("Edit ラベルが表示される", () => {
+    it("Edit ラベルが表示されること", () => {
       expect(screen.getByText("Edit")).toBeInTheDocument();
     });
 
     // Shows diff lines when expanded
-    it("展開すると差分行が表示される", async () => {
+    it("展開すると差分行が表示されること", async () => {
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Toggle details"));
       const diffLines = document.querySelectorAll(".tool-diff-line");
@@ -81,7 +81,7 @@ describe("ツール表示", () => {
   });
 
   // "write" category tool shows file creation view
-  context("write カテゴリのツール表示時", () => {
+  context("write カテゴリのツールを表示した場合", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -102,12 +102,12 @@ describe("ツール表示", () => {
     });
 
     // Shows Create label
-    it("Create ラベルが表示される", () => {
+    it("Create ラベルが表示されること", () => {
       expect(screen.getByText("Create")).toBeInTheDocument();
     });
 
     // Shows all-add diff lines when expanded
-    it("展開すると全行が add の差分が表示される", async () => {
+    it("展開すると全行が add の差分が表示されること", async () => {
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Toggle details"));
       const addLines = document.querySelectorAll(".tool-diff-line-add");
@@ -116,7 +116,7 @@ describe("ツール表示", () => {
   });
 
   // "run" category tool (bash) shows command
-  context("run カテゴリのツール（bash）表示時", () => {
+  context("run カテゴリのツール（bash）を表示した場合", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -134,18 +134,18 @@ describe("ツール表示", () => {
     });
 
     // Shows Run label
-    it("Run ラベルが表示される", () => {
+    it("Run ラベルが表示されること", () => {
       expect(screen.getByText("Run")).toBeInTheDocument();
     });
 
     // Shows command text
-    it("コマンドが表示される", () => {
+    it("コマンドが表示されること", () => {
       expect(screen.getByText("npm test")).toBeInTheDocument();
     });
   });
 
   // "search" category tool shows "Search" label
-  it("search カテゴリのツールに Search ラベルが表示される", async () => {
+  it("search カテゴリのツールに Search ラベルが表示されること", async () => {
     await setupWithToolPart({
       id: "tp1",
       type: "tool",
@@ -164,7 +164,7 @@ describe("ツール表示", () => {
   });
 
   // Error state tool shows error message
-  it("エラー状態のツールにエラーメッセージが表示される", async () => {
+  it("エラー状態のツールにエラーメッセージが表示されること", async () => {
     await setupWithToolPart({
       id: "tp1",
       type: "tool",
@@ -187,7 +187,7 @@ describe("ツール表示", () => {
   });
 
   // Expand/collapse toggles details
-  context("展開・折りたたみのトグル", () => {
+  context("展開・折りたたみをトグルする場合", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -205,31 +205,31 @@ describe("ツール表示", () => {
     });
 
     // Initially collapsed
-    it("初期状態では折りたたまれている", () => {
+    it("初期状態では折りたたまれていること", () => {
       expect(screen.queryByText("file content here")).not.toBeInTheDocument();
     });
 
     // Expands on click
-    context("展開時", () => {
+    context("展開した場合", () => {
       beforeEach(async () => {
         const user = userEvent.setup();
         await user.click(screen.getByTitle("Toggle details"));
       });
 
       // Shows content
-      it("コンテンツが表示される", () => {
+      it("コンテンツが表示されること", () => {
         expect(screen.getByText("file content here")).toBeInTheDocument();
       });
 
       // Collapses on second click
-      context("再クリック時", () => {
+      context("再クリックした場合", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByTitle("Toggle details"));
         });
 
         // Hides content
-        it("コンテンツが非表示になる", () => {
+        it("コンテンツが非表示になること", () => {
           expect(screen.queryByText("file content here")).not.toBeInTheDocument();
         });
       });
@@ -237,7 +237,7 @@ describe("ツール表示", () => {
   });
 
   // Running state shows spinner
-  it("running 状態ではスピナーが表示される", async () => {
+  it("running 状態ではスピナーが表示されること", async () => {
     await setupWithToolPart({
       id: "tp1",
       type: "tool",
@@ -257,7 +257,7 @@ describe("ツール表示", () => {
   });
 
   // "other" category tool shows "Tool" label
-  it("other カテゴリのツールに Tool ラベルが表示される", async () => {
+  it("other カテゴリのツールに Tool ラベルが表示されること", async () => {
     await setupWithToolPart({
       id: "tp1",
       type: "tool",
@@ -276,7 +276,7 @@ describe("ツール表示", () => {
   });
 
   // MCP tool name resolves to correct category
-  it("MCP ツール名がカテゴリに正しく解決される", async () => {
+  it("MCP ツール名がカテゴリに正しく解決されること", async () => {
     await setupWithToolPart({
       id: "tp1",
       type: "tool",
@@ -296,7 +296,7 @@ describe("ツール表示", () => {
   });
 
   // Pending state shows spinner
-  it("pending 状態でスピナーが表示される", async () => {
+  it("pending 状態でスピナーが表示されること", async () => {
     await setupWithToolPart({
       id: "tp1",
       type: "tool",
@@ -313,7 +313,7 @@ describe("ツール表示", () => {
   });
 
   // todowrite tool shows TodoView with count label when expanded
-  context("todowrite ツール表示時", () => {
+  context("todowrite ツールを表示した場合", () => {
     beforeEach(async () => {
       const todos = [
         { content: "Task 1", status: "completed" },
@@ -335,24 +335,24 @@ describe("ツール表示", () => {
     });
 
     // Shows count label
-    it("件数ラベルが表示される", () => {
+    it("件数ラベルが表示されること", () => {
       expect(screen.getByText("1/2 todos")).toBeInTheDocument();
     });
 
     // Shows todo items when expanded
-    context("展開時", () => {
+    context("展開した場合", () => {
       beforeEach(async () => {
         const user = userEvent.setup();
         await user.click(screen.getByTitle("Toggle details"));
       });
 
       // Shows first task
-      it("Task 1 が表示される", () => {
+      it("Task 1 が表示されること", () => {
         expect(screen.getByText("Task 1")).toBeInTheDocument();
       });
 
       // Shows second task
-      it("Task 2 が表示される", () => {
+      it("Task 2 が表示されること", () => {
         expect(screen.getByText("Task 2")).toBeInTheDocument();
       });
     });

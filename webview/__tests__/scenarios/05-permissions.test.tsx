@@ -27,7 +27,7 @@ async function setupWithPermission() {
 // Permissions
 describe("パーミッション", () => {
   // permission.updated event shows PermissionView
-  context("permission.updated イベント受信時", () => {
+  context("permission.updated イベントを受信した場合", () => {
     beforeEach(async () => {
       await setupWithPermission();
 
@@ -46,28 +46,28 @@ describe("パーミッション", () => {
     });
 
     // Shows the permission title
-    it("パーミッションタイトルが表示される", () => {
+    it("パーミッションタイトルが表示されること", () => {
       expect(screen.getByText("Allow file write to src/main.ts?")).toBeInTheDocument();
     });
 
     // Shows Allow button
-    it("Allow ボタンが表示される", () => {
+    it("Allow ボタンが表示されること", () => {
       expect(screen.getByText("Allow")).toBeInTheDocument();
     });
 
     // Shows Once button
-    it("Once ボタンが表示される", () => {
+    it("Once ボタンが表示されること", () => {
       expect(screen.getByText("Once")).toBeInTheDocument();
     });
 
     // Shows Deny button
-    it("Deny ボタンが表示される", () => {
+    it("Deny ボタンが表示されること", () => {
       expect(screen.getByText("Deny")).toBeInTheDocument();
     });
   });
 
   // Allow button sends replyPermission with "always"
-  it("Allow ボタンで replyPermission に always が送信される", async () => {
+  it("Allow ボタンで replyPermission に always が送信されること", async () => {
     const session = await setupWithPermission();
     const user = userEvent.setup();
 
@@ -90,7 +90,7 @@ describe("パーミッション", () => {
   });
 
   // Once button sends replyPermission with "once"
-  it("Once ボタンで replyPermission に once が送信される", async () => {
+  it("Once ボタンで replyPermission に once が送信されること", async () => {
     const session = await setupWithPermission();
     const user = userEvent.setup();
 
@@ -113,7 +113,7 @@ describe("パーミッション", () => {
   });
 
   // Deny button sends replyPermission with "reject"
-  it("Deny ボタンで replyPermission に reject が送信される", async () => {
+  it("Deny ボタンで replyPermission に reject が送信されること", async () => {
     const session = await setupWithPermission();
     const user = userEvent.setup();
 
@@ -136,7 +136,7 @@ describe("パーミッション", () => {
   });
 
   // permission.replied event hides PermissionView
-  it("permission.replied イベントで PermissionView が非表示になる", async () => {
+  it("permission.replied イベントで PermissionView が非表示になること", async () => {
     await setupWithPermission();
 
     // パーミッション表示

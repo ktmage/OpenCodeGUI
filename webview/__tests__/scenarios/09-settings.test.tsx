@@ -28,7 +28,7 @@ async function setupForSettings() {
 // Settings
 describe("設定", () => {
   // Settings button opens/closes ToolConfigPanel
-  it("設定ボタンで ToolConfigPanel が開閉する", async () => {
+  it("設定ボタンで ToolConfigPanel が開閉すること", async () => {
     await setupForSettings();
     const user = userEvent.setup();
 
@@ -40,7 +40,7 @@ describe("設定", () => {
   });
 
   // Changing locale updates persisted state
-  it("ロケール変更で persisted state が更新される", async () => {
+  it("ロケール変更で persisted state が更新されること", async () => {
     await setupForSettings();
     const user = userEvent.setup();
 
@@ -56,7 +56,7 @@ describe("設定", () => {
   });
 
   // Config file link sends openConfigFile
-  it("設定ファイルリンクで openConfigFile が送信される", async () => {
+  it("設定ファイルリンクで openConfigFile が送信されること", async () => {
     await setupForSettings();
     const user = userEvent.setup();
 
@@ -72,7 +72,7 @@ describe("設定", () => {
   });
 
   // Project config file link sends openConfigFile
-  it("プロジェクト設定ファイルリンクで openConfigFile が送信される", async () => {
+  it("プロジェクト設定ファイルリンクで openConfigFile が送信されること", async () => {
     await setupForSettings();
     const user = userEvent.setup();
 
@@ -87,7 +87,7 @@ describe("設定", () => {
   });
 
   // Terminal button sends openTerminal
-  it("ターミナルボタンで openTerminal が送信される", async () => {
+  it("ターミナルボタンで openTerminal が送信されること", async () => {
     await setupForSettings();
     const user = userEvent.setup();
 
@@ -97,7 +97,7 @@ describe("設定", () => {
   });
 
   // Switching locale to Japanese updates UI text
-  it("ロケールを日本語に変えるとUIが日本語になる", async () => {
+  it("ロケールを日本語に変えるとUIが日本語になること", async () => {
     await setupForSettings();
     const user = userEvent.setup();
 
@@ -110,7 +110,7 @@ describe("設定", () => {
   });
 
   // toolConfig message sets paths and shows config links in the panel
-  context("toolConfig メッセージ受信後の設定パネル", () => {
+  context("toolConfig メッセージを受信した場合", () => {
     beforeEach(async () => {
       renderApp();
       const session = createSession({ id: "s1" });
@@ -126,12 +126,12 @@ describe("設定", () => {
     });
 
     // Shows Project Config link
-    it("Project Config リンクが表示される", () => {
+    it("Project Config リンクが表示されること", () => {
       expect(screen.getByText("Project Config")).toBeInTheDocument();
     });
 
     // Shows Global Config link
-    it("Global Config リンクが表示される", () => {
+    it("Global Config リンクが表示されること", () => {
       expect(screen.getByText("Global Config")).toBeInTheDocument();
     });
   });

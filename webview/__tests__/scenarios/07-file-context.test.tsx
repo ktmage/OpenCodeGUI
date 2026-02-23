@@ -35,7 +35,7 @@ async function setupWithFiles() {
 // File context
 describe("ファイルコンテキスト", () => {
   // Clip button opens the file picker
-  it("クリップボタンでファイルピッカーが開く", async () => {
+  it("クリップボタンでファイルピッカーが開くこと", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -46,7 +46,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Selecting a file shows a chip and closes the picker
-  context("ファイルを選択したとき", () => {
+  context("ファイルを選択した場合", () => {
     beforeEach(async () => {
       await setupWithFiles();
       const user = userEvent.setup();
@@ -57,19 +57,19 @@ describe("ファイルコンテキスト", () => {
     });
 
     // Chip is shown
-    it("チップが表示される", () => {
+    it("チップが表示されること", () => {
       const chips = document.querySelectorAll(".attached-file-chip");
       expect(chips.length).toBe(1);
     });
 
     // Picker is closed
-    it("ピッカーが閉じる", () => {
+    it("ピッカーが閉じること", () => {
       expect(screen.queryByPlaceholderText("Search files...")).not.toBeInTheDocument();
     });
   });
 
   // Chip remove button detaches the file
-  it("チップの削除ボタンでファイルが除去される", async () => {
+  it("チップの削除ボタンでファイルが除去されること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -90,7 +90,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // # trigger shows file candidate popup
-  it("# トリガーでファイル候補ポップアップが表示される", async () => {
+  it("# トリガーでファイル候補ポップアップが表示されること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -103,7 +103,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // # query filters files and sends searchWorkspaceFiles
-  it("# クエリでファイルがフィルタされ searchWorkspaceFiles が送信される", async () => {
+  it("# クエリでファイルがフィルタされ searchWorkspaceFiles が送信されること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -117,7 +117,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Selecting from # popup removes the # portion and attaches the file
-  context("# からファイル選択時", () => {
+  context("# からファイルを選択した場合", () => {
     let textarea: HTMLElement;
 
     beforeEach(async () => {
@@ -131,18 +131,18 @@ describe("ファイルコンテキスト", () => {
     });
 
     // Hash portion is removed from text
-    it("テキストから # 部分が除去される", () => {
+    it("テキストから # 部分が除去されること", () => {
       expect(textarea).toHaveValue("Look at ");
     });
 
     // File chip is shown
-    it("ファイルチップが表示される", () => {
+    it("ファイルチップが表示されること", () => {
       expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
     });
   });
 
   // Sending message with attached files includes files in the payload
-  it("添付ファイル付きメッセージ送信で files が含まれる", async () => {
+  it("添付ファイル付きメッセージ送信で files が含まれること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -167,7 +167,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Quick-add button attaches the first open editor file
-  it("アクティブエディタの quick-add ボタンで先頭ファイルが添付される", async () => {
+  it("アクティブエディタの quick-add ボタンで先頭ファイルが添付されること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -183,7 +183,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Selecting the same file twice only attaches it once
-  it("同じファイルを2回選択しても1つだけ添付される", async () => {
+  it("同じファイルを2回選択しても1つだけ添付されること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -201,7 +201,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Escape closes the # popup
-  it("# トリガー中に Escape でポップアップが閉じる", async () => {
+  it("# トリガー中に Escape でポップアップが閉じること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
@@ -217,7 +217,7 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Space input during # trigger terminates the trigger
-  it("# トリガー中にスペース入力でトリガーが終了する", async () => {
+  it("# トリガー中にスペース入力でトリガーが終了すること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 

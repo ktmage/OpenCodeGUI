@@ -29,7 +29,7 @@ async function setupWithReasoningPart(partOverrides: Record<string, unknown> = {
 // Reasoning display (ReasoningPartView)
 describe("思考表示（ReasoningPartView）", () => {
   // In-progress reasoning part shows spinner and "Thinking..."
-  context("進行中のリーズニングパート", () => {
+  context("進行中のリーズニングパートの場合", () => {
     let part: Element | null;
 
     beforeEach(async () => {
@@ -38,23 +38,23 @@ describe("思考表示（ReasoningPartView）", () => {
     });
 
     // Shows Thinking label
-    it("Thinking\u2026 が表示される", () => {
+    it("Thinking\u2026 が表示されること", () => {
       expect(screen.getByText("Thinking\u2026")).toBeInTheDocument();
     });
 
     // Has active class
-    it("active クラスが付与される", () => {
+    it("active クラスが付与されること", () => {
       expect(part).toHaveClass("active");
     });
 
     // Shows spinner
-    it("スピナーが表示される", () => {
+    it("スピナーが表示されること", () => {
       expect(part!.querySelector(".tool-part-spinner")).toBeInTheDocument();
     });
   });
 
   // Completed reasoning part shows "Thought"
-  context("完了したリーズニングパート", () => {
+  context("完了したリーズニングパートの場合", () => {
     let part: Element | null;
 
     beforeEach(async () => {
@@ -63,23 +63,23 @@ describe("思考表示（ReasoningPartView）", () => {
     });
 
     // Shows Thought label
-    it("Thought が表示される", () => {
+    it("Thought が表示されること", () => {
       expect(screen.getByText("Thought")).toBeInTheDocument();
     });
 
     // Has complete class
-    it("complete クラスが付与される", () => {
+    it("complete クラスが付与されること", () => {
       expect(part).toHaveClass("complete");
     });
 
     // No spinner
-    it("スピナーが表示されない", () => {
+    it("スピナーが表示されないこと", () => {
       expect(part!.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
     });
   });
 
   // Clicking header expands/collapses thought content
-  context("ヘッダクリックで思考内容の展開・折りたたみ", () => {
+  context("ヘッダをクリックした場合", () => {
     beforeEach(async () => {
       await setupWithReasoningPart({
         text: "Step 1: analyze the problem",
@@ -88,31 +88,31 @@ describe("思考表示（ReasoningPartView）", () => {
     });
 
     // Initially collapsed
-    it("初期状態では本文が非表示", () => {
+    it("初期状態では本文が非表示こと", () => {
       expect(screen.queryByText("Step 1: analyze the problem")).not.toBeInTheDocument();
     });
 
     // Expands on click
-    context("展開時", () => {
+    context("展開した場合", () => {
       beforeEach(async () => {
         const user = userEvent.setup();
         await user.click(screen.getByTitle("Toggle thought details"));
       });
 
       // Shows content
-      it("本文が表示される", () => {
+      it("本文が表示されること", () => {
         expect(screen.getByText("Step 1: analyze the problem")).toBeInTheDocument();
       });
 
       // Collapses on second click
-      context("再クリック時", () => {
+      context("再クリックした場合", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByTitle("Toggle thought details"));
         });
 
         // Hides content
-        it("本文が非表示になる", () => {
+        it("本文が非表示になること", () => {
           expect(screen.queryByText("Step 1: analyze the problem")).not.toBeInTheDocument();
         });
       });

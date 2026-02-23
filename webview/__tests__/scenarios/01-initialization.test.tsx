@@ -8,16 +8,16 @@ import { createSession, createProvider, createAllProvidersData } from "../factor
 // Initialization
 describe("初期化", () => {
   // On mount
-  context("マウント時", () => {
+  context("マウントした場合", () => {
     // Sends ready on mount
-    it("ready を送信する", () => {
+    it("ready を送信すること", () => {
       renderApp();
 
       expect(postMessage).toHaveBeenCalledWith({ type: "ready" });
     });
 
     // Sends getOpenEditors on mount
-    it("getOpenEditors を送信する", () => {
+    it("getOpenEditors を送信すること", () => {
       renderApp();
 
       expect(postMessage).toHaveBeenCalledWith({ type: "getOpenEditors" });
@@ -25,7 +25,7 @@ describe("初期化", () => {
   });
 
   // When sessions message is received
-  context("sessions メッセージ受信時", () => {
+  context("sessions メッセージを受信した場合", () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(async () => {
@@ -38,12 +38,12 @@ describe("初期化", () => {
     });
 
     // First session is displayed
-    it("最初のセッションが表示される", () => {
+    it("最初のセッションが表示されること", () => {
       expect(screen.getByText("My Session")).toBeInTheDocument();
     });
 
     // Second session is displayed
-    it("2番目のセッションが表示される", () => {
+    it("2番目のセッションが表示されること", () => {
       expect(screen.getByText("Another")).toBeInTheDocument();
     });
   });
@@ -51,7 +51,7 @@ describe("初期化", () => {
   // When providers message has configModel
   context("providers メッセージに configModel がある場合", () => {
     // Selects model from configModel
-    it("configModel からモデルが選択される", async () => {
+    it("configModel からモデルが選択されること", async () => {
       renderApp();
 
       const provider = createProvider("anthropic", {
@@ -77,7 +77,7 @@ describe("初期化", () => {
   // When configModel is absent
   context("configModel がない場合", () => {
     // Falls back to default model
-    it("default でフォールバックする", async () => {
+    it("default でフォールバックすること", async () => {
       renderApp();
 
       const provider = createProvider("openai", {
@@ -102,7 +102,7 @@ describe("初期化", () => {
   // When locale message sets Japanese
   context("locale メッセージで日本語を設定した場合", () => {
     // Switches UI to Japanese
-    it("EmptyState が日本語になる", async () => {
+    it("EmptyState が日本語になること", async () => {
       renderApp();
 
       await sendExtMessage({ type: "locale", vscodeLanguage: "ja" });

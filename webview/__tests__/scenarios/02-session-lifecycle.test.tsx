@@ -23,18 +23,18 @@ describe("セッションライフサイクル", () => {
     });
 
     // Shows getting started message
-    it("開始メッセージが表示される", () => {
+    it("開始メッセージが表示されること", () => {
       expect(screen.getByText("Start a new conversation to get started.")).toBeInTheDocument();
     });
 
     // Shows New Chat button
-    it("New Chat ボタンが表示される", () => {
+    it("New Chat ボタンが表示されること", () => {
       expect(screen.getByText("New Chat")).toBeInTheDocument();
     });
   });
 
   // New Chat button in EmptyState sends createSession
-  it("EmptyState の New Chat ボタンで createSession が送信される", async () => {
+  it("EmptyState の New Chat ボタンで createSession が送信されること", async () => {
     renderApp();
     const user = userEvent.setup();
 
@@ -44,7 +44,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // activeSession message shows InputArea
-  it("activeSession メッセージで InputArea が表示される", async () => {
+  it("activeSession メッセージで InputArea が表示されること", async () => {
     renderApp();
 
     await sendExtMessage({ type: "activeSession", session: createSession({ title: "Test Session" }) });
@@ -53,7 +53,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // Automatically sends getMessages on activeSession
-  it("activeSession 受信時に getMessages が自動送信される", async () => {
+  it("activeSession 受信時に getMessages が自動送信されること", async () => {
     renderApp();
     vi.mocked(postMessage).mockClear();
 
@@ -64,7 +64,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // Displays session title in the header
-  it("ヘッダーにセッションタイトルが表示される", async () => {
+  it("ヘッダーにセッションタイトルが表示されること", async () => {
     renderApp();
 
     await sendExtMessage({ type: "activeSession", session: createSession({ title: "My Conversation" }) });
@@ -73,7 +73,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // Opens and closes session list
-  context("セッションリストの開閉", () => {
+  context("セッションリストを開閉する場合", () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(async () => {
@@ -83,34 +83,34 @@ describe("セッションライフサイクル", () => {
     });
 
     // Initially the list is hidden
-    it("初期状態ではリストは非表示", () => {
+    it("初期状態ではリストは非表示こと", () => {
       expect(screen.queryByText("Session A")).not.toBeInTheDocument();
     });
 
     // After clicking toggle button
-    context("トグルボタンクリック後", () => {
+    context("トグルボタンをクリックした場合", () => {
       beforeEach(async () => {
         await user.click(screen.getByTitle("Sessions"));
       });
 
       // Session A is displayed
-      it("Session A が表示される", () => {
+      it("Session A が表示されること", () => {
         expect(screen.getByText("Session A")).toBeInTheDocument();
       });
 
       // Session B is displayed
-      it("Session B が表示される", () => {
+      it("Session B が表示されること", () => {
         expect(screen.getByText("Session B")).toBeInTheDocument();
       });
 
       // After clicking toggle again
-      context("もう一度クリック後", () => {
+      context("もう一度クリックした場合", () => {
         beforeEach(async () => {
           await user.click(screen.getByTitle("Sessions"));
         });
 
         // List closes
-        it("リストが閉じる", () => {
+        it("リストが閉じること", () => {
           expect(screen.queryByText("Session A")).not.toBeInTheDocument();
         });
       });
@@ -118,7 +118,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // Selecting a session sends selectSession and closes the list
-  context("セッション選択時", () => {
+  context("セッションを選択した場合", () => {
     let session: ReturnType<typeof createSession>;
 
     beforeEach(async () => {
@@ -131,18 +131,18 @@ describe("セッションライフサイクル", () => {
     });
 
     // Sends selectSession
-    it("selectSession が送信される", () => {
+    it("selectSession が送信されること", () => {
       expect(postMessage).toHaveBeenCalledWith({ type: "selectSession", sessionId: session.id });
     });
 
     // Closes the session list
-    it("リストが閉じる", () => {
+    it("リストが閉じること", () => {
       expect(screen.queryByText("Target Session")).not.toBeInTheDocument();
     });
   });
 
   // Deleting a session sends deleteSession
-  it("セッション削除で deleteSession が送信される", async () => {
+  it("セッション削除で deleteSession が送信されること", async () => {
     const session = createSession({ title: "To Delete" });
     await setupWithSessions([session]);
 
@@ -156,7 +156,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // session.created event adds a new session
-  context("session.created イベント受信時", () => {
+  context("session.created イベントを受信した場合", () => {
     beforeEach(async () => {
       renderApp();
       const existingSession = createSession({ title: "Existing" });
@@ -173,18 +173,18 @@ describe("セッションライフサイクル", () => {
     });
 
     // New session is displayed
-    it("新しいセッションが表示される", () => {
+    it("新しいセッションが表示されること", () => {
       expect(screen.getByText("New Session")).toBeInTheDocument();
     });
 
     // Existing session remains
-    it("既存のセッションも表示される", () => {
+    it("既存のセッションも表示されること", () => {
       expect(screen.getByText("Existing")).toBeInTheDocument();
     });
   });
 
   // session.deleted event removes the session
-  context("session.deleted イベント受信時", () => {
+  context("session.deleted イベントを受信した場合", () => {
     beforeEach(async () => {
       const session = createSession({ title: "Will Be Deleted" });
       await setupWithSessions([session]);
@@ -199,18 +199,18 @@ describe("セッションライフサイクル", () => {
     });
 
     // Deleted session is removed
-    it("削除されたセッションが表示されない", () => {
+    it("削除されたセッションが表示されないこと", () => {
       expect(screen.queryByText("Will Be Deleted")).not.toBeInTheDocument();
     });
 
     // Shows empty state
-    it("No sessions が表示される", () => {
+    it("No sessions が表示されること", () => {
       expect(screen.getByText("No sessions")).toBeInTheDocument();
     });
   });
 
   // session.updated event updates the title
-  context("session.updated イベントでタイトル更新時", () => {
+  context("session.updated イベントでタイトルが更新された場合", () => {
     beforeEach(async () => {
       const session = createSession({ title: "Original Title" });
       renderApp();
@@ -227,7 +227,7 @@ describe("セッションライフサイクル", () => {
     });
 
     // Title is updated
-    it("タイトルが更新される", () => {
+    it("タイトルが更新されること", () => {
       expect(screen.getByText("Updated Title")).toBeInTheDocument();
     });
   });
@@ -254,18 +254,18 @@ describe("セッションライフサイクル", () => {
     });
 
     // Returns to EmptyState
-    it("EmptyState に戻る", () => {
+    it("EmptyState に戻ること", () => {
       expect(screen.getByText("New Chat")).toBeInTheDocument();
     });
 
     // Messages are cleared
-    it("メッセージがクリアされる", () => {
+    it("メッセージがクリアされること", () => {
       expect(screen.queryByText("Some response")).not.toBeInTheDocument();
     });
   });
 
   // session.updated updates title in both header and session list
-  context("session.updated でアクティブセッションのタイトル更新時", () => {
+  context("session.updated でアクティブセッションのタイトルが更新された場合", () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(async () => {
@@ -286,12 +286,12 @@ describe("セッションライフサイクル", () => {
     });
 
     // Header is updated
-    it("ヘッダーが更新される", () => {
+    it("ヘッダーが更新されること", () => {
       expect(screen.getByText("After Update")).toBeInTheDocument();
     });
 
     // Session list is also updated
-    it("セッション一覧でも更新される", async () => {
+    it("セッション一覧でも更新されること", async () => {
       await user.click(screen.getByTitle("Sessions"));
 
       expect(screen.getAllByText("After Update").length).toBeGreaterThanOrEqual(1);
@@ -299,7 +299,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // Shows "No sessions" when session list is empty
-  it("セッション一覧の空状態で No sessions が表示される", async () => {
+  it("セッション一覧の空状態で No sessions が表示されること", async () => {
     await setupWithSessions([]);
 
     const user = userEvent.setup();
@@ -309,7 +309,7 @@ describe("セッションライフサイクル", () => {
   });
 
   // Displays session summary (files/additions/deletions)
-  context("セッションのサマリー表示", () => {
+  context("セッションのサマリーを表示する場合", () => {
     beforeEach(async () => {
       const session = createSession({
         title: "With Summary",
@@ -322,17 +322,17 @@ describe("セッションライフサイクル", () => {
     });
 
     // Shows file count
-    it("ファイル数が表示される", () => {
+    it("ファイル数が表示されること", () => {
       expect(screen.getByText("3")).toBeInTheDocument();
     });
 
     // Shows additions
-    it("追加行数が表示される", () => {
+    it("追加行数が表示されること", () => {
       expect(screen.getByText("+42")).toBeInTheDocument();
     });
 
     // Shows deletions
-    it("削除行数が表示される", () => {
+    it("削除行数が表示されること", () => {
       expect(screen.getByText("-7")).toBeInTheDocument();
     });
   });
