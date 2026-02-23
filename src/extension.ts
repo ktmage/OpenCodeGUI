@@ -10,7 +10,10 @@ process.on("exit", () => connection.disconnect());
 export async function activate(context: vscode.ExtensionContext) {
   const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
   if (!workspaceFolder) {
-    throw new Error("OpenCodeGUI requires an open workspace folder.");
+    vscode.window.showWarningMessage(
+      vscode.l10n.t("OpenCodeGUI requires an open workspace folder."),
+    );
+    return;
   }
 
   // SDK の createOpencodeServer は cwd オプションを持たないため、
