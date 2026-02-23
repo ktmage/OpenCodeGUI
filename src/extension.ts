@@ -8,7 +8,20 @@ const connection = new OpenCodeConnection();
 process.on("exit", () => connection.disconnect());
 
 export async function activate(context: vscode.ExtensionContext) {
-  await connection.connect();
+  const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+  if (!workspaceFolder) {
+    throw new Error("OpenCodeGUI requires an open workspace folder.");
+  }
+
+  // SDK の createOpencodeServer は cwd オプションを持たないため、
+  // プロセスのカレントディレクトリを変更してからサーバーを起動する。
+  const originalCwd = process.cwd();
+  process.chdir(workspaceFolder);
+  try {
+    await connection.connect();
+  } finally {
+    process.chdir(originalCwd);
+  }
 
   const chatViewProvider = new ChatViewProvider(context.extensionUri, connection);
   context.subscriptions.push(
