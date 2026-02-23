@@ -23,6 +23,20 @@ export async function activate(context: vscode.ExtensionContext) {
   try {
     connection.workspaceFolder = workspaceFolder;
     await connection.connect();
+  } catch (error) {
+    const isNotFound =
+      error instanceof Error &&
+      ("code" in error && (error as NodeJS.ErrnoException).code === "ENOENT" ||
+       error.message.includes("ENOENT"));
+    if (isNotFound) {
+      vscode.window.showWarningMessage(
+        vscode.l10n.t(
+          "OpenCodeGUI: \"opencode\" command not found. Please install OpenCode first: https://github.com/opencode-ai/opencode",
+        ),
+      );
+      return;
+    }
+    throw error;
   } finally {
     process.chdir(originalCwd);
   }
