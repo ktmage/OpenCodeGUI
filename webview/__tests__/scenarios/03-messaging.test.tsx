@@ -173,4 +173,90 @@ describe("03 メッセージング", () => {
     expect(screen.queryByText("Remove this")).not.toBeInTheDocument();
     expect(screen.getByText("Keep this")).toBeInTheDocument();
   });
+
+  it("別セッションの messages は無視される", async () => {
+    await setupActiveSession();
+
+    // アクティブセッション s1 のメッセージを設定
+    const msg = createMessage({ id: "m1", sessionID: "s1", role: "user" });
+    const part = createTextPart("Original message", { messageID: "m1" });
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s1",
+      messages: [{ info: msg, parts: [part] }],
+    });
+    expect(screen.getByText("Original message")).toBeInTheDocument();
+
+    // 別セッション s2 の messages を送信
+    const otherMsg = createMessage({ id: "m99", sessionID: "s2", role: "user" });
+    const otherPart = createTextPart("Other session message", { messageID: "m99" });
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s2",
+      messages: [{ info: otherMsg, parts: [otherPart] }],
+    });
+
+    // s1 のメッセージはそのまま、s2 のメッセージは表示されない
+    expect(screen.getByText("Original message")).toBeInTheDocument();
+    expect(screen.queryByText("Other session message")).not.toBeInTheDocument();
+  });
+
+  it("message.part.updated で存在しない messageID のパートは無視される", async () => {
+    await setupActiveSession();
+
+    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+    const part = createTextPart("Existing", { messageID: "m1" });
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s1",
+      messages: [{ info: msg, parts: [part] }],
+    });
+
+    // 存在しない messageID でパート更新
+    const orphanPart = createTextPart("Orphan", { messageID: "nonexistent" });
+    await sendExtMessage({
+      type: "event",
+      event: { type: "message.part.updated", properties: { part: orphanPart } } as any,
+    });
+
+    // 元のメッセージに影響なし、orphan は表示されない
+    expect(screen.getByText("Existing")).toBeInTheDocument();
+    expect(screen.queryByText("Orphan")).not.toBeInTheDocument();
+  });
+
+  it("sendMessage に selectedModel が含まれる", async () => {
+    renderApp();
+
+    // プロバイダーとモデルを設定
+    const { createProvider, createAllProvidersData } = await import("../factories");
+    const provider = createProvider("anthropic", {
+      "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+    });
+    await sendExtMessage({
+      type: "providers",
+      providers: [provider],
+      allProviders: createAllProvidersData(["anthropic"], [
+        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
+      ]),
+      default: { general: "anthropic/claude-4-opus" },
+      configModel: "anthropic/claude-4-opus",
+    });
+
+    const session = createSession({ id: "s1" });
+    await sendExtMessage({ type: "activeSession", session });
+    vi.mocked(postMessage).mockClear();
+
+    const user = userEvent.setup();
+    const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+    await user.type(textarea, "Hello{Enter}");
+
+    expect(postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "sendMessage",
+        sessionId: "s1",
+        text: "Hello",
+        model: { providerID: "anthropic", modelID: "claude-4-opus" },
+      }),
+    );
+  });
 });

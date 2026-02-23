@@ -198,4 +198,86 @@ describe("10 ツール表示", () => {
     const spinner = document.querySelector(".tool-part-spinner");
     expect(spinner).toBeTruthy();
   });
+
+  it("other カテゴリのツールに Tool ラベルが表示される", async () => {
+    await setupWithToolPart({
+      id: "tp1",
+      type: "tool",
+      tool: "question",
+      messageID: "m1",
+      time: { created: Date.now(), updated: Date.now() },
+      state: {
+        status: "completed",
+        title: "What should I do?",
+        input: { question: "What?" },
+        output: "answered",
+      },
+    });
+
+    expect(screen.getByText("Tool")).toBeInTheDocument();
+  });
+
+  it("MCP ツール名がカテゴリに正しく解決される", async () => {
+    await setupWithToolPart({
+      id: "tp1",
+      type: "tool",
+      tool: "mcp_server/read",
+      messageID: "m1",
+      time: { created: Date.now(), updated: Date.now() },
+      state: {
+        status: "completed",
+        title: "remote file",
+        input: { path: "/remote/file" },
+        output: "content",
+      },
+    });
+
+    // mcp_server/read → read カテゴリ → "Read" ラベル
+    expect(screen.getByText("Read")).toBeInTheDocument();
+  });
+
+  it("pending 状態でスピナーが表示される", async () => {
+    await setupWithToolPart({
+      id: "tp1",
+      type: "tool",
+      tool: "read",
+      messageID: "m1",
+      time: { created: Date.now(), updated: Date.now() },
+      state: {
+        status: "pending",
+      },
+    });
+
+    const spinner = document.querySelector(".tool-part-spinner");
+    expect(spinner).toBeTruthy();
+  });
+
+  it("todowrite ツール展開時に TodoView が件数ラベル付きで表示される", async () => {
+    const todos = [
+      { content: "Task 1", status: "completed" },
+      { content: "Task 2", status: "pending" },
+    ];
+    await setupWithToolPart({
+      id: "tp1",
+      type: "tool",
+      tool: "todowrite",
+      messageID: "m1",
+      time: { created: Date.now(), updated: Date.now() },
+      state: {
+        status: "completed",
+        title: "todowrite",
+        input: { todos },
+        output: JSON.stringify(todos),
+      },
+    });
+
+    // タイトルに件数が表示される
+    expect(screen.getByText("1/2 todos")).toBeInTheDocument();
+
+    // 展開して TodoView を確認
+    const user = userEvent.setup();
+    await user.click(screen.getByTitle("Toggle details"));
+    expect(screen.getByText("Task 1")).toBeInTheDocument();
+    expect(screen.getByText("Task 2")).toBeInTheDocument();
+  });
 });

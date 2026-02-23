@@ -154,4 +154,75 @@ describe("02 セッションライフサイクル", () => {
 
     expect(screen.getByText("Updated Title")).toBeInTheDocument();
   });
+
+  it("activeSession を null にすると EmptyState に戻り messages がクリアされる", async () => {
+    renderApp();
+    const session = createSession({ id: "s1", title: "Active" });
+    await sendExtMessage({ type: "activeSession", session });
+
+    // メッセージを設定
+    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+    const part = createTextPart("Some response", { messageID: "m1" });
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s1",
+      messages: [{ info: msg, parts: [part] }],
+    });
+    expect(screen.getByText("Some response")).toBeInTheDocument();
+
+    // activeSession を null に
+    await sendExtMessage({ type: "activeSession", session: null });
+
+    // EmptyState に戻る
+    expect(screen.getByText("New Chat")).toBeInTheDocument();
+    expect(screen.queryByText("Some response")).not.toBeInTheDocument();
+  });
+
+  it("session.updated でアクティブセッションのタイトルがヘッダーとセッション一覧の両方で更新される", async () => {
+    const session = createSession({ id: "s1", title: "Before Update" });
+    renderApp();
+    await sendExtMessage({ type: "sessions", sessions: [session] });
+    await sendExtMessage({ type: "activeSession", session });
+
+    // ヘッダーに表示
+    expect(screen.getByText("Before Update")).toBeInTheDocument();
+
+    // session.updated イベント
+    await sendExtMessage({
+      type: "event",
+      event: { type: "session.updated", properties: { info: { ...session, title: "After Update" } } } as any,
+    });
+
+    // ヘッダーが更新
+    expect(screen.getByText("After Update")).toBeInTheDocument();
+
+    // セッション一覧でも更新されている
+    const user = userEvent.setup();
+    await user.click(screen.getByTitle("Sessions"));
+    expect(screen.getAllByText("After Update").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("セッション一覧の空状態で No sessions が表示される", async () => {
+    await setupWithSessions([]);
+
+    const user = userEvent.setup();
+    await user.click(screen.getByTitle("Sessions"));
+
+    expect(screen.getByText("No sessions")).toBeInTheDocument();
+  });
+
+  it("セッションのサマリー（files/additions/deletions）が表示される", async () => {
+    const session = createSession({
+      title: "With Summary",
+      summary: { files: 3, additions: 42, deletions: 7 },
+    } as any);
+    await setupWithSessions([session]);
+
+    const user = userEvent.setup();
+    await user.click(screen.getByTitle("Sessions"));
+
+    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByText("+42")).toBeInTheDocument();
+    expect(screen.getByText("-7")).toBeInTheDocument();
+  });
 });

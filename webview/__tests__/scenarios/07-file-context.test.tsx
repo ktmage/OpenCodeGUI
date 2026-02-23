@@ -153,4 +153,62 @@ describe("07 ファイルコンテキスト", () => {
       }),
     );
   });
+
+  it("アクティブエディタの quick-add ボタンで先頭ファイルが添付される", async () => {
+    await setupWithFiles();
+    const user = userEvent.setup();
+
+    // quick-add ボタン（最初の openEditor ファイル: main.ts）が表示される
+    const quickAdd = screen.getByTitle("Add src/main.ts");
+    expect(quickAdd).toBeInTheDocument();
+
+    await user.click(quickAdd);
+
+    // チップが表示される
+    const chips = document.querySelectorAll(".attached-file-chip");
+    expect(chips.length).toBe(1);
+  });
+
+  it("同じファイルを2回選択しても1つだけ添付される", async () => {
+    await setupWithFiles();
+    const user = userEvent.setup();
+
+    // quick-add で main.ts を添付
+    await user.click(screen.getByTitle("Add src/main.ts"));
+    expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
+
+    // ファイルピッカーからもう一度 main.ts を選択しようとする
+    await user.click(screen.getByTitle("Add context"));
+
+    // main.ts は既に添付済みなのでピッカーのリストに表示されない（フィルタされている）
+    const pickerItems = document.querySelectorAll(".file-picker-item");
+    const mainInPicker = Array.from(pickerItems).find((el) => el.textContent?.includes("main.ts"));
+    expect(mainInPicker).toBeFalsy();
+  });
+
+  it("# トリガー中に Escape でポップアップが閉じる", async () => {
+    await setupWithFiles();
+    const user = userEvent.setup();
+
+    const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+    await user.type(textarea, "#");
+
+    // ポップアップが開いている
+    expect(document.querySelector(".hash-popup")).toBeTruthy();
+
+    // Escape で閉じる
+    await user.keyboard("{Escape}");
+    expect(document.querySelector(".hash-popup")).toBeFalsy();
+  });
+
+  it("# トリガー中にスペース入力でトリガーが終了する", async () => {
+    await setupWithFiles();
+    const user = userEvent.setup();
+
+    const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+    await user.type(textarea, "#test ");
+
+    // スペースを入力したのでポップアップが閉じる
+    expect(document.querySelector(".hash-popup")).toBeFalsy();
+  });
 });

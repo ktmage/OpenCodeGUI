@@ -108,4 +108,61 @@ describe("06 モデル選択", () => {
     // OpenAI は未接続なので Not connected バッジ
     expect(screen.getByText("Not connected")).toBeInTheDocument();
   });
+
+  it("プロバイダー名クリックでモデル一覧が折りたたまれる", async () => {
+    await setupWithProviders();
+    const user = userEvent.setup();
+
+    // モデルパネルを開く
+    await user.click(screen.getByText("Claude 4 Opus"));
+    expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
+
+    // Anthropic プロバイダーヘッダーをクリックして折りたたむ
+    await user.click(screen.getByText("Anthropic"));
+    expect(screen.queryByText("Claude 4 Sonnet")).not.toBeInTheDocument();
+
+    // もう一度クリックで展開
+    await user.click(screen.getByText("Anthropic"));
+    expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
+  });
+
+  it("Show all providers トグルで未接続プロバイダーが表示・非表示される", async () => {
+    await setupWithProviders();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText("Claude 4 Opus"));
+
+    // 初期状態では接続済みのみ → OpenAI は非表示
+    expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
+
+    // Show all をクリック
+    await user.click(screen.getByTitle("Show all providers"));
+    expect(screen.getByText("OpenAI")).toBeInTheDocument();
+
+    // Connected only をクリックして戻す
+    await user.click(screen.getByTitle("Hide disconnected providers"));
+    expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
+  });
+
+  it("モデル選択後にドロップダウンが閉じる", async () => {
+    await setupWithProviders();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText("Claude 4 Opus"));
+    expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
+
+    await user.click(screen.getByText("Claude 4 Sonnet"));
+
+    // パネルが閉じている（モデルパネル内のセクションタイトルが消える）
+    expect(screen.queryByText("Anthropic")).not.toBeInTheDocument();
+  });
+
+  it("selectedModel が null のとき Select model が表示される", async () => {
+    renderApp();
+
+    // プロバイダーなしで activeSession を設定
+    await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
+
+    expect(screen.getByText("Select model")).toBeInTheDocument();
+  });
 });

@@ -103,4 +103,123 @@ describe("08 コンテキストとコンプレッション", () => {
     expect(screen.getByTitle("Context: 15% used")).toBeInTheDocument();
     expect(screen.queryByTitle("Context: 40% used")).not.toBeInTheDocument();
   });
+
+  it("inputTokens が 0 の場合 ContextIndicator が表示されない", async () => {
+    renderApp();
+
+    const provider = createProvider("anthropic", {
+      "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+    });
+    await sendExtMessage({
+      type: "providers",
+      providers: [provider],
+      allProviders: createAllProvidersData(["anthropic"], [
+        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
+      ]),
+      default: { general: "anthropic/claude-4-opus" },
+      configModel: "anthropic/claude-4-opus",
+    });
+
+    await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
+
+    // トークン 0 → ContextIndicator ボタンが存在しない
+    const button = document.querySelector(".context-indicator-button");
+    expect(button).toBeFalsy();
+  });
+
+  it("使用率 80% 以上で警告色になる", async () => {
+    renderApp();
+
+    const provider = createProvider("anthropic", {
+      "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 100000, output: 4096 } },
+    });
+    await sendExtMessage({
+      type: "providers",
+      providers: [provider],
+      allProviders: createAllProvidersData(["anthropic"], [
+        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 100000, output: 4096 } } } },
+      ]),
+      default: { general: "anthropic/claude-4-opus" },
+      configModel: "anthropic/claude-4-opus",
+    });
+
+    const session = createSession({ id: "s1" });
+    await sendExtMessage({ type: "activeSession", session });
+
+    // 85000 / 100000 = 85% → 警告色
+    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+    const textPart = createTextPart("Response", { messageID: "m1" });
+    const stepFinish = {
+      id: "sf1",
+      type: "step-finish" as const,
+      messageID: "m1",
+      tokens: { input: 85000, output: 1000 },
+      time: { created: Date.now(), updated: Date.now() },
+    };
+
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s1",
+      messages: [{ info: msg, parts: [textPart, stepFinish as any] }],
+    });
+
+    // 85% 表示
+    expect(screen.getByTitle("Context: 85% used")).toBeInTheDocument();
+  });
+
+  it("ポップアップでトークン詳細が表示される", async () => {
+    const session = await setupWithTokenUsage();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByTitle("Context: 40% used"));
+
+    // ポップアップにトークン情報が表示される
+    expect(screen.getByText("Context Window Usage")).toBeInTheDocument();
+    expect(screen.getByText("Input tokens")).toBeInTheDocument();
+    expect(screen.getByText("Context limit")).toBeInTheDocument();
+  });
+
+  it("圧縮中は Compressing テキストとボタン disabled", async () => {
+    renderApp();
+
+    const provider = createProvider("anthropic", {
+      "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+    });
+    await sendExtMessage({
+      type: "providers",
+      providers: [provider],
+      allProviders: createAllProvidersData(["anthropic"], [
+        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
+      ]),
+      default: { general: "anthropic/claude-4-opus" },
+      configModel: "anthropic/claude-4-opus",
+    });
+
+    // compacting フラグ付きセッション
+    const session = createSession({ id: "s1", time: { created: Date.now(), updated: Date.now(), compacting: Date.now() } } as any);
+    await sendExtMessage({ type: "activeSession", session });
+
+    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
+    const textPart = createTextPart("Response", { messageID: "m1" });
+    const stepFinish = {
+      id: "sf1",
+      type: "step-finish" as const,
+      messageID: "m1",
+      tokens: { input: 50000, output: 1000 },
+      time: { created: Date.now(), updated: Date.now() },
+    };
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s1",
+      messages: [{ info: msg, parts: [textPart, stepFinish as any] }],
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getByTitle("Context: 25% used"));
+
+    // Compressing ラベルとボタン disabled
+    const compressBtn = screen.getByText("Compressing...");
+    expect(compressBtn).toBeInTheDocument();
+    expect(compressBtn).toBeDisabled();
+  });
 });

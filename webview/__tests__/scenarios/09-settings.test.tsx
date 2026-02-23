@@ -101,4 +101,29 @@ describe("09 設定", () => {
     // ヘッダーの「New chat」が「新しいチャット」になる
     expect(screen.getByTitle("新しいチャット")).toBeInTheDocument();
   });
+
+  it("toolConfig メッセージで paths が設定され設定パネルにリンクが表示される", async () => {
+    renderApp();
+    const session = createSession({ id: "s1" });
+    await sendExtMessage({ type: "activeSession", session });
+
+    // toolConfig なしで設定パネルを開く
+    const user = userEvent.setup();
+    await user.click(screen.getByTitle("Settings"));
+
+    // パスリンクがない
+    expect(screen.queryByText("Project Config")).not.toBeInTheDocument();
+
+    // 閉じて toolConfig を受信
+    await user.click(screen.getByTitle("Settings"));
+    await sendExtMessage({
+      type: "toolConfig",
+      paths: { home: "/h", config: "/c", state: "/s", directory: "/d" },
+    });
+
+    // 再度開くとリンクが表示される
+    await user.click(screen.getByTitle("Settings"));
+    expect(screen.getByText("Project Config")).toBeInTheDocument();
+    expect(screen.getByText("Global Config")).toBeInTheDocument();
+  });
 });

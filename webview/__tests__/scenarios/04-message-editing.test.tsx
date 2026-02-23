@@ -110,4 +110,65 @@ describe("04 メッセージ編集とチェックポイント", () => {
     const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
     expect(textarea).toHaveValue("Second question");
   });
+
+  it("最初のメッセージの編集では messageId 自体で editAndResend が送信される", async () => {
+    await setupConversation();
+    const user = userEvent.setup();
+
+    // 最初のユーザーメッセージ「First question」をクリックして編集
+    await user.click(screen.getByText("First question"));
+
+    const editTextarea = screen.getByDisplayValue("First question");
+    await user.clear(editTextarea);
+    await user.type(editTextarea, "Revised first{Enter}");
+
+    expect(postMessage).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "editAndResend",
+        sessionId: "s1",
+        // 最初のメッセージ (m1) の場合は messageId 自体が渡される
+        messageId: "m1",
+        text: "Revised first",
+      }),
+    );
+  });
+
+  it("空テキストでは編集送信されない", async () => {
+    await setupConversation();
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText("First question"));
+
+    const editTextarea = screen.getByDisplayValue("First question");
+    await user.clear(editTextarea);
+
+    // Send ボタンが disabled
+    const submitButton = screen.getByText("Send");
+    expect(submitButton).toBeDisabled();
+  });
+
+  it("ユーザーメッセージの添付ファイルがチップとして表示される", async () => {
+    renderApp();
+    const session = createSession({ id: "s1", title: "Chat" });
+    await sendExtMessage({ type: "activeSession", session });
+
+    const userMsg = createMessage({ id: "m1", sessionID: "s1", role: "user" });
+    const textPart = createTextPart("Check this", { messageID: "m1" });
+    const filePart = {
+      id: "fp1",
+      type: "file" as const,
+      messageID: "m1",
+      filename: "file:///workspace/src/main.ts",
+      time: { created: Date.now(), updated: Date.now() },
+    };
+
+    await sendExtMessage({
+      type: "messages",
+      sessionId: "s1",
+      messages: [{ info: userMsg, parts: [textPart, filePart as any] }],
+    });
+
+    // ファイル名がチップとして表示される
+    expect(screen.getByText("main.ts")).toBeInTheDocument();
+  });
 });
