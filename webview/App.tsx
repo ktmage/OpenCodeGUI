@@ -24,6 +24,8 @@ export function App() {
   );
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
+  // チェックポイントからの復元時にテキストを入力欄にプリフィルするためのステート
+  const [prefillText, setPrefillText] = useState("");
 
   // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
   const inputTokens = useMemo(() => {
@@ -237,6 +239,54 @@ export function App() {
     });
   }, [activeSession, selectedModel]);
 
+  // ユーザーメッセージを編集して再送信する
+  const handleEditAndResend = useCallback(
+    (messageId: string, text: string) => {
+      if (!activeSession) return;
+      // messageId は編集対象のユーザーメッセージ。
+      // その直前のメッセージまで巻き戻し、編集後のテキストを送信する。
+      const msgIndex = messages.findIndex((m) => m.info.id === messageId);
+      if (msgIndex < 0) return;
+      if (msgIndex === 0) {
+        // 最初のメッセージの場合: 新規セッションを作成して送信する方がクリーン
+        // ただし revert API のフォールバックとして、messageId 自体で revert
+        postMessage({
+          type: "editAndResend",
+          sessionId: activeSession.id,
+          messageId,
+          text,
+          model: selectedModel ?? undefined,
+        });
+      } else {
+        // 直前のメッセージまで巻き戻して再送信
+        const prevMessageId = messages[msgIndex - 1].info.id;
+        postMessage({
+          type: "editAndResend",
+          sessionId: activeSession.id,
+          messageId: prevMessageId,
+          text,
+          model: selectedModel ?? undefined,
+        });
+      }
+    },
+    [activeSession, messages, selectedModel],
+  );
+
+  // チェックポイントまで巻き戻す + ユーザーメッセージのテキストを入力欄に復元
+  const handleRevertToCheckpoint = useCallback(
+    (assistantMessageId: string, userText: string | null) => {
+      if (!activeSession) return;
+      postMessage({
+        type: "revertToMessage",
+        sessionId: activeSession.id,
+        messageId: assistantMessageId,
+      });
+      // ユーザーメッセージのテキストを入力欄にプリフィルする
+      setPrefillText(userText ?? "");
+    },
+    [activeSession],
+  );
+
   return (
     <div className="chat-container">
       <ChatHeader
@@ -255,7 +305,14 @@ export function App() {
       )}
       {activeSession ? (
         <>
-          <MessagesArea messages={messages} sessionBusy={sessionBusy} activeSessionId={activeSession.id} permissions={permissions} />
+          <MessagesArea
+            messages={messages}
+            sessionBusy={sessionBusy}
+            activeSessionId={activeSession.id}
+            permissions={permissions}
+            onEditAndResend={handleEditAndResend}
+            onRevertToCheckpoint={handleRevertToCheckpoint}
+          />
           <InputArea
             onSend={handleSend}
             onAbort={handleAbort}
@@ -269,6 +326,8 @@ export function App() {
             contextLimit={contextLimit}
             onCompress={handleCompress}
             isCompressing={!!activeSession?.time?.compacting}
+            prefillText={prefillText}
+            onPrefillConsumed={() => setPrefillText("")}
           />
         </>
       ) : (

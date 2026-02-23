@@ -36,6 +36,8 @@ export type WebviewToExtMessage =
   | { type: "getOpenEditors" }
   | { type: "searchWorkspaceFiles"; query: string }
   | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
+  | { type: "revertToMessage"; sessionId: string; messageId: string }
+  | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "ready" };
 
 interface VsCodeApi {

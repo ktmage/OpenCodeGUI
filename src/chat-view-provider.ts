@@ -33,6 +33,8 @@ export type WebviewToExtMessage =
   | { type: "getOpenEditors" }
   | { type: "searchWorkspaceFiles"; query: string }
   | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
+  | { type: "revertToMessage"; sessionId: string; messageId: string }
+  | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -180,6 +182,25 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       }
       case "compressSession": {
         await this.connection.summarizeSession(message.sessionId, message.model);
+        break;
+      }
+      case "revertToMessage": {
+        const session = await this.connection.revertSession(message.sessionId, message.messageId);
+        this.activeSession = session;
+        this.postMessage({ type: "activeSession", session });
+        const messages = await this.connection.getMessages(message.sessionId);
+        this.postMessage({ type: "messages", sessionId: message.sessionId, messages });
+        break;
+      }
+      case "editAndResend": {
+        // 1. 指定メッセージまで巻き戻す（そのメッセージ以降を削除）
+        const session = await this.connection.revertSession(message.sessionId, message.messageId);
+        this.activeSession = session;
+        this.postMessage({ type: "activeSession", session });
+        const msgs = await this.connection.getMessages(message.sessionId);
+        this.postMessage({ type: "messages", sessionId: message.sessionId, messages: msgs });
+        // 2. 編集後のテキストを送信
+        await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files);
         break;
       }
     }

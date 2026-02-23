@@ -177,6 +177,20 @@ export class OpenCodeConnection {
     });
   }
 
+  // --- Revert API ---
+
+  async revertSession(
+    sessionId: string,
+    messageID: string,
+  ): Promise<Session> {
+    const client = this.requireClient();
+    const response = await client.session.revert({
+      path: { id: sessionId },
+      body: { messageID },
+    });
+    return response.data!;
+  }
+
   // --- Summarize API ---
 
   async summarizeSession(

@@ -18,11 +18,14 @@ type Props = {
   contextLimit: number;
   onCompress: () => void;
   isCompressing: boolean;
+  prefillText?: string;
+  onPrefillConsumed?: () => void;
 };
 
 export function InputArea({
   onSend, onAbort, isBusy, providers, selectedModel, onModelSelect,
   openEditors, workspaceFiles, inputTokens, contextLimit, onCompress, isCompressing,
+  prefillText, onPrefillConsumed,
 }: Props) {
   const [text, setText] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<FileAttachment[]>([]);
@@ -35,6 +38,23 @@ export function InputArea({
   const composingRef = useRef(false);
   const filePickerRef = useRef<HTMLDivElement>(null);
   const hashPopupRef = useRef<HTMLDivElement>(null);
+
+  // チェックポイントからの復元時にテキストをプリフィルする
+  useEffect(() => {
+    if (prefillText) {
+      setText(prefillText);
+      onPrefillConsumed?.();
+      // テキストエリアの高さを調整してフォーカスする
+      requestAnimationFrame(() => {
+        const el = textareaRef.current;
+        if (el) {
+          el.style.height = "auto";
+          el.style.height = `${el.scrollHeight}px`;
+          el.focus();
+        }
+      });
+    }
+  }, [prefillText]);
 
   // クリップボタンを押したときにエディタ一覧を取得してファイルピッカーを開く
   const handleClipClick = useCallback(() => {

@@ -102,6 +102,144 @@ body {
   border: 1px solid var(--vscode-panel-border);
   border-radius: 10px;
   padding: 8px 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.message-user-bubble:hover {
+  border-color: var(--vscode-focusBorder);
+}
+
+.message-user-bubble:hover .message-edit-icon {
+  opacity: 1;
+}
+
+.message-edit-icon {
+  position: absolute;
+  top: 6px;
+  right: -24px;
+  opacity: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: opacity 0.15s;
+}
+
+/* --- Message edit mode --- */
+
+.message-edit-container {
+  width: 100%;
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-end;
+}
+
+.message-edit-textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-focusBorder);
+  border-radius: 10px;
+  color: var(--vscode-input-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.message-edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.message-edit-cancel {
+  padding: 3px 10px;
+  background: none;
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-font-family);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.message-edit-cancel:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-foreground);
+}
+
+.message-edit-submit {
+  padding: 3px 10px;
+  background-color: var(--vscode-button-background);
+  border: none;
+  border-radius: 4px;
+  color: var(--vscode-button-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.message-edit-submit:hover:not(:disabled) {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+.message-edit-submit:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+/* --- Checkpoint divider --- */
+
+.checkpoint-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  margin: 2px 0;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.messages-area:hover .checkpoint-divider {
+  opacity: 0.6;
+}
+
+.checkpoint-divider:hover {
+  opacity: 1 !important;
+}
+
+.checkpoint-line {
+  flex: 1;
+  height: 0;
+  border-top: 1px dashed var(--vscode-panel-border);
+}
+
+.checkpoint-divider:hover .checkpoint-line {
+  border-color: var(--vscode-focusBorder);
+}
+
+.checkpoint-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: none;
+  border: none;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-font-family);
+  font-size: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  border-radius: 3px;
+}
+
+.checkpoint-divider:hover .checkpoint-button {
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-toolbar-hoverBackground);
 }
 
 .message-user-bubble .message-content {
@@ -158,54 +296,157 @@ body {
   margin: 4px 0;
 }
 
-/* --- Tool call --- */
+/* --- Tool part (collapsible) --- */
 
-.tool-call {
-  margin: 8px 0;
-  border: 1px solid var(--vscode-panel-border);
-  border-radius: 4px;
-  overflow: hidden;
+.tool-part {
+  margin: 2px 0;
+  border-radius: 6px;
 }
 
-.tool-call-header {
+.tool-part-header {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  background-color: var(--vscode-editor-background);
+  padding: 3px 8px;
   cursor: pointer;
   font-size: 12px;
+  border-radius: 6px;
+  user-select: none;
 }
 
-.tool-call-header:hover {
+.tool-part-header:hover {
   background-color: var(--vscode-list-hoverBackground);
 }
 
-.tool-call-name {
-  font-weight: 600;
+.tool-part-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
-.tool-call-status {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
+.tool-part.completed .tool-part-icon {
+  color: var(--vscode-terminal-ansiGreen, #4caf50);
 }
 
-.tool-call-status.running {
+.tool-part.running .tool-part-icon,
+.tool-part.pending .tool-part-icon {
   color: var(--vscode-progressBar-background);
 }
 
-.tool-call-status.error {
+.tool-part.error .tool-part-icon {
   color: var(--vscode-errorForeground);
 }
 
-.tool-call-body {
-  padding: 8px 10px;
-  font-size: 12px;
-  border-top: 1px solid var(--vscode-panel-border);
+.tool-part-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.tool-part-label {
+  flex: 1;
+  color: var(--vscode-foreground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tool-part.completed .tool-part-label {
+  color: var(--vscode-descriptionForeground);
+}
+
+.tool-part.error .tool-part-label {
+  color: var(--vscode-errorForeground);
+}
+
+.tool-part-chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: transform 0.15s;
+}
+
+.tool-part-chevron.expanded {
+  transform: rotate(90deg);
+}
+
+.tool-part-body {
+  padding: 0 8px 6px 30px;
+}
+
+.tool-part-output {
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  background-color: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
   white-space: pre-wrap;
   word-wrap: break-word;
   max-height: 200px;
   overflow-y: auto;
+  color: var(--vscode-descriptionForeground);
+}
+
+.tool-part-error {
+  color: var(--vscode-errorForeground);
+}
+
+/* --- Reasoning part (Thinking) --- */
+
+.reasoning-part {
+  margin: 4px 0;
+  border-radius: 6px;
+}
+
+.reasoning-part-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.reasoning-part-header:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.reasoning-part-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+}
+
+.reasoning-part.active .reasoning-part-icon {
+  color: var(--vscode-progressBar-background);
+}
+
+.reasoning-part-label {
+  flex: 1;
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+}
+
+.reasoning-part.active .reasoning-part-label {
+  color: var(--vscode-foreground);
+}
+
+.reasoning-part-body {
+  padding: 4px 8px 6px 30px;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 /* --- Permission --- */
