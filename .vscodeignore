@@ -1,0 +1,9 @@
+.vscode/**
+.ktmage/**
+src/**
+webview/**
+node_modules/**
+tsconfig.json
+vite.config.ts
+esbuild.mjs
+.gitignore
