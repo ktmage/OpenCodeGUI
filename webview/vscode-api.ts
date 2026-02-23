@@ -28,6 +28,12 @@ export type WebviewToExtMessage =
 
 interface VsCodeApi {
   postMessage(message: WebviewToExtMessage): void;
+  getState(): WebviewPersistedState | undefined;
+  setState(state: WebviewPersistedState): void;
+}
+
+export interface WebviewPersistedState {
+  selectedModel?: { providerID: string; modelID: string } | null;
 }
 
 declare function acquireVsCodeApi(): VsCodeApi;
@@ -37,4 +43,12 @@ const vscode = acquireVsCodeApi();
 
 export function postMessage(message: WebviewToExtMessage): void {
   vscode.postMessage(message);
+}
+
+export function getPersistedState(): WebviewPersistedState | undefined {
+  return vscode.getState();
+}
+
+export function setPersistedState(state: WebviewPersistedState): void {
+  vscode.setState(state);
 }

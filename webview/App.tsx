@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Session, Message, Part, Event, Permission, Provider } from "@opencode-ai/sdk";
 import type { ExtToWebviewMessage } from "./vscode-api";
-import { postMessage } from "./vscode-api";
+import { postMessage, getPersistedState, setPersistedState } from "./vscode-api";
 import { ChatHeader } from "./components/ChatHeader";
 import { MessagesArea } from "./components/MessagesArea";
 import { InputArea } from "./components/InputArea";
@@ -19,7 +19,9 @@ export function App() {
   // パーミッションリクエストを messageID でグルーピングして管理する
   const [permissions, setPermissions] = useState<Map<string, Permission>>(new Map());
   const [providers, setProviders] = useState<Provider[]>([]);
-  const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(null);
+  const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(
+    () => getPersistedState()?.selectedModel ?? null,
+  );
 
   useEffect(() => {
     const handler = (e: MessageEvent<ExtToWebviewMessage>) => {
@@ -46,7 +48,7 @@ export function App() {
           break;
         case "providers": {
           setProviders(msg.providers);
-          // 初回のみデフォルトモデルを設定する
+          // 永続化された選択がなければデフォルトモデルを設定する
           setSelectedModel((prev) => {
             if (prev) return prev;
             const defaultModel = msg.default["general"] || msg.default["code"] || Object.values(msg.default)[0];
@@ -54,10 +56,12 @@ export function App() {
             // default は "providerID/modelID" 形式
             const slashIndex = defaultModel.indexOf("/");
             if (slashIndex < 0) return null;
-            return {
+            const model = {
               providerID: defaultModel.slice(0, slashIndex),
               modelID: defaultModel.slice(slashIndex + 1),
             };
+            setPersistedState({ selectedModel: model });
+            return model;
           });
           break;
         }
@@ -176,6 +180,11 @@ export function App() {
     postMessage({ type: "deleteSession", sessionId });
   }, []);
 
+  const handleModelSelect = useCallback((model: { providerID: string; modelID: string }) => {
+    setSelectedModel(model);
+    setPersistedState({ selectedModel: model });
+  }, []);
+
   const handleAbort = useCallback(() => {
     if (!activeSession) return;
     postMessage({ type: "abort", sessionId: activeSession.id });
@@ -206,7 +215,7 @@ export function App() {
             isBusy={sessionBusy}
             providers={providers}
             selectedModel={selectedModel}
-            onModelSelect={setSelectedModel}
+            onModelSelect={handleModelSelect}
           />
         </>
       ) : (
