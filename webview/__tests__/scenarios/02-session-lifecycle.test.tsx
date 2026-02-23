@@ -14,10 +14,10 @@ async function setupWithSessions(sessions: ReturnType<typeof createSession>[]) {
   await sendExtMessage({ type: "sessions", sessions });
 }
 
-// 02 Session lifecycle
-describe("02 セッションライフサイクル", () => {
+// Session lifecycle
+describe("セッションライフサイクル", () => {
   // No sessions → EmptyState
-  describe("セッションなしの場合", () => {
+  context("セッションなしの場合", () => {
     beforeEach(() => {
       renderApp();
     });
@@ -73,7 +73,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // Opens and closes session list
-  describe("セッションリストの開閉", () => {
+  context("セッションリストの開閉", () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(async () => {
@@ -88,7 +88,7 @@ describe("02 セッションライフサイクル", () => {
     });
 
     // After clicking toggle button
-    describe("トグルボタンクリック後", () => {
+    context("トグルボタンクリック後", () => {
       beforeEach(async () => {
         await user.click(screen.getByTitle("Sessions"));
       });
@@ -104,7 +104,7 @@ describe("02 セッションライフサイクル", () => {
       });
 
       // After clicking toggle again
-      describe("もう一度クリック後", () => {
+      context("もう一度クリック後", () => {
         beforeEach(async () => {
           await user.click(screen.getByTitle("Sessions"));
         });
@@ -118,7 +118,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // Selecting a session sends selectSession and closes the list
-  describe("セッション選択時", () => {
+  context("セッション選択時", () => {
     let session: ReturnType<typeof createSession>;
 
     beforeEach(async () => {
@@ -156,7 +156,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // session.created event adds a new session
-  describe("session.created イベント受信時", () => {
+  context("session.created イベント受信時", () => {
     beforeEach(async () => {
       renderApp();
       const existingSession = createSession({ title: "Existing" });
@@ -184,7 +184,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // session.deleted event removes the session
-  describe("session.deleted イベント受信時", () => {
+  context("session.deleted イベント受信時", () => {
     beforeEach(async () => {
       const session = createSession({ title: "Will Be Deleted" });
       await setupWithSessions([session]);
@@ -210,7 +210,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // session.updated event updates the title
-  describe("session.updated イベントでタイトル更新時", () => {
+  context("session.updated イベントでタイトル更新時", () => {
     beforeEach(async () => {
       const session = createSession({ title: "Original Title" });
       renderApp();
@@ -233,7 +233,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // Setting activeSession to null returns to EmptyState and clears messages
-  describe("activeSession を null に設定した場合", () => {
+  context("activeSession を null に設定した場合", () => {
     beforeEach(async () => {
       renderApp();
       const session = createSession({ id: "s1", title: "Active" });
@@ -265,7 +265,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // session.updated updates title in both header and session list
-  describe("session.updated でアクティブセッションのタイトル更新時", () => {
+  context("session.updated でアクティブセッションのタイトル更新時", () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(async () => {
@@ -309,7 +309,7 @@ describe("02 セッションライフサイクル", () => {
   });
 
   // Displays session summary (files/additions/deletions)
-  describe("セッションのサマリー表示", () => {
+  context("セッションのサマリー表示", () => {
     beforeEach(async () => {
       const session = createSession({
         title: "With Summary",

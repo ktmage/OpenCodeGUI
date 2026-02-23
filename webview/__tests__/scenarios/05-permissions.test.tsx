@@ -24,10 +24,10 @@ async function setupWithPermission() {
   return session;
 }
 
-// 05 Permissions
-describe("05 パーミッション", () => {
+// Permissions
+describe("パーミッション", () => {
   // permission.updated event shows PermissionView
-  describe("permission.updated イベント受信時", () => {
+  context("permission.updated イベント受信時", () => {
     beforeEach(async () => {
       await setupWithPermission();
 

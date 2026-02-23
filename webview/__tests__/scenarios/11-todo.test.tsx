@@ -31,10 +31,10 @@ async function setupWithTodos(todos: Array<{ content: string; status: string; pr
   });
 }
 
-// 11 Todo
-describe("11 Todo", () => {
+// Todo
+describe("Todo", () => {
   // TodoHeader is shown from todowrite output
-  describe("todowrite 出力から TodoHeader 表示時", () => {
+  context("todowrite 出力から TodoHeader 表示時", () => {
     beforeEach(async () => {
       await setupWithTodos([
         { content: "First task", status: "completed" },
@@ -55,7 +55,7 @@ describe("11 Todo", () => {
   });
 
   // Expanding shows the todo list contents
-  describe("展開時の Todo 一覧", () => {
+  context("展開時の Todo 一覧", () => {
     beforeEach(async () => {
       await setupWithTodos([
         { content: "Implement feature", status: "completed" },

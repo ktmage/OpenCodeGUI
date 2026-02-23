@@ -5,10 +5,10 @@ import { postMessage } from "../../vscode-api";
 import { renderApp, sendExtMessage } from "../helpers";
 import { createSession, createProvider, createAllProvidersData } from "../factories";
 
-// 01 Initialization
-describe("01 初期化", () => {
+// Initialization
+describe("初期化", () => {
   // On mount
-  describe("マウント時", () => {
+  context("マウント時", () => {
     // Sends ready on mount
     it("ready を送信する", () => {
       renderApp();
@@ -25,7 +25,7 @@ describe("01 初期化", () => {
   });
 
   // When sessions message is received
-  describe("sessions メッセージ受信時", () => {
+  context("sessions メッセージ受信時", () => {
     let user: ReturnType<typeof userEvent.setup>;
 
     beforeEach(async () => {
@@ -49,7 +49,7 @@ describe("01 初期化", () => {
   });
 
   // When providers message has configModel
-  describe("providers メッセージに configModel がある場合", () => {
+  context("providers メッセージに configModel がある場合", () => {
     // Selects model from configModel
     it("configModel からモデルが選択される", async () => {
       renderApp();
@@ -75,7 +75,7 @@ describe("01 初期化", () => {
   });
 
   // When configModel is absent
-  describe("configModel がない場合", () => {
+  context("configModel がない場合", () => {
     // Falls back to default model
     it("default でフォールバックする", async () => {
       renderApp();
@@ -100,7 +100,7 @@ describe("01 初期化", () => {
   });
 
   // When locale message sets Japanese
-  describe("locale メッセージで日本語を設定した場合", () => {
+  context("locale メッセージで日本語を設定した場合", () => {
     // Switches UI to Japanese
     it("EmptyState が日本語になる", async () => {
       renderApp();

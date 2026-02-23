@@ -18,10 +18,10 @@ async function setupWithToolPart(toolPart: unknown) {
   });
 }
 
-// 10 Tool display
-describe("10 ツール表示", () => {
+// Tool display
+describe("ツール表示", () => {
   // "read" category tool shows "Read" label
-  describe("read カテゴリのツール表示時", () => {
+  context("read カテゴリのツール表示時", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -45,7 +45,7 @@ describe("10 ツール表示", () => {
   });
 
   // "edit" category tool shows diff view when expanded
-  describe("edit カテゴリのツール展開時", () => {
+  context("edit カテゴリのツール展開時", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -81,7 +81,7 @@ describe("10 ツール表示", () => {
   });
 
   // "write" category tool shows file creation view
-  describe("write カテゴリのツール表示時", () => {
+  context("write カテゴリのツール表示時", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -116,7 +116,7 @@ describe("10 ツール表示", () => {
   });
 
   // "run" category tool (bash) shows command
-  describe("run カテゴリのツール（bash）表示時", () => {
+  context("run カテゴリのツール（bash）表示時", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -187,7 +187,7 @@ describe("10 ツール表示", () => {
   });
 
   // Expand/collapse toggles details
-  describe("展開・折りたたみのトグル", () => {
+  context("展開・折りたたみのトグル", () => {
     beforeEach(async () => {
       await setupWithToolPart({
         id: "tp1",
@@ -210,7 +210,7 @@ describe("10 ツール表示", () => {
     });
 
     // Expands on click
-    describe("展開時", () => {
+    context("展開時", () => {
       beforeEach(async () => {
         const user = userEvent.setup();
         await user.click(screen.getByTitle("Toggle details"));
@@ -222,7 +222,7 @@ describe("10 ツール表示", () => {
       });
 
       // Collapses on second click
-      describe("再クリック時", () => {
+      context("再クリック時", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByTitle("Toggle details"));
@@ -313,7 +313,7 @@ describe("10 ツール表示", () => {
   });
 
   // todowrite tool shows TodoView with count label when expanded
-  describe("todowrite ツール表示時", () => {
+  context("todowrite ツール表示時", () => {
     beforeEach(async () => {
       const todos = [
         { content: "Task 1", status: "completed" },
@@ -340,7 +340,7 @@ describe("10 ツール表示", () => {
     });
 
     // Shows todo items when expanded
-    describe("展開時", () => {
+    context("展開時", () => {
       beforeEach(async () => {
         const user = userEvent.setup();
         await user.click(screen.getByTitle("Toggle details"));

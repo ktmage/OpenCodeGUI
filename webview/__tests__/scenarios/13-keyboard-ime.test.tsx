@@ -23,8 +23,8 @@ async function setupInputReady() {
   await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
 }
 
-// 13 Keyboard and IME handling
-describe("13 キーボード・IME ハンドリング", () => {
+// Keyboard and IME handling
+describe("キーボード・IME ハンドリング", () => {
   // Enter during IME composition does not send
   it("IME 変換中に Enter を押しても送信されない", async () => {
     await setupInputReady();
@@ -51,7 +51,7 @@ describe("13 キーボード・IME ハンドリング", () => {
   });
 
   // Shift+Enter inserts newline without sending
-  describe("Shift+Enter 入力時", () => {
+  context("Shift+Enter 入力時", () => {
     let textarea: HTMLElement;
 
     beforeEach(async () => {

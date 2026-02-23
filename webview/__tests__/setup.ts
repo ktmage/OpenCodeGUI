@@ -1,5 +1,15 @@
 import "@testing-library/jest-dom/vitest";
-import { vi, beforeEach } from "vitest";
+import { vi, beforeEach, describe } from "vitest";
+
+// --- RSpec スタイルの context エイリアス ---
+// ネストされた describe を意味的に区別するために使用する。
+
+declare global {
+  // eslint-disable-next-line no-var
+  var context: typeof describe;
+}
+
+globalThis.context = describe;
 
 // --- jsdom に存在しない DOM API のスタブ ---
 

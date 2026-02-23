@@ -14,8 +14,8 @@ async function setupActiveSession() {
   return session;
 }
 
-// 03 Messaging
-describe("03 メッセージング", () => {
+// Messaging
+describe("メッセージング", () => {
   // Text input + Enter sends sendMessage
   it("テキスト入力 + Enter で sendMessage が送信される", async () => {
     const session = await setupActiveSession();
@@ -47,7 +47,7 @@ describe("03 メッセージング", () => {
   });
 
   // Received messages are displayed
-  describe("messages 受信時", () => {
+  context("messages 受信時", () => {
     beforeEach(async () => {
       await setupActiveSession();
 
@@ -108,7 +108,7 @@ describe("03 メッセージング", () => {
   });
 
   // session.status busy shows StreamingIndicator and stop button
-  describe("session.status busy のとき", () => {
+  context("session.status busy のとき", () => {
     beforeEach(async () => {
       await setupActiveSession();
 
@@ -131,7 +131,7 @@ describe("03 メッセージング", () => {
   });
 
   // session.status idle restores send button
-  describe("session.status idle に戻したとき", () => {
+  context("session.status idle に戻したとき", () => {
     beforeEach(async () => {
       await setupActiveSession();
 
@@ -176,7 +176,7 @@ describe("03 メッセージング", () => {
   });
 
   // message.removed event deletes the message
-  describe("message.removed イベント受信時", () => {
+  context("message.removed イベント受信時", () => {
     beforeEach(async () => {
       await setupActiveSession();
 
@@ -212,7 +212,7 @@ describe("03 メッセージング", () => {
   });
 
   // Messages from a different session are ignored
-  describe("別セッションの messages 受信時", () => {
+  context("別セッションの messages 受信時", () => {
     beforeEach(async () => {
       await setupActiveSession();
 
@@ -245,7 +245,7 @@ describe("03 メッセージング", () => {
   });
 
   // message.part.updated with non-existent messageID is ignored
-  describe("存在しない messageID で message.part.updated 受信時", () => {
+  context("存在しない messageID で message.part.updated 受信時", () => {
     beforeEach(async () => {
       await setupActiveSession();
 

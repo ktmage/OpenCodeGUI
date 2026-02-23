@@ -25,8 +25,8 @@ async function setupForSettings() {
   vi.mocked(postMessage).mockClear();
 }
 
-// 09 Settings
-describe("09 設定", () => {
+// Settings
+describe("設定", () => {
   // Settings button opens/closes ToolConfigPanel
   it("設定ボタンで ToolConfigPanel が開閉する", async () => {
     await setupForSettings();
@@ -110,7 +110,7 @@ describe("09 設定", () => {
   });
 
   // toolConfig message sets paths and shows config links in the panel
-  describe("toolConfig メッセージ受信後の設定パネル", () => {
+  context("toolConfig メッセージ受信後の設定パネル", () => {
     beforeEach(async () => {
       renderApp();
       const session = createSession({ id: "s1" });

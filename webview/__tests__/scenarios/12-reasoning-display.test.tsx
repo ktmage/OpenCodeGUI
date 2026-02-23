@@ -26,10 +26,10 @@ async function setupWithReasoningPart(partOverrides: Record<string, unknown> = {
   });
 }
 
-// 12 Reasoning display (ReasoningPartView)
-describe("12 思考表示（ReasoningPartView）", () => {
+// Reasoning display (ReasoningPartView)
+describe("思考表示（ReasoningPartView）", () => {
   // In-progress reasoning part shows spinner and "Thinking..."
-  describe("進行中のリーズニングパート", () => {
+  context("進行中のリーズニングパート", () => {
     let part: Element | null;
 
     beforeEach(async () => {
@@ -54,7 +54,7 @@ describe("12 思考表示（ReasoningPartView）", () => {
   });
 
   // Completed reasoning part shows "Thought"
-  describe("完了したリーズニングパート", () => {
+  context("完了したリーズニングパート", () => {
     let part: Element | null;
 
     beforeEach(async () => {
@@ -79,7 +79,7 @@ describe("12 思考表示（ReasoningPartView）", () => {
   });
 
   // Clicking header expands/collapses thought content
-  describe("ヘッダクリックで思考内容の展開・折りたたみ", () => {
+  context("ヘッダクリックで思考内容の展開・折りたたみ", () => {
     beforeEach(async () => {
       await setupWithReasoningPart({
         text: "Step 1: analyze the problem",
@@ -93,7 +93,7 @@ describe("12 思考表示（ReasoningPartView）", () => {
     });
 
     // Expands on click
-    describe("展開時", () => {
+    context("展開時", () => {
       beforeEach(async () => {
         const user = userEvent.setup();
         await user.click(screen.getByTitle("Toggle thought details"));
@@ -105,7 +105,7 @@ describe("12 思考表示（ReasoningPartView）", () => {
       });
 
       // Collapses on second click
-      describe("再クリック時", () => {
+      context("再クリック時", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByTitle("Toggle thought details"));

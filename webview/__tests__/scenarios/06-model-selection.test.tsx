@@ -51,8 +51,8 @@ async function setupWithProviders() {
   vi.mocked(postMessage).mockClear();
 }
 
-// 06 Model selection
-describe("06 モデル選択", () => {
+// Model selection
+describe("モデル選択", () => {
   // Selected model name is shown on the button
   it("選択中のモデル名がボタンに表示される", async () => {
     await setupWithProviders();
@@ -116,9 +116,9 @@ describe("06 モデル選択", () => {
   });
 
   // Clicking provider name toggles model list fold/unfold
-  describe("プロバイダー名クリックでモデル一覧の折りたたみ", () => {
+  context("プロバイダー名クリックでモデル一覧の折りたたみ", () => {
     // After folding, models are hidden
-    describe("折りたたんだとき", () => {
+    context("折りたたんだとき", () => {
       beforeEach(async () => {
         await setupWithProviders();
         const user = userEvent.setup();
@@ -132,7 +132,7 @@ describe("06 モデル選択", () => {
       });
 
       // After unfolding, models are shown again
-      describe("再度クリックしたとき", () => {
+      context("再度クリックしたとき", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByText("Anthropic"));
@@ -147,9 +147,9 @@ describe("06 モデル選択", () => {
   });
 
   // "Show all providers" toggle shows/hides disconnected providers
-  describe("Show all providers トグル", () => {
+  context("Show all providers トグル", () => {
     // Initially disconnected providers are hidden
-    describe("初期状態", () => {
+    context("初期状態", () => {
       beforeEach(async () => {
         await setupWithProviders();
         const user = userEvent.setup();
@@ -162,7 +162,7 @@ describe("06 モデル選択", () => {
       });
 
       // After clicking Show all, disconnected providers appear
-      describe("Show all クリック後", () => {
+      context("Show all クリック後", () => {
         beforeEach(async () => {
           const user = userEvent.setup();
           await user.click(screen.getByTitle("Show all providers"));
@@ -174,7 +174,7 @@ describe("06 モデル選択", () => {
         });
 
         // After clicking Connected only, disconnected providers are hidden again
-        describe("Connected only クリック後", () => {
+        context("Connected only クリック後", () => {
           beforeEach(async () => {
             const user = userEvent.setup();
             await user.click(screen.getByTitle("Hide disconnected providers"));

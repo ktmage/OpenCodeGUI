@@ -32,8 +32,8 @@ async function setupWithFiles() {
   vi.mocked(postMessage).mockClear();
 }
 
-// 07 File context
-describe("07 ファイルコンテキスト", () => {
+// File context
+describe("ファイルコンテキスト", () => {
   // Clip button opens the file picker
   it("クリップボタンでファイルピッカーが開く", async () => {
     await setupWithFiles();
@@ -46,7 +46,7 @@ describe("07 ファイルコンテキスト", () => {
   });
 
   // Selecting a file shows a chip and closes the picker
-  describe("ファイルを選択したとき", () => {
+  context("ファイルを選択したとき", () => {
     beforeEach(async () => {
       await setupWithFiles();
       const user = userEvent.setup();
@@ -117,7 +117,7 @@ describe("07 ファイルコンテキスト", () => {
   });
 
   // Selecting from # popup removes the # portion and attaches the file
-  describe("# からファイル選択時", () => {
+  context("# からファイル選択時", () => {
     let textarea: HTMLElement;
 
     beforeEach(async () => {

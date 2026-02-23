@@ -60,8 +60,8 @@ async function setupWithTokenUsage() {
   return session;
 }
 
-// 08 Context and compression
-describe("08 コンテキストとコンプレッション", () => {
+// Context and compression
+describe("コンテキストとコンプレッション", () => {
   // ContextIndicator is shown based on token usage
   it("トークン使用量に応じて ContextIndicator が表示される", async () => {
     await setupWithTokenUsage();
@@ -91,7 +91,7 @@ describe("08 コンテキストとコンプレッション", () => {
   });
 
   // Token usage is recalculated after message.removed
-  describe("message.removed 後のトークン使用量再計算", () => {
+  context("message.removed 後のトークン使用量再計算", () => {
     beforeEach(async () => {
       await setupWithTokenUsage();
 
@@ -178,7 +178,7 @@ describe("08 コンテキストとコンプレッション", () => {
   });
 
   // Popup shows token details
-  describe("ポップアップ表示時", () => {
+  context("ポップアップ表示時", () => {
     beforeEach(async () => {
       await setupWithTokenUsage();
       const user = userEvent.setup();
@@ -202,7 +202,7 @@ describe("08 コンテキストとコンプレッション", () => {
   });
 
   // Compressing state shows "Compressing..." text and disabled button
-  describe("圧縮中の状態", () => {
+  context("圧縮中の状態", () => {
     let compressBtn: HTMLElement;
 
     beforeEach(async () => {

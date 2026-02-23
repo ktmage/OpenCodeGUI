@@ -32,10 +32,10 @@ async function setupConversation() {
   return session;
 }
 
-// 04 Message editing and checkpoints
-describe("04 メッセージ編集とチェックポイント", () => {
+// Message editing and checkpoints
+describe("メッセージ編集とチェックポイント", () => {
   // Clicking a user message enters edit mode
-  describe("ユーザーメッセージをクリックしたとき", () => {
+  context("ユーザーメッセージをクリックしたとき", () => {
     beforeEach(async () => {
       await setupConversation();
       const user = userEvent.setup();
@@ -77,7 +77,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
   });
 
   // Escape cancels editing
-  describe("Escape で編集キャンセル時", () => {
+  context("Escape で編集キャンセル時", () => {
     beforeEach(async () => {
       await setupConversation();
       const user = userEvent.setup();
@@ -107,7 +107,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
   });
 
   // Clicking checkpoint sends revertToMessage and prefills the input
-  describe("チェックポイントクリック時", () => {
+  context("チェックポイントクリック時", () => {
     beforeEach(async () => {
       await setupConversation();
       const user = userEvent.setup();
