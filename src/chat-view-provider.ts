@@ -48,6 +48,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = "opencode.chatView";
 
   private view: vscode.WebviewView | undefined;
+  // OpenCode サーバーには「現在アクティブなセッション」を保持する API がないため、
+  // UI クライアント側で管理する（TUI も同様の設計）。
   private activeSession: Session | null = null;
 
   constructor(
