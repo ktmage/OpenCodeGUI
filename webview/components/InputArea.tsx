@@ -25,14 +25,9 @@ type Props = {
   isCompressing: boolean;
   prefillText?: string;
   onPrefillConsumed?: () => void;
-  toolIds: string[];
-  toolSettings: Record<string, boolean>;
-  mcpStatus: Record<string, McpStatus>;
   openCodePaths: { home: string; config: string; state: string; directory: string } | null;
   onOpenConfigFile: (filePath: string) => void;
-  onOpenToolConfig: () => void;
   onOpenTerminal: () => void;
-  onRestartServer: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
 };
@@ -41,7 +36,7 @@ export function InputArea({
   onSend, onAbort, isBusy, providers, allProvidersData, selectedModel, onModelSelect,
   openEditors, workspaceFiles, inputTokens, contextLimit, onCompress, isCompressing,
   prefillText, onPrefillConsumed,
-  toolIds, toolSettings, mcpStatus, openCodePaths, onOpenConfigFile, onOpenToolConfig, onOpenTerminal, onRestartServer,
+  openCodePaths, onOpenConfigFile, onOpenTerminal,
   localeSetting, onLocaleSettingChange,
 }: Props) {
   const t = useLocale();
@@ -373,8 +368,8 @@ export function InputArea({
             </button>
             <button
               className="tool-config-button"
-              onClick={() => { onOpenToolConfig(); setShowToolConfig((s) => !s); }}
-              title={t["input.configureTools"]}
+              onClick={() => setShowToolConfig((s) => !s)}
+              title={t["input.settings"]}
             >
               <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                 <path d="M14.773 7.308l-1.394-.461a5.543 5.543 0 0 0-.476-1.147l.646-1.32a.249.249 0 0 0-.046-.283l-.87-.87a.249.249 0 0 0-.283-.046l-1.32.646a5.543 5.543 0 0 0-1.147-.476l-.461-1.394A.249.249 0 0 0 9.184 1.8H8.016a.249.249 0 0 0-.238.157l-.461 1.394a5.543 5.543 0 0 0-1.147.476l-1.32-.646a.249.249 0 0 0-.283.046l-.87.87a.249.249 0 0 0-.046.283l.646 1.32a5.543 5.543 0 0 0-.476 1.147l-1.394.461A.249.249 0 0 0 2.27 7.546v1.168c0 .103.064.196.157.238l1.394.461c.11.4.27.784.476 1.147l-.646 1.32a.249.249 0 0 0 .046.283l.87.87c.073.073.18.096.283.046l1.32-.646c.363.206.747.366 1.147.476l.461 1.394c.042.093.135.157.238.157h1.168c.103 0 .196-.064.238-.157l.461-1.394a5.543 5.543 0 0 0 1.147-.476l1.32.646a.249.249 0 0 0 .283-.046l.87-.87a.249.249 0 0 0 .046-.283l-.646-1.32c.206-.363.366-.747.476-1.147l1.394-.461a.249.249 0 0 0 .157-.238V7.546a.249.249 0 0 0-.157-.238zM8.6 10.9a2.3 2.3 0 1 1 0-4.6 2.3 2.3 0 0 1 0 4.6z" />
@@ -387,12 +382,8 @@ export function InputArea({
             </button>
             {showToolConfig && (
               <ToolConfigPanel
-                toolIds={toolIds}
-                toolSettings={toolSettings}
-                mcpStatus={mcpStatus}
                 paths={openCodePaths}
                 onOpenConfigFile={onOpenConfigFile}
-                onRestartServer={onRestartServer}
                 onClose={() => setShowToolConfig(false)}
                 localeSetting={localeSetting}
                 onLocaleSettingChange={onLocaleSettingChange}

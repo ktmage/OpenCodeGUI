@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider, type McpStatus, type Config, type OpenCodePath, type ProviderListResult } from "./opencode-client";
+import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider, type OpenCodePath, type ProviderListResult } from "./opencode-client";
 import * as path from "path";
 
 // --- File attachment ---
@@ -18,7 +18,7 @@ export type ExtToWebviewMessage =
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
-  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: OpenCodePath }
+  | { type: "toolConfig"; paths: OpenCodePath }
   | { type: "locale"; vscodeLanguage: string };
 
 // --- Webview → Extension Host ---
@@ -37,9 +37,7 @@ export type WebviewToExtMessage =
   | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
   | { type: "revertToMessage"; sessionId: string; messageId: string }
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
-  | { type: "getToolConfig" }
   | { type: "openConfigFile"; filePath: string }
-  | { type: "restartServer" }
   | { type: "openTerminal" }
   | { type: "ready" };
 
@@ -102,6 +100,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           this.connection.listAllProviders(),
         ]);
         this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default });
+        const paths = await this.connection.getPath();
+        this.postMessage({ type: "toolConfig", paths });
         break;
       }
       case "sendMessage": {
@@ -217,22 +217,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files);
         break;
       }
-      case "getToolConfig": {
-        const [toolIds, config, mcpStatus, paths] = await Promise.all([
-          this.connection.getToolIds(),
-          this.connection.getConfig(),
-          this.connection.getMcpStatus(),
-          this.connection.getPath(),
-        ]);
-        this.postMessage({
-          type: "toolConfig",
-          toolIds,
-          toolSettings: config.tools ?? {},
-          mcpStatus,
-          paths,
-        });
-        break;
-      }
       case "openConfigFile": {
         const filePath = message.filePath;
         const uri = vscode.Uri.file(filePath);
@@ -246,48 +230,6 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         }
         const doc = await vscode.workspace.openTextDocument(uri);
         await vscode.window.showTextDocument(doc);
-        break;
-      }
-      case "restartServer": {
-        this.connection.disconnect();
-        await this.connection.connect();
-        // 再接続後にイベントを再購読する
-        this.connection.onEvent((event) => {
-          this.postMessage({ type: "event", event });
-        });
-        // 再接続後の初期データを送信する
-        const rsSessions = await this.connection.listSessions();
-        this.postMessage({ type: "sessions", sessions: rsSessions });
-        if (this.activeSession) {
-          try {
-            const rsSession = await this.connection.getSession(this.activeSession.id);
-            this.activeSession = rsSession;
-            this.postMessage({ type: "activeSession", session: rsSession });
-            const rsMessages = await this.connection.getMessages(rsSession.id);
-            this.postMessage({ type: "messages", sessionId: rsSession.id, messages: rsMessages });
-          } catch {
-            this.activeSession = null;
-            this.postMessage({ type: "activeSession", session: null });
-          }
-        }
-        const [rsProvidersData, rsAllProviders] = await Promise.all([
-          this.connection.getProviders(),
-          this.connection.listAllProviders(),
-        ]);
-        this.postMessage({ type: "providers", providers: rsProvidersData.providers, allProviders: rsAllProviders, default: rsProvidersData.default });
-        const [rsToolIds, rsConfig, rsMcpStatus, rsPaths] = await Promise.all([
-          this.connection.getToolIds(),
-          this.connection.getConfig(),
-          this.connection.getMcpStatus(),
-          this.connection.getPaths(),
-        ]);
-        this.postMessage({
-          type: "toolConfig",
-          toolIds: rsToolIds,
-          toolSettings: rsConfig.tools ?? {},
-          mcpStatus: rsMcpStatus,
-          paths: rsPaths,
-        });
         break;
       }
       case "openTerminal": {

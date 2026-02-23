@@ -1676,18 +1676,6 @@ body {
   padding: 4px 12px;
 }
 
-.tool-config-status-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px;
-  font-size: 12px;
-}
-
-.tool-config-status-row:hover {
-  background-color: var(--vscode-list-hoverBackground);
-}
-
 .tool-config-toggle {
   display: flex;
   align-items: center;
@@ -1707,45 +1695,6 @@ body {
   accent-color: var(--vscode-checkbox-background);
 }
 
-.tool-config-mcp-item {
-  /* MCP サーバーの親要素 */
-}
-
-.tool-config-mcp-name {
-  flex: 1;
-  color: var(--vscode-foreground);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tool-config-mcp-status {
-  font-size: 10px;
-  flex-shrink: 0;
-  padding: 1px 6px;
-  border-radius: 3px;
-}
-
-.tool-config-mcp-status.status-connected {
-  color: var(--vscode-terminal-ansiGreen, #4caf50);
-}
-
-.tool-config-mcp-status.status-disabled {
-  color: var(--vscode-descriptionForeground);
-}
-
-.tool-config-mcp-status.status-error {
-  color: var(--vscode-errorForeground);
-}
-
-.tool-config-mcp-status.status-warning {
-  color: var(--vscode-editorWarning-foreground, #ff9800);
-}
-
-.tool-config-mcp-tools {
-  padding-left: 16px;
-}
-
 .tool-config-tool-item {
   padding: 3px 12px;
 }
@@ -1756,29 +1705,6 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-family: var(--vscode-editor-font-family, monospace);
-  font-size: 11px;
-}
-
-.tool-config-tool-badge {
-  flex-shrink: 0;
-  font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 3px;
-}
-
-.tool-config-tool-badge.badge-enabled {
-  color: var(--vscode-terminal-ansiGreen, #4caf50);
-}
-
-.tool-config-tool-badge.badge-disabled {
-  color: var(--vscode-descriptionForeground);
-}
-
-.tool-config-empty {
-  padding: 16px 12px;
-  text-align: center;
-  color: var(--vscode-descriptionForeground);
   font-size: 12px;
 }
 
@@ -1788,41 +1714,6 @@ body {
   padding: 6px 12px;
   border-top: 1px solid var(--vscode-panel-border);
   flex-shrink: 0;
-}
-
-.tool-config-notice {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-top: 1px solid var(--vscode-panel-border);
-  flex-shrink: 0;
-}
-
-.tool-config-notice-text {
-  font-size: 11px;
-  color: var(--vscode-descriptionForeground);
-  flex: 1;
-}
-
-.tool-config-restart-button {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: 1px solid var(--vscode-button-secondaryBorder, var(--vscode-panel-border));
-  color: var(--vscode-textLink-foreground);
-  font-size: 11px;
-  cursor: pointer;
-  padding: 3px 8px;
-  border-radius: 3px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.tool-config-restart-button:hover {
-  color: var(--vscode-textLink-activeForeground);
-  background-color: var(--vscode-toolbar-hoverBackground);
 }
 
 .tool-config-link {

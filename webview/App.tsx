@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { Session, Message, Part, Event, Permission, Provider, McpStatus } from "@opencode-ai/sdk";
+import type { Session, Message, Part, Event, Permission, Provider } from "@opencode-ai/sdk";
 import type { ExtToWebviewMessage, FileAttachment, AllProvidersData } from "./vscode-api";
 import { postMessage, getPersistedState, setPersistedState } from "./vscode-api";
 import { ChatHeader } from "./components/ChatHeader";
@@ -32,10 +32,7 @@ export function App() {
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
   // チェックポイントからの復元時にテキストを入力欄にプリフィルするためのステート
   const [prefillText, setPrefillText] = useState("");
-  // Tool & MCP 構成パネル用のステート
-  const [toolIds, setToolIds] = useState<string[]>([]);
-  const [toolSettings, setToolSettings] = useState<Record<string, boolean>>({});
-  const [mcpStatus, setMcpStatus] = useState<Record<string, McpStatus>>({});
+  // 設定パネル用のステート
   const [openCodePaths, setOpenCodePaths] = useState<{ home: string; config: string; state: string; directory: string } | null>(null);
 
   // ロケール管理
@@ -123,9 +120,6 @@ export function App() {
           setWorkspaceFiles(msg.files);
           break;
         case "toolConfig":
-          setToolIds(msg.toolIds);
-          setToolSettings(msg.toolSettings);
-          setMcpStatus(msg.mcpStatus);
           setOpenCodePaths(msg.paths);
           break;
         case "locale":
@@ -273,20 +267,12 @@ export function App() {
     });
   }, [activeSession, selectedModel]);
 
-  const handleOpenToolConfig = useCallback(() => {
-    postMessage({ type: "getToolConfig" });
-  }, []);
-
   const handleOpenConfigFile = useCallback((filePath: string) => {
     postMessage({ type: "openConfigFile", filePath });
   }, []);
 
   const handleOpenTerminal = useCallback(() => {
     postMessage({ type: "openTerminal" });
-  }, []);
-
-  const handleRestartServer = useCallback(() => {
-    postMessage({ type: "restartServer" });
   }, []);
 
   // ユーザーメッセージを編集して再送信する
@@ -406,14 +392,9 @@ export function App() {
             isCompressing={!!activeSession?.time?.compacting}
             prefillText={prefillText}
             onPrefillConsumed={() => setPrefillText("")}
-            toolIds={toolIds}
-            toolSettings={toolSettings}
-            mcpStatus={mcpStatus}
             openCodePaths={openCodePaths}
             onOpenConfigFile={handleOpenConfigFile}
-            onOpenToolConfig={handleOpenToolConfig}
             onOpenTerminal={handleOpenTerminal}
-            onRestartServer={handleRestartServer}
             localeSetting={localeSetting}
             onLocaleSettingChange={handleLocaleSettingChange}
           />

@@ -17,7 +17,7 @@ export const en = {
   "input.placeholder": "Ask OpenCode... (type # to attach files)",
   "input.addFile": (name: string) => `Add ${name}`,
   "input.openTerminal": "Open in terminal",
-  "input.configureTools": "Configure tools & MCP",
+  "input.settings": "Settings",
   "input.stop": "Stop",
   "input.send": "Send",
 
@@ -78,20 +78,9 @@ export const en = {
   "context.compress": "Compress Conversation",
 
   // ToolConfigPanel
-  "config.connected": "Connected",
-  "config.disabled": "Disabled",
-  "config.enabled": "Enabled",
-  "config.error": "Error",
-  "config.needsAuth": "Needs Auth",
-  "config.needsRegistration": "Needs Registration",
-  "config.title": "Tools & MCP Servers",
-  "config.mcpServers": "MCP Servers",
-  "config.tools": "Tools",
-  "config.noToolsOrMcp": "No tools or MCP servers available",
+  "config.title": "Settings",
   "config.projectConfig": "Project Config",
   "config.globalConfig": "Global Config",
-  "config.restartServer": "Restart Server",
-  "config.restartNotice": "Config changes require a server restart to take effect.",
 
   "config.close": "Close",
 

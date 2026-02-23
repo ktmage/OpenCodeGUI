@@ -19,7 +19,7 @@ export const ja: typeof en = {
   "input.placeholder": "OpenCode に質問... (# でファイルを添付)",
   "input.addFile": (name: string) => `${name} を追加`,
   "input.openTerminal": "ターミナルで開く",
-  "input.configureTools": "ツール & MCP 設定",
+  "input.settings": "設定",
   "input.stop": "停止",
   "input.send": "送信",
 
@@ -80,20 +80,9 @@ export const ja: typeof en = {
   "context.compress": "会話を圧縮",
 
   // ToolConfigPanel
-  "config.connected": "接続済み",
-  "config.disabled": "無効",
-  "config.enabled": "有効",
-  "config.error": "エラー",
-  "config.needsAuth": "認証が必要",
-  "config.needsRegistration": "登録が必要",
-  "config.title": "ツール & MCP サーバー",
-  "config.mcpServers": "MCP サーバー",
-  "config.tools": "ツール",
-  "config.noToolsOrMcp": "利用可能なツールや MCP サーバーがありません",
+  "config.title": "設定",
   "config.projectConfig": "プロジェクト設定",
   "config.globalConfig": "グローバル設定",
-  "config.restartServer": "サーバーを再起動",
-  "config.restartNotice": "設定の変更を反映するにはサーバーの再起動が必要です。",
 
   "config.close": "閉じる",
 
