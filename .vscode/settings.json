@@ -38,5 +38,6 @@
   "chat.instructionsFilesLocations": {
     ".ktmage/instructions": true,
     ".ktmage/project/instructions": true
-  }
+  },
+  "chat.agent.maxRequests": 100
 }
