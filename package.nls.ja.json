@@ -1,4 +1,4 @@
 {
   "displayName": "OpenCodeGUI",
-  "description": "【実験的】OpenCode の VS Code チャットインターフェース — GitHub Copilot ライクな UI/UX。本拡張機能は主に AI を活用したコーディングにより開発されており、現状のまま無保証で提供されます。"
+  "description": "【実験的・非公式】OpenCode の VS Code サイドバーチャットインターフェース。本拡張機能は主に AI を活用したコーディングにより開発されており、現状のまま無保証で提供されます。OpenCode プロジェクトとは提携・推薦関係にありません。"
 }

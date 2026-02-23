@@ -2,7 +2,9 @@
 
 # OpenCodeGUI
 
-A VS Code chat interface for [OpenCode](https://github.com/opencode-ai/opencode). GitHub Copilot-like UI/UX that lets you use all OpenCode features from the sidebar.
+An unofficial VS Code sidebar chat interface for [OpenCode](https://github.com/opencode-ai/opencode). Use all OpenCode features from a familiar sidebar chat UI.
+
+> **This is an unofficial, community-developed extension. It is not affiliated with or endorsed by the OpenCode project.**
 
 > [!CAUTION]
 > **Disclaimer:** This project is experimental and developed primarily through AI-assisted coding. It is provided "as-is" without warranty of any kind. It may contain unexpected behavior, unconventional implementations, or undiscovered defects. Use at your own risk. The authors assume no liability for any damages arising from the use of this software. Bug reports and contributions are welcome.
