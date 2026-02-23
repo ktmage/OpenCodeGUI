@@ -1,4 +1,4 @@
-import type { Permission } from "@opencode-ai/sdk";
+import type { Permission, TextPart } from "@opencode-ai/sdk";
 import type { MessageWithParts } from "../App";
 import { TextPartView } from "./TextPartView";
 import { ToolPartView } from "./ToolPartView";
@@ -19,23 +19,35 @@ export function MessageItem({ message, activeSessionId, permissions }: Props) {
     (p) => p.messageID === info.id,
   );
 
-  // ユーザーメッセージはテキストパートのみ抽出して表示する
+  // ユーザーメッセージはテキストパートのみ抽出
+  // synthetic かつテキストが空でないものは SDK がファイルコンテキスト用に生成したもの
+  // ただし全パートが synthetic の場合は全て表示する（フォールバック）
+  const textParts = isUser ? parts.filter((p) => p.type === "text") : [];
+  const nonSyntheticTexts = textParts.filter((p) => !(p as TextPart).synthetic);
+  const displayTextParts = nonSyntheticTexts.length > 0 ? nonSyntheticTexts : textParts;
   const userText = isUser
-    ? parts
-        .filter((p) => p.type === "text")
-        .map((p) => (p as { text: string }).text)
-        .join("")
+    ? displayTextParts.map((p) => (p as { text: string }).text).join("")
     : null;
 
   // ユーザーメッセージに添付されたファイルパートを取得する
   const userFiles = isUser
-    ? parts.filter((p) => p.type === "file").map((p) => (p as { filename?: string; url: string }).filename ?? (p as { url: string }).url)
+    ? parts.filter((p) => p.type === "file").map((p) => {
+        const fp = p as { filename?: string; url?: string };
+        const name = fp.filename ?? fp.url ?? "file";
+        // file:// プレフィックスを除去し、パスのファイル名だけ表示する
+        const cleaned = name.replace(/^file:\/\//, "");
+        const basename = cleaned.split("/").pop() ?? cleaned;
+        return basename;
+      })
     : [];
 
   return (
     <div className={`message ${isUser ? "message-user" : "message-assistant"}`}>
       {isUser ? (
-        <div className="message-user-bubble">
+        <>
+          <div className="message-user-bubble">
+            <div className="message-content">{userText}</div>
+          </div>
           {userFiles.length > 0 && (
             <div className="message-user-files">
               {userFiles.map((name, i) => (
@@ -43,8 +55,7 @@ export function MessageItem({ message, activeSessionId, permissions }: Props) {
               ))}
             </div>
           )}
-          <div className="message-content">{userText}</div>
-        </div>
+        </>
       ) : (
         <div className="message-content">
           {parts.map((part) => {

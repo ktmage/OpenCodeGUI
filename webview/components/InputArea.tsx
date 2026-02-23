@@ -3,6 +3,7 @@ import type { Provider } from "@opencode-ai/sdk";
 import type { FileAttachment } from "../vscode-api";
 import { postMessage } from "../vscode-api";
 import { ModelSelector } from "./ModelSelector";
+import { ContextIndicator } from "./ContextIndicator";
 
 type Props = {
   onSend: (text: string, files: FileAttachment[]) => void;
@@ -13,11 +14,15 @@ type Props = {
   onModelSelect: (model: { providerID: string; modelID: string }) => void;
   openEditors: FileAttachment[];
   workspaceFiles: FileAttachment[];
+  inputTokens: number;
+  contextLimit: number;
+  onCompress: () => void;
+  isCompressing: boolean;
 };
 
 export function InputArea({
   onSend, onAbort, isBusy, providers, selectedModel, onModelSelect,
-  openEditors, workspaceFiles,
+  openEditors, workspaceFiles, inputTokens, contextLimit, onCompress, isCompressing,
 }: Props) {
   const [text, setText] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<FileAttachment[]>([]);
@@ -203,7 +208,7 @@ export function InputArea({
             {/* クリップボタン */}
             <div className="context-clip-container" ref={filePickerRef}>
               <button className="context-clip-button" onClick={handleClipClick} title="Add context">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M10.97 2.29a1.625 1.625 0 0 0-2.298 0L3.836 7.126a2.813 2.813 0 0 0 3.977 3.977l4.837-4.836-.707-.708-4.837 4.837a1.813 1.813 0 0 1-2.563-2.563L9.38 2.997a.625.625 0 0 1 .884.884L5.427 8.718a.313.313 0 0 0 .442.442l4.837-4.837-.707-.707-4.837 4.837a1.313 1.313 0 0 1-1.856-1.856l4.836-4.837a1.625 1.625 0 0 1 2.298 0 1.625 1.625 0 0 1 0 2.298l-4.837 4.837a2.813 2.813 0 0 1-3.977-3.977L7.63 1.285l-.707-.707L1.285 6.214a3.813 3.813 0 0 0 5.391 5.391l4.837-4.837a2.625 2.625 0 0 0 0-3.712 2.625 2.625 0 0 0-.543-.356z" />
                 </svg>
               </button>
@@ -264,6 +269,15 @@ export function InputArea({
               </button>
             )}
           </div>
+          {/* コンテキストウィンドウ使用率インジケーター (右側) */}
+          {contextLimit > 0 && (
+            <ContextIndicator
+              inputTokens={inputTokens}
+              contextLimit={contextLimit}
+              onCompress={onCompress}
+              isCompressing={isCompressing}
+            />
+          )}
         </div>
 
         {/* テキスト入力エリア（# ポップアップ付き） */}

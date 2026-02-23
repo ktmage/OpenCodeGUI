@@ -92,7 +92,8 @@ body {
 
 .message-user {
   display: flex;
-  justify-content: flex-end;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
 .message-user-bubble {
@@ -114,16 +115,18 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  margin-bottom: 4px;
+  margin-top: 4px;
+  justify-content: flex-end;
 }
 
 .message-user-file-chip {
   display: inline-block;
-  padding: 1px 6px;
-  font-size: 10px;
-  background-color: var(--vscode-badge-background);
-  color: var(--vscode-badge-foreground);
-  border-radius: 3px;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
 }
 
 /* --- Markdown in messages --- */
@@ -564,36 +567,39 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 3px;
+  padding: 2px 4px;
   background: none;
-  border: none;
+  border: 1px solid var(--vscode-input-border);
   color: var(--vscode-descriptionForeground);
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
+  line-height: 1;
 }
 
 .context-clip-button:hover {
   background-color: var(--vscode-toolbar-hoverBackground);
   color: var(--vscode-foreground);
+  border-color: var(--vscode-foreground);
 }
 
 .context-file-button {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 6px;
+  padding: 3px 8px;
   background: none;
-  border: 1px solid var(--vscode-panel-border);
+  border: 1px dashed var(--vscode-input-border);
   color: var(--vscode-descriptionForeground);
   font-family: var(--vscode-font-family);
   font-size: 11px;
   cursor: pointer;
-  border-radius: 3px;
+  border-radius: 4px;
 }
 
 .context-file-button:hover {
   background-color: var(--vscode-toolbar-hoverBackground);
   color: var(--vscode-foreground);
+  border-color: var(--vscode-foreground);
 }
 
 /* --- File picker dropdown --- */
@@ -679,10 +685,11 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 6px;
-  background-color: var(--vscode-badge-background);
-  color: var(--vscode-badge-foreground);
-  border-radius: 3px;
+  padding: 3px 8px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-foreground);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
   font-size: 11px;
 }
 
@@ -760,4 +767,99 @@ body {
   padding: 8px 10px;
   font-size: 12px;
   color: var(--vscode-descriptionForeground);
+}
+
+/* --- Context indicator --- */
+
+.context-indicator-container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.context-indicator-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--vscode-descriptionForeground);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.context-indicator-button:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.context-indicator-percent {
+  font-size: 10px;
+  font-family: var(--vscode-font-family);
+}
+
+.context-indicator-popup {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 6px;
+  min-width: 220px;
+  padding: 10px 12px;
+  background-color: var(--vscode-quickInput-background);
+  border: 1px solid var(--vscode-dropdown-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+}
+
+.context-indicator-popup-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  margin-bottom: 8px;
+}
+
+.context-indicator-popup-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 4px;
+}
+
+.context-indicator-popup-bar {
+  height: 4px;
+  background-color: var(--vscode-input-border);
+  border-radius: 2px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.context-indicator-popup-bar-fill {
+  height: 100%;
+  background-color: var(--vscode-progressBar-background);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.context-indicator-compress-button {
+  width: 100%;
+  padding: 5px 10px;
+  margin-top: 4px;
+  background-color: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+  border: none;
+  border-radius: 4px;
+  font-family: var(--vscode-font-family);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.context-indicator-compress-button:hover:not(:disabled) {
+  background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.context-indicator-compress-button:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

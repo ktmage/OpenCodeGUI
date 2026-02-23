@@ -19,7 +19,8 @@ export type ExtToWebviewMessage =
   | { type: "activeSession"; session: Session | null }
   | { type: "providers"; providers: Provider[]; default: Record<string, string> }
   | { type: "openEditors"; files: FileAttachment[] }
-  | { type: "workspaceFiles"; files: FileAttachment[] };
+  | { type: "workspaceFiles"; files: FileAttachment[] }
+  | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -34,6 +35,7 @@ export type WebviewToExtMessage =
   | { type: "getProviders" }
   | { type: "getOpenEditors" }
   | { type: "searchWorkspaceFiles"; query: string }
+  | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
   | { type: "ready" };
 
 interface VsCodeApi {

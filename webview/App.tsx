@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import type { Session, Message, Part, Event, Permission, Provider } from "@opencode-ai/sdk";
 import type { ExtToWebviewMessage, FileAttachment } from "./vscode-api";
 import { postMessage, getPersistedState, setPersistedState } from "./vscode-api";
@@ -24,6 +24,28 @@ export function App() {
   );
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
+
+  // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
+  const inputTokens = useMemo(() => {
+    let total = 0;
+    for (const m of messages) {
+      for (const p of m.parts) {
+        if (p.type === "step-finish" && p.tokens) {
+          total += p.tokens.input;
+        }
+      }
+    }
+    return total;
+  }, [messages]);
+
+  // 選択中のモデルのコンテキストリミットを算出
+  const contextLimit = useMemo(() => {
+    if (!selectedModel) return 0;
+    const provider = providers.find((p) => p.id === selectedModel.providerID);
+    if (!provider) return 0;
+    const model = provider.models[selectedModel.modelID];
+    return model?.limit?.context ?? 0;
+  }, [providers, selectedModel]);
 
   useEffect(() => {
     const handler = (e: MessageEvent<ExtToWebviewMessage>) => {
@@ -138,6 +160,12 @@ export function App() {
           });
           break;
         }
+        case "message.removed": {
+          // 圧縮時にメッセージが削除される → messages から除去すると inputTokens も自動的に再計算される
+          const { messageID } = event.properties;
+          setMessages((prev) => prev.filter((m) => m.info.id !== messageID));
+          break;
+        }
         case "session.updated": {
           const info = event.properties.info;
           setSessions((prev) =>
@@ -200,6 +228,15 @@ export function App() {
     postMessage({ type: "abort", sessionId: activeSession.id });
   }, [activeSession]);
 
+  const handleCompress = useCallback(() => {
+    if (!activeSession) return;
+    postMessage({
+      type: "compressSession",
+      sessionId: activeSession.id,
+      model: selectedModel ?? undefined,
+    });
+  }, [activeSession, selectedModel]);
+
   return (
     <div className="chat-container">
       <ChatHeader
@@ -228,6 +265,10 @@ export function App() {
             onModelSelect={handleModelSelect}
             openEditors={openEditors}
             workspaceFiles={workspaceFiles}
+            inputTokens={inputTokens}
+            contextLimit={contextLimit}
+            onCompress={handleCompress}
+            isCompressing={!!activeSession?.time?.compacting}
           />
         </>
       ) : (

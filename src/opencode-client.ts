@@ -24,6 +24,7 @@ export class OpenCodeConnection {
   private server: { url: string; close(): void } | undefined;
   private sseAbortController: AbortController | undefined;
   private listeners: Set<EventListener> = new Set();
+  public workspaceFolder: string | undefined;
 
   async connect(): Promise<void> {
     // ポート 0 を指定し、OS に空きポートを自動割り当てさせる。
@@ -126,7 +127,10 @@ export class OpenCodeConnection {
     ];
     if (files) {
       for (const file of files) {
-        const absPath = path.resolve(file.filePath);
+        // filePath はワークスペース相対パス。cwd 基準で絶対パスに変換する。
+        const absPath = path.isAbsolute(file.filePath)
+          ? file.filePath
+          : path.resolve(this.workspaceFolder ?? ".", file.filePath);
         parts.push({
           type: "file",
           mime: "text/plain",
@@ -170,6 +174,19 @@ export class OpenCodeConnection {
     await client.postSessionIdPermissionsPermissionId({
       path: { id: sessionId, permissionID: permissionId },
       body: { response },
+    });
+  }
+
+  // --- Summarize API ---
+
+  async summarizeSession(
+    sessionId: string,
+    model?: { providerID: string; modelID: string },
+  ): Promise<void> {
+    const client = this.requireClient();
+    await client.session.summarize({
+      path: { id: sessionId },
+      body: model,
     });
   }
 

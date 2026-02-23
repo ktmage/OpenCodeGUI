@@ -18,6 +18,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const originalCwd = process.cwd();
   process.chdir(workspaceFolder);
   try {
+    connection.workspaceFolder = workspaceFolder;
     await connection.connect();
   } finally {
     process.chdir(originalCwd);

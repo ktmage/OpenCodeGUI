@@ -1,0 +1,117 @@
+import { useState, useRef, useEffect, useCallback } from "react";
+
+type Props = {
+  inputTokens: number;
+  contextLimit: number;
+  onCompress: () => void;
+  isCompressing: boolean;
+};
+
+function formatTokenCount(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
+  return String(n);
+}
+
+export function ContextIndicator({ inputTokens, contextLimit, onCompress, isCompressing }: Props) {
+  const [showPopup, setShowPopup] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // 外部クリックでポップアップを閉じる
+  useEffect(() => {
+    if (!showPopup) return;
+    const handler = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setShowPopup(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showPopup]);
+
+  const handleClick = useCallback(() => {
+    setShowPopup((s) => !s);
+  }, []);
+
+  if (contextLimit <= 0) return null;
+
+  const ratio = Math.min(inputTokens / contextLimit, 1);
+  const percent = Math.round(ratio * 100);
+
+  // 円形プログレスリング (SVG)
+  const size = 22;
+  const strokeWidth = 2.5;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const dashOffset = circumference * (1 - ratio);
+
+  // 使用率に応じた色
+  const color =
+    percent >= 80
+      ? "var(--vscode-editorWarning-foreground)"
+      : "var(--vscode-descriptionForeground)";
+
+  return (
+    <div className="context-indicator-container" ref={containerRef}>
+      <button
+        className="context-indicator-button"
+        onClick={handleClick}
+        title={`Context: ${percent}% used`}
+      >
+        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+          {/* 背景リング */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke="var(--vscode-input-border)"
+            strokeWidth={strokeWidth}
+            opacity={0.4}
+          />
+          {/* プログレスリング */}
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={dashOffset}
+            strokeLinecap="round"
+            transform={`rotate(-90 ${size / 2} ${size / 2})`}
+          />
+        </svg>
+        <span className="context-indicator-percent" style={{ color }}>{percent}%</span>
+      </button>
+
+      {showPopup && (
+        <div className="context-indicator-popup">
+          <div className="context-indicator-popup-title">Context Window Usage</div>
+          <div className="context-indicator-popup-row">
+            <span>Input tokens</span>
+            <span>{formatTokenCount(inputTokens)}</span>
+          </div>
+          <div className="context-indicator-popup-row">
+            <span>Context limit</span>
+            <span>{formatTokenCount(contextLimit)}</span>
+          </div>
+          <div className="context-indicator-popup-bar">
+            <div
+              className="context-indicator-popup-bar-fill"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+          <button
+            className="context-indicator-compress-button"
+            onClick={() => { onCompress(); setShowPopup(false); }}
+            disabled={isCompressing}
+          >
+            {isCompressing ? "Compressing..." : "Compress Conversation"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
