@@ -1,0 +1,95 @@
+export const en = {
+  // ChatHeader
+  "header.sessions": "Sessions",
+  "header.title.fallback": "OpenCode",
+  "header.newChat": "New chat",
+
+  // EmptyState
+  "empty.title": "OpenCode",
+  "empty.description": "Start a new conversation to get started.",
+  "empty.newChat": "New Chat",
+
+  // InputArea
+  "input.addContext": "Add context",
+  "input.searchFiles": "Search files...",
+  "input.noFiles": "No files found",
+  "input.remove": "Remove",
+  "input.placeholder": "Ask OpenCode... (type # to attach files)",
+  "input.openTerminal": "Open in terminal",
+  "input.configureTools": "Configure tools & MCP",
+  "input.stop": "Stop",
+  "input.send": "Send",
+
+  // MessageItem
+  "message.fileFallback": "file",
+  "message.clickToEdit": "Click to edit",
+  "message.cancel": "Cancel",
+  "message.send": "Send",
+  "message.thought": "Thought",
+  "message.thinking": "Thinking…",
+
+  // MessagesArea
+  "checkpoint.revertTitle": "Revert to this point",
+  "checkpoint.retryFromHere": "Retry from here",
+
+  // PermissionView
+  "permission.allow": "Allow",
+  "permission.once": "Once",
+  "permission.deny": "Deny",
+
+  // SessionList
+  "session.noSessions": "No sessions",
+  "session.untitled": "Untitled",
+  "session.delete": "Delete",
+
+  // ToolPartView - category labels
+  "tool.read": "Read",
+  "tool.edit": "Edit",
+  "tool.create": "Create",
+  "tool.run": "Run",
+  "tool.search": "Search",
+  "tool.tool": "Tool",
+  "tool.completed": (done: number, total: number) => `${done}/${total} completed`,
+  "tool.moreLines": (n: number) => `… +${n} more lines`,
+  "tool.addLines": (n: number) => `+${n} lines`,
+  "tool.todos": (done: number, total: number) => `${done}/${total} todos`,
+
+  // ModelSelector
+  "model.selectModel": "Select model",
+  "model.notConnected": "Not connected",
+  "model.connectedOnly": "Connected only",
+  "model.showAll": "Show all providers",
+  "model.hideDisconnected": "Hide disconnected providers",
+
+  // TodoHeader
+  "todo.label": "To Do",
+
+  // ContextIndicator
+  "context.title": (percent: number) => `Context: ${percent}% used`,
+  "context.windowUsage": "Context Window Usage",
+  "context.inputTokens": "Input tokens",
+  "context.contextLimit": "Context limit",
+  "context.compressing": "Compressing...",
+  "context.compress": "Compress Conversation",
+
+  // ToolConfigPanel
+  "config.connected": "Connected",
+  "config.disabled": "Disabled",
+  "config.error": "Error",
+  "config.needsAuth": "Needs Auth",
+  "config.needsRegistration": "Needs Registration",
+  "config.title": "Tools & MCP Servers",
+  "config.mcpServers": "MCP Servers",
+  "config.tools": "Tools",
+  "config.noToolsOrMcp": "No tools or MCP servers available",
+  "config.projectConfig": "Project Config",
+  "config.globalConfig": "Global Config",
+
+  // Language setting
+  "config.language": "Language",
+  "config.langAuto": "Auto (VS Code)",
+  "config.langEn": "English",
+  "config.langJa": "日本語",
+} as const;
+
+export type LocaleKeys = keyof typeof en;

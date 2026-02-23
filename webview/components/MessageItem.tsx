@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import type { Permission, TextPart, ReasoningPart as ReasoningPartType } from "@opencode-ai/sdk";
 import type { MessageWithParts } from "../App";
+import { useLocale } from "../locales";
 import { TextPartView } from "./TextPartView";
 import { ToolPartView } from "./ToolPartView";
 import { PermissionView } from "./PermissionView";
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function MessageItem({ message, activeSessionId, permissions, onEditAndResend }: Props) {
+  const t = useLocale();
   const { info, parts } = message;
   const isUser = info.role === "user";
   const [editing, setEditing] = useState(false);
@@ -97,12 +99,12 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
                 rows={1}
               />
               <div className="message-edit-actions">
-                <button className="message-edit-cancel" onClick={() => setEditing(false)}>Cancel</button>
-                <button className="message-edit-submit" onClick={handleEditSubmit} disabled={!editText.trim()}>Send</button>
+                <button className="message-edit-cancel" onClick={() => setEditing(false)}>{t["message.cancel"]}</button>
+                <button className="message-edit-submit" onClick={handleEditSubmit} disabled={!editText.trim()}>{t["message.send"]}</button>
               </div>
             </div>
           ) : (
-            <div className="message-user-bubble" onClick={handleStartEdit} title="Click to edit">
+            <div className="message-user-bubble" onClick={handleStartEdit} title={t["message.clickToEdit"]}>
               <div className="message-content">{userText}</div>
               <div className="message-edit-icon">
                 <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
@@ -163,7 +165,7 @@ function ReasoningPartView({ part }: { part: ReasoningPartType }) {
             </svg>
           )}
         </span>
-        <span className="reasoning-part-label">{isComplete ? "Thought" : "Thinking…"}</span>
+        <span className="reasoning-part-label">{isComplete ? t["message.thought"] : t["message.thinking"]}</span>
         <span className={`tool-part-chevron ${expanded ? "expanded" : ""}`}>
           <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
             <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />

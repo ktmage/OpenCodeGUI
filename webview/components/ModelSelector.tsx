@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import type { Provider } from "@opencode-ai/sdk";
 import type { AllProvidersData, ProviderInfo, ModelInfo } from "../vscode-api";
+import { useLocale } from "../locales";
 
 type Props = {
   providers: Provider[];
@@ -20,6 +21,7 @@ function statusBadge(status?: string): string | null {
 }
 
 export function ModelSelector({ providers, allProvidersData, selectedModel, onSelect }: Props) {
+  const t = useLocale();
   const [open, setOpen] = useState(false);
   const [collapsedProviders, setCollapsedProviders] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
@@ -80,7 +82,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
   );
 
   const selectedModelName = useMemo(() => {
-    if (!selectedModel) return "Select model";
+    if (!selectedModel) return t["model.selectModel"];
     for (const p of allDisplayProviders) {
       const model = p.models.find((m) => m.id === selectedModel.modelID && p.id === selectedModel.providerID);
       if (model) return model.name || selectedModel.modelID;
@@ -126,7 +128,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                     </span>
                     <span className="model-panel-section-name">{provider.name}</span>
                     {!provider.connected && (
-                      <span className="model-panel-section-badge">Not connected</span>
+                      <span className="model-panel-section-badge">{t["model.notConnected"]}</span>
                     )}
                   </div>
                   {!isCollapsed && provider.models.map((model) => {
@@ -171,7 +173,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
               <button
                 className="model-panel-link"
                 onClick={() => setShowAll((s) => !s)}
-                title={showAll ? "Hide disconnected providers" : "Show all providers"}
+                title={showAll ? t["model.hideDisconnected"] : t["model.showAll"]}
               >
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                   {showAll ? (
@@ -180,7 +182,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                     <path d="M8 3C4.5 3 1.7 5.1 0.5 8c.5 1.2 1.3 2.3 2.3 3.1l1-1c-.7-.6-1.3-1.3-1.7-2.1C3.5 6 5.5 4.5 8 4.5c.8 0 1.6.2 2.3.4l1.1-1.1C10.4 3.3 9.2 3 8 3zm4.9 1.9l-1 1c.7.6 1.3 1.3 1.7 2.1-1.3 2-3.3 3.5-5.8 3.5-.8 0-1.5-.1-2.2-.4l-1.1 1.1c1 .5 2.1.8 3.3.8 3.5 0 6.3-2.1 7.5-5-.6-1.3-1.4-2.4-2.4-3.1zM2.3 1.3L1 2.6l2.5 2.5C2 6.2 1 7 0.5 8c1.2 2.9 4 5 7.5 5 1.1 0 2.2-.2 3.1-.6l2.3 2.3 1.3-1.3L2.3 1.3zM8 11.5c-2.5 0-4.5-1.5-5.8-3.5.5-.9 1.2-1.7 2-2.3l1.5 1.5c-.1.3-.2.5-.2.8a2.5 2.5 0 003.3 2.3l1.1 1.1c-.6.1-1.2.1-1.9.1z" />
                   )}
                 </svg>
-                <span>{showAll ? "Connected only" : "Show all providers"}</span>
+                <span>{showAll ? t["model.connectedOnly"] : t["model.showAll"]}</span>
               </button>
             </div>
           )}

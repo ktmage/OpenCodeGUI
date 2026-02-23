@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useLocale } from "../locales";
 
 type Props = {
   inputTokens: number;
@@ -14,6 +15,7 @@ function formatTokenCount(n: number): string {
 }
 
 export function ContextIndicator({ inputTokens, contextLimit, onCompress, isCompressing }: Props) {
+  const t = useLocale();
   const [showPopup, setShowPopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +58,7 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
       <button
         className="context-indicator-button"
         onClick={handleClick}
-        title={`Context: ${percent}% used`}
+        title={t["context.title"](percent)}
       >
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           {/* 背景リング */}
@@ -88,13 +90,13 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
 
       {showPopup && (
         <div className="context-indicator-popup">
-          <div className="context-indicator-popup-title">Context Window Usage</div>
+          <div className="context-indicator-popup-title">{t["context.windowUsage"]}</div>
           <div className="context-indicator-popup-row">
-            <span>Input tokens</span>
+            <span>{t["context.inputTokens"]}</span>
             <span>{formatTokenCount(inputTokens)}</span>
           </div>
           <div className="context-indicator-popup-row">
-            <span>Context limit</span>
+            <span>{t["context.contextLimit"]}</span>
             <span>{formatTokenCount(contextLimit)}</span>
           </div>
           <div className="context-indicator-popup-bar">
@@ -108,7 +110,7 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
             onClick={() => { onCompress(); setShowPopup(false); }}
             disabled={isCompressing}
           >
-            {isCompressing ? "Compressing..." : "Compress Conversation"}
+            {isCompressing ? t["context.compressing"] : t["context.compress"]}
           </button>
         </div>
       )}

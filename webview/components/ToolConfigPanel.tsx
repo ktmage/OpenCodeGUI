@@ -1,5 +1,7 @@
 import { useEffect, useRef } from "react";
 import type { McpStatus } from "@opencode-ai/sdk";
+import { useLocale } from "../locales";
+import type { LocaleSetting } from "../locales";
 
 type Props = {
   toolIds: string[];
@@ -10,15 +12,17 @@ type Props = {
   onToggleMcp: (name: string, connect: boolean) => void;
   onOpenConfigFile: (filePath: string) => void;
   onClose: () => void;
+  localeSetting: LocaleSetting;
+  onLocaleSettingChange: (setting: LocaleSetting) => void;
 };
 
-function mcpStatusLabel(status: McpStatus): string {
+function mcpStatusLabel(status: McpStatus, t: ReturnType<typeof useLocale>): string {
   switch (status.status) {
-    case "connected": return "Connected";
-    case "disabled": return "Disabled";
-    case "failed": return "Error";
-    case "needs_auth": return "Needs Auth";
-    case "needs_client_registration": return "Needs Registration";
+    case "connected": return t["config.connected"];
+    case "disabled": return t["config.disabled"];
+    case "failed": return t["config.error"];
+    case "needs_auth": return t["config.needsAuth"];
+    case "needs_client_registration": return t["config.needsRegistration"];
   }
 }
 
@@ -32,7 +36,8 @@ function mcpStatusClass(status: McpStatus): string {
   }
 }
 
-export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onToggleTool, onToggleMcp, onOpenConfigFile, onClose }: Props) {
+export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onToggleTool, onToggleMcp, onOpenConfigFile, onClose, localeSetting, onLocaleSettingChange }: Props) {
+  const t = useLocale();
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,7 +75,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
   return (
     <div className="tool-config-panel" ref={panelRef}>
       <div className="tool-config-header">
-        <span className="tool-config-title">Tools & MCP Servers</span>
+        <span className="tool-config-title">{t["config.title"]}</span>
         <button className="tool-config-close" onClick={onClose}>
           <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
             <path d="M8 8.707l3.646 3.647.708-.707L8.707 8l3.647-3.646-.707-.708L8 7.293 4.354 3.646l-.708.708L7.293 8l-3.647 3.646.708.708L8 8.707z" />
@@ -82,7 +87,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
         {/* MCP Servers */}
         {mcpNames.length > 0 && (
           <div className="tool-config-section">
-            <div className="tool-config-section-title">MCP Servers</div>
+            <div className="tool-config-section-title">{t["config.mcpServers"]}</div>
             {mcpNames.map((name) => {
               const status = mcpStatus[name];
               const isConnected = status.status === "connected";
@@ -97,7 +102,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
                     />
                     <span className="tool-config-mcp-name">{name}</span>
                     <span className={`tool-config-mcp-status ${mcpStatusClass(status)}`}>
-                      {mcpStatusLabel(status)}
+                      {mcpStatusLabel(status, t)}
                     </span>
                   </label>
                   {isConnected && tools.length > 0 && (
@@ -126,7 +131,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
         {/* Built-in Tools */}
         {builtinTools.length > 0 && (
           <div className="tool-config-section">
-            <div className="tool-config-section-title">Tools</div>
+            <div className="tool-config-section-title">{t["config.tools"]}</div>
             {builtinTools.map((id) => {
               const enabled = toolSettings[id] !== false;
               return (
@@ -144,8 +149,29 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
         )}
 
         {toolIds.length === 0 && mcpNames.length === 0 && (
-          <div className="tool-config-empty">No tools or MCP servers available</div>
+          <div className="tool-config-empty">{t["config.noToolsOrMcp"]}</div>
         )}
+
+        {/* Language Setting */}
+        <div className="tool-config-section">
+          <div className="tool-config-section-title">{t["config.language"]}</div>
+          <div className="tool-config-locale-options">
+            {(["auto", "en", "ja"] as const).map((opt) => {
+              const label = opt === "auto" ? t["config.langAuto"] : opt === "en" ? t["config.langEn"] : t["config.langJa"];
+              return (
+                <label key={opt} className="tool-config-toggle tool-config-tool-item">
+                  <input
+                    type="radio"
+                    name="locale"
+                    checked={localeSetting === opt}
+                    onChange={() => onLocaleSettingChange(opt)}
+                  />
+                  <span className="tool-config-tool-name">{label}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* 設定ファイルへのリンク */}
@@ -158,7 +184,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
             <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
               <path d="M13.71 4.29l-3-3A1 1 0 0 0 10 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5a1 1 0 0 0-.29-.71zM12 14H4V2h5v3a1 1 0 0 0 1 1h3v8z" />
             </svg>
-            Project Config
+            {t["config.projectConfig"]}
           </button>
           <button
             className="tool-config-link"
@@ -167,7 +193,7 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onTog
             <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
               <path d="M13.71 4.29l-3-3A1 1 0 0 0 10 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5a1 1 0 0 0-.29-.71zM12 14H4V2h5v3a1 1 0 0 0 1 1h3v8z" />
             </svg>
-            Global Config
+            {t["config.globalConfig"]}
           </button>
         </div>
       )}

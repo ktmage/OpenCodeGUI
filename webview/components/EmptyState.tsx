@@ -1,16 +1,19 @@
+import { useLocale } from "../locales";
+
 type Props = {
   onNewSession: () => void;
 };
 
 export function EmptyState({ onNewSession }: Props) {
+  const t = useLocale();
   return (
     <div className="empty-state">
-      <div className="empty-state-title">OpenCode</div>
+      <div className="empty-state-title">{t["empty.title"]}</div>
       <div className="empty-state-description">
-        Start a new conversation to get started.
+        {t["empty.description"]}
       </div>
       <button className="btn" onClick={onNewSession}>
-        New Chat
+        {t["empty.newChat"]}
       </button>
     </div>
   );

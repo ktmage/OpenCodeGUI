@@ -1,4 +1,5 @@
 import type { Session } from "@opencode-ai/sdk";
+import { useLocale } from "../locales";
 
 type Props = {
   sessions: Session[];
@@ -15,6 +16,7 @@ export function SessionList({
   onDelete,
   onClose,
 }: Props) {
+  const t = useLocale();
   return (
     <>
       {/* Backdrop to close session list on outside click */}
@@ -25,7 +27,7 @@ export function SessionList({
       <div className="session-list">
         {sessions.length === 0 ? (
           <div style={{ padding: "12px", fontSize: 12, color: "var(--vscode-descriptionForeground)" }}>
-            No sessions
+            {t["session.noSessions"]}
           </div>
         ) : (
           sessions.map((session) => (
@@ -35,7 +37,7 @@ export function SessionList({
               onClick={() => onSelect(session.id)}
             >
               <span className="session-item-title">
-                {session.title || "Untitled"}
+                {session.title || t["session.untitled"]}
               </span>
               <button
                 className="btn-icon session-item-delete"
@@ -43,7 +45,7 @@ export function SessionList({
                   e.stopPropagation();
                   onDelete(session.id);
                 }}
-                title="Delete"
+                title={t["session.delete"]}
               >
                 {/* Codicon: trash */}
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">

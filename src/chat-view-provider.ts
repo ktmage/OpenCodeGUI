@@ -18,7 +18,8 @@ export type ExtToWebviewMessage =
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
-  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: OpenCodePath };
+  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: OpenCodePath }
+  | { type: "locale"; vscodeLanguage: string };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -91,6 +92,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   private async handleWebviewMessageInner(message: WebviewToExtMessage): Promise<void> {
     switch (message.type) {
       case "ready": {
+        // VS Code の言語設定を送信
+        this.postMessage({ type: "locale", vscodeLanguage: vscode.env.language });
         // Webview の初期化完了時にセッション一覧、現在のセッション、プロバイダー一覧を送信する
         const sessions = await this.connection.listSessions();
         this.postMessage({ type: "sessions", sessions });

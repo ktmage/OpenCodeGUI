@@ -1,4 +1,5 @@
 import type { Session } from "@opencode-ai/sdk";
+import { useLocale } from "../locales";
 
 type Props = {
   activeSession: Session | null;
@@ -7,12 +8,13 @@ type Props = {
 };
 
 export function ChatHeader({ activeSession, onNewSession, onToggleSessionList }: Props) {
+  const t = useLocale();
   return (
     <div className="chat-header">
       <button
         className="btn-icon"
         onClick={onToggleSessionList}
-        title="Sessions"
+        title={t["header.sessions"]}
       >
         {/* Codicon: list-unordered */}
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -20,13 +22,13 @@ export function ChatHeader({ activeSession, onNewSession, onToggleSessionList }:
         </svg>
       </button>
       <span className="chat-header-title">
-        {activeSession?.title || "OpenCode"}
+        {activeSession?.title || t["header.title.fallback"]}
       </span>
       <div className="chat-header-actions">
         <button
           className="btn-icon"
           onClick={onNewSession}
-          title="New chat"
+          title={t["header.newChat"]}
         >
           {/* Codicon: add */}
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">

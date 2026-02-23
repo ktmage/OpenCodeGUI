@@ -10,6 +10,8 @@ import { SessionList } from "./components/SessionList";
 import { TodoHeader } from "./components/TodoHeader";
 import { parseTodos } from "./components/ToolPartView";
 import type { TodoItem } from "./components/ToolPartView";
+import { LocaleProvider, resolveLocale, getStrings } from "./locales";
+import type { LocaleSetting } from "./locales";
 
 export type MessageWithParts = { info: Message; parts: Part[] };
 
@@ -35,6 +37,19 @@ export function App() {
   const [toolSettings, setToolSettings] = useState<Record<string, boolean>>({});
   const [mcpStatus, setMcpStatus] = useState<Record<string, McpStatus>>({});
   const [openCodePaths, setOpenCodePaths] = useState<{ home: string; config: string; state: string; directory: string } | null>(null);
+
+  // ロケール管理
+  const [localeSetting, setLocaleSetting] = useState<LocaleSetting>(
+    () => (getPersistedState()?.localeSetting as LocaleSetting) ?? "auto",
+  );
+  const [vscodeLanguage, setVscodeLanguage] = useState("en");
+  const resolvedLocale = useMemo(() => resolveLocale(localeSetting, vscodeLanguage), [localeSetting, vscodeLanguage]);
+  const strings = useMemo(() => getStrings(resolvedLocale), [resolvedLocale]);
+
+  const handleLocaleSettingChange = useCallback((setting: LocaleSetting) => {
+    setLocaleSetting(setting);
+    setPersistedState({ ...getPersistedState(), localeSetting: setting });
+  }, []);
 
   // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
   const inputTokens = useMemo(() => {
@@ -112,6 +127,9 @@ export function App() {
           setToolSettings(msg.toolSettings);
           setMcpStatus(msg.mcpStatus);
           setOpenCodePaths(msg.paths);
+          break;
+        case "locale":
+          setVscodeLanguage(msg.vscodeLanguage);
           break;
       }
     };
@@ -349,6 +367,7 @@ export function App() {
   }, [messages]);
 
   return (
+    <LocaleProvider value={strings}>
     <div className="chat-container">
       <ChatHeader
         activeSession={activeSession}
@@ -400,11 +419,14 @@ export function App() {
             onOpenConfigFile={handleOpenConfigFile}
             onOpenToolConfig={handleOpenToolConfig}
             onOpenTerminal={handleOpenTerminal}
+            localeSetting={localeSetting}
+            onLocaleSettingChange={handleLocaleSettingChange}
           />
         </>
       ) : (
         <EmptyState onNewSession={handleNewSession} />
       )}
     </div>
+    </LocaleProvider>
   );
 }

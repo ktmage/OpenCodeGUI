@@ -1,11 +1,13 @@
 import { useState } from "react";
 import type { TodoItem } from "./ToolPartView";
+import { useLocale } from "../locales";
 
 type Props = {
   todos: TodoItem[];
 };
 
 export function TodoHeader({ todos }: Props) {
+  const t = useLocale();
   const [expanded, setExpanded] = useState(false);
 
   const completed = todos.filter((t) => t.status === "completed" || t.status === "done").length;
@@ -18,7 +20,7 @@ export function TodoHeader({ todos }: Props) {
           <path d="M3.5 2h9A1.5 1.5 0 0 1 14 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-9A1.5 1.5 0 0 1 3.5 2zm0 1a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-9zM6.5 6L5 7.5 7 9.5l4-4L9.5 4 7 6.5 6.5 6z" />
         </svg>
         <span className="todo-header-label">
-          To Do
+          {t["todo.label"]}
         </span>
         <span className="todo-header-count">{completed}/{total}</span>
         <span className="todo-header-progress">

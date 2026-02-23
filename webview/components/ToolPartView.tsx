@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import type { ToolPart } from "@opencode-ai/sdk";
+import { useLocale } from "../locales";
 
 type Props = {
   part: ToolPart;
@@ -33,13 +34,13 @@ const TOOL_CATEGORIES: Record<string, ToolCategory> = {
   plan_exit: "other",
 };
 
-const CATEGORY_LABELS: Record<ToolCategory, string> = {
-  read: "Read",
-  edit: "Edit",
-  write: "Create",
-  run: "Run",
-  search: "Search",
-  other: "Tool",
+const CATEGORY_LABEL_KEYS: Record<ToolCategory, "tool.read" | "tool.edit" | "tool.create" | "tool.run" | "tool.search" | "tool.tool"> = {
+  read: "tool.read",
+  edit: "tool.edit",
+  write: "tool.create",
+  run: "tool.run",
+  search: "tool.search",
+  other: "tool.tool",
 };
 
 function getCategory(toolName: string): ToolCategory {
@@ -160,13 +161,14 @@ export function parseTodos(raw: unknown): TodoItem[] | null {
 }
 
 function TodoView({ todos }: { todos: TodoItem[] }) {
-  const completed = todos.filter((t) => t.status === "completed" || t.status === "done").length;
+  const t = useLocale();
+  const completed = todos.filter((td) => td.status === "completed" || td.status === "done").length;
   const total = todos.length;
 
   return (
     <div className="tool-todo">
       <div className="tool-todo-summary">
-        {completed}/{total} completed
+        {t["tool.completed"](completed, total)}
       </div>
       <ul className="tool-todo-list">
         {todos.map((todo, i) => {
@@ -215,12 +217,13 @@ function DiffView({ oldStr, newStr }: { oldStr: string; newStr: string }) {
 }
 
 function FileCreateView({ content }: { content: string }) {
+  const t = useLocale();
   const lines = content.split("\n");
-  const displayLines = lines.length > 30 ? [...lines.slice(0, 30), `… +${lines.length - 30} more lines`] : lines;
+  const displayLines = lines.length > 30 ? [...lines.slice(0, 30), t["tool.moreLines"](lines.length - 30)] : lines;
   return (
     <div className="tool-diff">
       <div className="tool-diff-stats">
-        <span className="tool-diff-stat-add">+{lines.length} lines</span>
+        <span className="tool-diff-stat-add">{t["tool.addLines"](lines.length)}</span>
       </div>
       <div className="tool-diff-lines">
         {displayLines.map((line, i) => (
@@ -280,6 +283,7 @@ function ActionIcon({ category }: { category: ToolCategory }) {
 // --- メインコンポーネント ---
 
 export function ToolPartView({ part }: Props) {
+  const t = useLocale();
   const [expanded, setExpanded] = useState(false);
   const { state } = part;
 
@@ -288,7 +292,7 @@ export function ToolPartView({ part }: Props) {
   const isError = state.status === "error";
 
   const category = getCategory(part.tool);
-  const actionLabel = CATEGORY_LABELS[category];
+  const actionLabel = t[CATEGORY_LABEL_KEYS[category]];
   const title = formatTitle(part);
 
   const input = (state.status !== "pending" ? state.input : null) as Record<string, unknown> | null;
@@ -315,8 +319,8 @@ export function ToolPartView({ part }: Props) {
   // タイトル表示: todoツールの場合は件数を正しく表示
   const displayTitle = useMemo(() => {
     if (isTodoTool && todos) {
-      const done = todos.filter((t) => t.status === "completed" || t.status === "done").length;
-      return `${done}/${todos.length} todos`;
+      const done = todos.filter((td) => td.status === "completed" || td.status === "done").length;
+      return t["tool.todos"](done, todos.length);
     }
     return title;
   }, [isTodoTool, todos, title]);

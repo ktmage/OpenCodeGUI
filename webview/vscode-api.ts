@@ -57,7 +57,8 @@ export type ExtToWebviewMessage =
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
-  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: { home: string; config: string; state: string; directory: string } };
+  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: { home: string; config: string; state: string; directory: string } }
+  | { type: "locale"; vscodeLanguage: string };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -90,6 +91,7 @@ interface VsCodeApi {
 
 export interface WebviewPersistedState {
   selectedModel?: { providerID: string; modelID: string } | null;
+  localeSetting?: "auto" | "en" | "ja";
 }
 
 declare function acquireVsCodeApi(): VsCodeApi;
