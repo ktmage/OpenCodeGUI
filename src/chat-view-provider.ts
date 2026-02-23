@@ -39,6 +39,7 @@ export type WebviewToExtMessage =
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "getToolConfig" }
   | { type: "openConfigFile"; filePath: string }
+  | { type: "restartServer" }
   | { type: "openTerminal" }
   | { type: "ready" };
 
@@ -245,6 +246,48 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         }
         const doc = await vscode.workspace.openTextDocument(uri);
         await vscode.window.showTextDocument(doc);
+        break;
+      }
+      case "restartServer": {
+        this.connection.disconnect();
+        await this.connection.connect();
+        // 再接続後にイベントを再購読する
+        this.connection.onEvent((event) => {
+          this.postMessage({ type: "event", event });
+        });
+        // 再接続後の初期データを送信する
+        const rsSessions = await this.connection.listSessions();
+        this.postMessage({ type: "sessions", sessions: rsSessions });
+        if (this.activeSession) {
+          try {
+            const rsSession = await this.connection.getSession(this.activeSession.id);
+            this.activeSession = rsSession;
+            this.postMessage({ type: "activeSession", session: rsSession });
+            const rsMessages = await this.connection.getMessages(rsSession.id);
+            this.postMessage({ type: "messages", sessionId: rsSession.id, messages: rsMessages });
+          } catch {
+            this.activeSession = null;
+            this.postMessage({ type: "activeSession", session: null });
+          }
+        }
+        const [rsProvidersData, rsAllProviders] = await Promise.all([
+          this.connection.getProviders(),
+          this.connection.listAllProviders(),
+        ]);
+        this.postMessage({ type: "providers", providers: rsProvidersData.providers, allProviders: rsAllProviders, default: rsProvidersData.default });
+        const [rsToolIds, rsConfig, rsMcpStatus, rsPaths] = await Promise.all([
+          this.connection.getToolIds(),
+          this.connection.getConfig(),
+          this.connection.getMcpStatus(),
+          this.connection.getPaths(),
+        ]);
+        this.postMessage({
+          type: "toolConfig",
+          toolIds: rsToolIds,
+          toolSettings: rsConfig.tools ?? {},
+          mcpStatus: rsMcpStatus,
+          paths: rsPaths,
+        });
         break;
       }
       case "openTerminal": {

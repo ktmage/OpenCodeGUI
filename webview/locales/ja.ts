@@ -92,6 +92,8 @@ export const ja: typeof en = {
   "config.noToolsOrMcp": "利用可能なツールや MCP サーバーがありません",
   "config.projectConfig": "プロジェクト設定",
   "config.globalConfig": "グローバル設定",
+  "config.restartServer": "サーバーを再起動",
+  "config.restartNotice": "設定の変更を反映するにはサーバーの再起動が必要です。",
 
   "config.close": "閉じる",
 

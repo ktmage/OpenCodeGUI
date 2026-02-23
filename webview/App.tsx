@@ -285,6 +285,10 @@ export function App() {
     postMessage({ type: "openTerminal" });
   }, []);
 
+  const handleRestartServer = useCallback(() => {
+    postMessage({ type: "restartServer" });
+  }, []);
+
   // ユーザーメッセージを編集して再送信する
   const handleEditAndResend = useCallback(
     (messageId: string, text: string) => {
@@ -409,6 +413,7 @@ export function App() {
             onOpenConfigFile={handleOpenConfigFile}
             onOpenToolConfig={handleOpenToolConfig}
             onOpenTerminal={handleOpenTerminal}
+            onRestartServer={handleRestartServer}
             localeSetting={localeSetting}
             onLocaleSettingChange={handleLocaleSettingChange}
           />

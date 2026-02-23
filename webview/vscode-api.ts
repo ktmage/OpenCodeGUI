@@ -78,6 +78,7 @@ export type WebviewToExtMessage =
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "getToolConfig" }
   | { type: "openConfigFile"; filePath: string }
+  | { type: "restartServer" }
   | { type: "openTerminal" }
   | { type: "ready" };
 

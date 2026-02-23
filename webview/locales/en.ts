@@ -90,6 +90,8 @@ export const en = {
   "config.noToolsOrMcp": "No tools or MCP servers available",
   "config.projectConfig": "Project Config",
   "config.globalConfig": "Global Config",
+  "config.restartServer": "Restart Server",
+  "config.restartNotice": "Config changes require a server restart to take effect.",
 
   "config.close": "Close",
 

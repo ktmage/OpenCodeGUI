@@ -32,6 +32,7 @@ type Props = {
   onOpenConfigFile: (filePath: string) => void;
   onOpenToolConfig: () => void;
   onOpenTerminal: () => void;
+  onRestartServer: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
 };
@@ -40,7 +41,7 @@ export function InputArea({
   onSend, onAbort, isBusy, providers, allProvidersData, selectedModel, onModelSelect,
   openEditors, workspaceFiles, inputTokens, contextLimit, onCompress, isCompressing,
   prefillText, onPrefillConsumed,
-  toolIds, toolSettings, mcpStatus, openCodePaths, onOpenConfigFile, onOpenToolConfig, onOpenTerminal,
+  toolIds, toolSettings, mcpStatus, openCodePaths, onOpenConfigFile, onOpenToolConfig, onOpenTerminal, onRestartServer,
   localeSetting, onLocaleSettingChange,
 }: Props) {
   const t = useLocale();
@@ -391,6 +392,7 @@ export function InputArea({
                 mcpStatus={mcpStatus}
                 paths={openCodePaths}
                 onOpenConfigFile={onOpenConfigFile}
+                onRestartServer={onRestartServer}
                 onClose={() => setShowToolConfig(false)}
                 localeSetting={localeSetting}
                 onLocaleSettingChange={onLocaleSettingChange}

@@ -9,6 +9,7 @@ type Props = {
   mcpStatus: Record<string, McpStatus>;
   paths: { home: string; config: string; state: string; directory: string } | null;
   onOpenConfigFile: (filePath: string) => void;
+  onRestartServer: () => void;
   onClose: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
@@ -34,7 +35,7 @@ function mcpStatusClass(status: McpStatus): string {
   }
 }
 
-export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onOpenConfigFile, onClose, localeSetting, onLocaleSettingChange }: Props) {
+export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onOpenConfigFile, onRestartServer, onClose, localeSetting, onLocaleSettingChange }: Props) {
   const t = useLocale();
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -166,6 +167,17 @@ export function ToolConfigPanel({ toolIds, toolSettings, mcpStatus, paths, onOpe
             })}
           </div>
         </div>
+      </div>
+
+      {/* 注意書きとサーバー再起動ボタン */}
+      <div className="tool-config-notice">
+        <span className="tool-config-notice-text">{t["config.restartNotice"]}</span>
+        <button className="tool-config-restart-button" onClick={onRestartServer}>
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M13.451 5.609l-.579-.101.248-.521C12.225 3.1 10.252 2 8.07 2A6.026 6.026 0 0 0 2 7.955a6.1 6.1 0 0 0 6.07 6.044 6.026 6.026 0 0 0 5.83-4.515l.073-.273.962.26-.073.274A7.026 7.026 0 0 1 8.07 15 7.1 7.1 0 0 1 1 7.955 7.026 7.026 0 0 1 8.07 1c2.478 0 4.737 1.258 5.886 3.21l.201.348.293-.052V1h1v5.609h-1z" />
+          </svg>
+          {t["config.restartServer"]}
+        </button>
       </div>
 
       {/* 設定ファイルへのリンク */}

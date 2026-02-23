@@ -1790,6 +1790,41 @@ body {
   flex-shrink: 0;
 }
 
+.tool-config-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid var(--vscode-panel-border);
+  flex-shrink: 0;
+}
+
+.tool-config-notice-text {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  flex: 1;
+}
+
+.tool-config-restart-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 1px solid var(--vscode-button-secondaryBorder, var(--vscode-panel-border));
+  color: var(--vscode-textLink-foreground);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 3px 8px;
+  border-radius: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.tool-config-restart-button:hover {
+  color: var(--vscode-textLink-activeForeground);
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
 .tool-config-link {
   display: inline-flex;
   align-items: center;
