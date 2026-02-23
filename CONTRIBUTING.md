@@ -4,6 +4,9 @@
 
 Thank you for your interest in contributing! Both English and Japanese are welcome in issues and pull requests.
 
+> [!CAUTION]
+> **Disclaimer:** This project is experimental and developed primarily through AI-assisted coding. It is provided "as-is" without warranty of any kind. There may be unconventional implementations or areas requiring improvement. Your insights and contributions toward improving the codebase are sincerely appreciated.
+
 ## Getting Started
 
 ### Prerequisites

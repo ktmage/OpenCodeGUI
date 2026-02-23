@@ -1,4 +1,4 @@
 {
   "displayName": "OpenCodeGUI",
-  "description": "A VS Code chat interface for OpenCode — GitHub Copilot-like UI/UX for OpenCode"
+  "description": "[Experimental] A VS Code chat interface for OpenCode — GitHub Copilot-like UI/UX. This extension is developed primarily through AI-assisted coding and provided as-is without warranty."
 }
