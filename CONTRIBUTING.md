@@ -12,6 +12,8 @@ OpenCodeGUI へのコントリビュートについて
 
 Thank you for your interest in contributing! Both English and Japanese are welcome in issues and pull requests.
 
+This project itself is developed primarily through AI-assisted coding, and we welcome contributions made with AI tools as well. Whether you write code by hand or with the help of AI, all contributions are equally valued. Beginners are also very welcome — don't hesitate to open an issue or submit a PR, even if it's your first time contributing to open source.
+
 > [!CAUTION]
 > **Disclaimer:**
 > This project is experimental and developed primarily through AI-assisted coding. It is provided "as-is" without warranty of any kind. There may be unconventional implementations or areas requiring improvement. Your insights and contributions toward improving the codebase are sincerely appreciated.
@@ -77,6 +79,8 @@ By submitting a pull request, you agree that your contributions are licensed und
 ## 日本語
 
 コントリビュートに興味を持っていただきありがとうございます！Issue や Pull Request は英語・日本語どちらでも構いません。
+
+本プロジェクト自体が主に AI を活用したコーディングで開発されており、AI ツールを使ったコントリビュートも歓迎します。手書きでも AI の助けを借りても、すべてのコントリビュートを同等に評価します。初心者の方も大歓迎です。オープンソースへのコントリビュートが初めてでも、気軽に Issue や PR を出してください。
 
 > [!CAUTION]
 > **免責事項：**
