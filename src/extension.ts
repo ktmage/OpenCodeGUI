@@ -4,6 +4,9 @@ import { ChatViewProvider } from "./chat-view-provider";
 
 const connection = new OpenCodeConnection();
 
+// Extension Host プロセスが強制終了された場合でもサーバーを停止する
+process.on("exit", () => connection.disconnect());
+
 export async function activate(context: vscode.ExtensionContext) {
   await connection.connect();
 

@@ -6,10 +6,11 @@ import {
   type Session,
   type Message,
   type Part,
+  type Provider,
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
-export type { Event, Session, Message, Part };
+export type { Event, Session, Message, Part, Provider };
 
 type EventListener = (event: Event) => void;
 
@@ -24,7 +25,9 @@ export class OpenCodeConnection {
   private listeners: Set<EventListener> = new Set();
 
   async connect(): Promise<void> {
-    const server = await createOpencodeServer();
+    // ポート 0 を指定し、OS に空きポートを自動割り当てさせる。
+    // 固定ポートだと前回のデバッグセッションで残ったプロセスと競合する。
+    const server = await createOpencodeServer({ port: 0 });
     this.server = server;
     this.client = createOpencodeClient({
       baseUrl: server.url,
@@ -110,12 +113,17 @@ export class OpenCodeConnection {
    * 非同期でメッセージを送信する。
    * 応答は SSE イベントストリーム経由で配信される。
    */
-  async sendMessage(sessionId: string, text: string): Promise<void> {
+  async sendMessage(
+    sessionId: string,
+    text: string,
+    model?: { providerID: string; modelID: string },
+  ): Promise<void> {
     const client = this.requireClient();
     await client.session.promptAsync({
       path: { id: sessionId },
       body: {
         parts: [{ type: "text", text }],
+        model,
       },
     });
   }
@@ -125,6 +133,14 @@ export class OpenCodeConnection {
     await client.session.abort({
       path: { id: sessionId },
     });
+  }
+
+  // --- Provider API ---
+
+  async getProviders(): Promise<{ providers: Provider[]; default: Record<string, string> }> {
+    const client = this.requireClient();
+    const response = await client.config.providers();
+    return response.data!;
   }
 
   // --- Permission API ---

@@ -247,8 +247,7 @@ body {
 
 .input-wrapper {
   display: flex;
-  align-items: flex-end;
-  gap: 6px;
+  flex-direction: column;
   background-color: var(--vscode-input-background);
   border: 1px solid var(--vscode-input-border);
   border-radius: 4px;
@@ -407,4 +406,103 @@ body {
 
 .session-item:hover .session-item-delete {
   opacity: 1;
+}
+
+/* --- Input actions row --- */
+
+.input-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 4px;
+}
+
+/* --- Model selector --- */
+
+.model-selector {
+  position: relative;
+}
+
+.model-selector-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  background: none;
+  border: none;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-font-family);
+  font-size: 11px;
+  cursor: pointer;
+  border-radius: 3px;
+}
+
+.model-selector-button:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-foreground);
+}
+
+.model-selector-label {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.model-dropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 4px;
+  min-width: 220px;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--vscode-dropdown-background);
+  border: 1px solid var(--vscode-dropdown-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+}
+
+.model-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.model-dropdown::-webkit-scrollbar-thumb {
+  background-color: var(--vscode-scrollbarSlider-background);
+  border-radius: 3px;
+}
+
+.model-dropdown-group {
+  padding: 6px 10px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-descriptionForeground);
+  text-transform: uppercase;
+}
+
+.model-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--vscode-dropdown-foreground);
+}
+
+.model-dropdown-item:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.model-dropdown-item.active {
+  color: var(--vscode-textLink-foreground);
+}
+
+.model-dropdown-item-check {
+  width: 14px;
+  font-size: 12px;
+  text-align: center;
+  flex-shrink: 0;
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import type { Session, Message, Part, Event, Permission } from "@opencode-ai/sdk";
+import type { Session, Message, Part, Event, Permission, Provider } from "@opencode-ai/sdk";
 import type { ExtToWebviewMessage } from "./vscode-api";
 import { postMessage } from "./vscode-api";
 import { ChatHeader } from "./components/ChatHeader";
@@ -18,6 +18,8 @@ export function App() {
   const [sessionBusy, setSessionBusy] = useState(false);
   // パーミッションリクエストを messageID でグルーピングして管理する
   const [permissions, setPermissions] = useState<Map<string, Permission>>(new Map());
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(null);
 
   useEffect(() => {
     const handler = (e: MessageEvent<ExtToWebviewMessage>) => {
@@ -42,6 +44,23 @@ export function App() {
         case "event":
           handleEvent(msg.event);
           break;
+        case "providers": {
+          setProviders(msg.providers);
+          // 初回のみデフォルトモデルを設定する
+          setSelectedModel((prev) => {
+            if (prev) return prev;
+            const defaultModel = msg.default["general"] || msg.default["code"] || Object.values(msg.default)[0];
+            if (!defaultModel) return null;
+            // default は "providerID/modelID" 形式
+            const slashIndex = defaultModel.indexOf("/");
+            if (slashIndex < 0) return null;
+            return {
+              providerID: defaultModel.slice(0, slashIndex),
+              modelID: defaultModel.slice(slashIndex + 1),
+            };
+          });
+          break;
+        }
       }
     };
     window.addEventListener("message", handler);
@@ -133,9 +152,14 @@ export function App() {
   const handleSend = useCallback(
     (text: string) => {
       if (!activeSession) return;
-      postMessage({ type: "sendMessage", sessionId: activeSession.id, text });
+      postMessage({
+        type: "sendMessage",
+        sessionId: activeSession.id,
+        text,
+        model: selectedModel ?? undefined,
+      });
     },
-    [activeSession],
+    [activeSession, selectedModel],
   );
 
   const handleNewSession = useCallback(() => {
@@ -176,7 +200,14 @@ export function App() {
       {activeSession ? (
         <>
           <MessagesArea messages={messages} sessionBusy={sessionBusy} activeSessionId={activeSession.id} permissions={permissions} />
-          <InputArea onSend={handleSend} onAbort={handleAbort} isBusy={sessionBusy} />
+          <InputArea
+            onSend={handleSend}
+            onAbort={handleAbort}
+            isBusy={sessionBusy}
+            providers={providers}
+            selectedModel={selectedModel}
+            onModelSelect={setSelectedModel}
+          />
         </>
       ) : (
         <EmptyState onNewSession={handleNewSession} />

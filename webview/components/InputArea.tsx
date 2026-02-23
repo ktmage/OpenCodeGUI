@@ -1,12 +1,17 @@
 import { useState, useRef, useCallback, type KeyboardEvent } from "react";
+import type { Provider } from "@opencode-ai/sdk";
+import { ModelSelector } from "./ModelSelector";
 
 type Props = {
   onSend: (text: string) => void;
   onAbort: () => void;
   isBusy: boolean;
+  providers: Provider[];
+  selectedModel: { providerID: string; modelID: string } | null;
+  onModelSelect: (model: { providerID: string; modelID: string }) => void;
 };
 
-export function InputArea({ onSend, onAbort, isBusy }: Props) {
+export function InputArea({ onSend, onAbort, isBusy, providers, selectedModel, onModelSelect }: Props) {
   const [text, setText] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -53,7 +58,13 @@ export function InputArea({ onSend, onAbort, isBusy }: Props) {
           onInput={handleInput}
           rows={1}
         />
-        {isBusy ? (
+        <div className="input-actions">
+          <ModelSelector
+            providers={providers}
+            selectedModel={selectedModel}
+            onSelect={onModelSelect}
+          />
+          {isBusy ? (
           <button className="send-button" onClick={onAbort} title="Stop">
             {/* Codicon: debug-stop */}
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
@@ -73,6 +84,7 @@ export function InputArea({ onSend, onAbort, isBusy }: Props) {
             </svg>
           </button>
         )}
+        </div>
       </div>
     </div>
   );

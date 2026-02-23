@@ -1,16 +1,17 @@
 import * as vscode from "vscode";
-import { OpenCodeConnection, type Event, type Session, type Message, type Part } from "./opencode-client";
+import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider } from "./opencode-client";
 
 // --- Extension Host → Webview ---
 export type ExtToWebviewMessage =
   | { type: "sessions"; sessions: Session[] }
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
-  | { type: "activeSession"; session: Session | null };
+  | { type: "activeSession"; session: Session | null }
+  | { type: "providers"; providers: Provider[]; default: Record<string, string> };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
-  | { type: "sendMessage"; sessionId: string; text: string }
+  | { type: "sendMessage"; sessionId: string; text: string; model?: { providerID: string; modelID: string } }
   | { type: "createSession"; title?: string }
   | { type: "listSessions" }
   | { type: "selectSession"; sessionId: string }
@@ -18,6 +19,7 @@ export type WebviewToExtMessage =
   | { type: "getMessages"; sessionId: string }
   | { type: "replyPermission"; sessionId: string; permissionId: string; response: "once" | "always" | "reject" }
   | { type: "abort"; sessionId: string }
+  | { type: "getProviders" }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -60,14 +62,16 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   private async handleWebviewMessage(message: WebviewToExtMessage): Promise<void> {
     switch (message.type) {
       case "ready": {
-        // Webview の初期化完了時にセッション一覧と現在のセッションを送信する
+        // Webview の初期化完了時にセッション一覧、現在のセッション、プロバイダー一覧を送信する
         const sessions = await this.connection.listSessions();
         this.postMessage({ type: "sessions", sessions });
         this.postMessage({ type: "activeSession", session: this.activeSession });
+        const providersData = await this.connection.getProviders();
+        this.postMessage({ type: "providers", providers: providersData.providers, default: providersData.default });
         break;
       }
       case "sendMessage": {
-        await this.connection.sendMessage(message.sessionId, message.text);
+        await this.connection.sendMessage(message.sessionId, message.text, message.model);
         break;
       }
       case "createSession": {
@@ -116,6 +120,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       }
       case "abort": {
         await this.connection.abortSession(message.sessionId);
+        break;
+      }
+      case "getProviders": {
+        const providersData = await this.connection.getProviders();
+        this.postMessage({ type: "providers", providers: providersData.providers, default: providersData.default });
         break;
       }
     }
