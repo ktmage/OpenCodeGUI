@@ -27,13 +27,24 @@ export function MessageItem({ message, activeSessionId, permissions }: Props) {
         .join("")
     : null;
 
+  // ユーザーメッセージに添付されたファイルパートを取得する
+  const userFiles = isUser
+    ? parts.filter((p) => p.type === "file").map((p) => (p as { filename?: string; url: string }).filename ?? (p as { url: string }).url)
+    : [];
+
   return (
-    <div className="message">
-      <div className={`message-role ${isUser ? "user" : ""}`}>
-        {isUser ? "You" : "OpenCode"}
-      </div>
+    <div className={`message ${isUser ? "message-user" : "message-assistant"}`}>
       {isUser ? (
-        <div className="message-content">{userText}</div>
+        <div className="message-user-bubble">
+          {userFiles.length > 0 && (
+            <div className="message-user-files">
+              {userFiles.map((name, i) => (
+                <span key={i} className="message-user-file-chip">{name}</span>
+              ))}
+            </div>
+          )}
+          <div className="message-content">{userText}</div>
+        </div>
       ) : (
         <div className="message-content">
           {parts.map((part) => {

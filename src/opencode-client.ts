@@ -1,3 +1,4 @@
+import * as path from "path";
 import {
   createOpencodeClient,
   createOpencodeServer,
@@ -117,12 +118,27 @@ export class OpenCodeConnection {
     sessionId: string,
     text: string,
     model?: { providerID: string; modelID: string },
+    files?: Array<{ filePath: string; fileName: string }>,
   ): Promise<void> {
     const client = this.requireClient();
+    const parts: Array<{ type: "text"; text: string } | { type: "file"; mime: string; url: string; filename: string }> = [
+      { type: "text", text },
+    ];
+    if (files) {
+      for (const file of files) {
+        const absPath = path.resolve(file.filePath);
+        parts.push({
+          type: "file",
+          mime: "text/plain",
+          url: `file://${absPath}`,
+          filename: file.fileName,
+        });
+      }
+    }
     await client.session.promptAsync({
       path: { id: sessionId },
       body: {
-        parts: [{ type: "text", text }],
+        parts,
         model,
       },
     });

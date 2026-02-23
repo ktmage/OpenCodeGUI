@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Session, Message, Part, Event, Permission, Provider } from "@opencode-ai/sdk";
-import type { ExtToWebviewMessage } from "./vscode-api";
+import type { ExtToWebviewMessage, FileAttachment } from "./vscode-api";
 import { postMessage, getPersistedState, setPersistedState } from "./vscode-api";
 import { ChatHeader } from "./components/ChatHeader";
 import { MessagesArea } from "./components/MessagesArea";
@@ -22,6 +22,8 @@ export function App() {
   const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(
     () => getPersistedState()?.selectedModel ?? null,
   );
+  const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
+  const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
 
   useEffect(() => {
     const handler = (e: MessageEvent<ExtToWebviewMessage>) => {
@@ -65,10 +67,17 @@ export function App() {
           });
           break;
         }
+        case "openEditors":
+          setOpenEditors(msg.files);
+          break;
+        case "workspaceFiles":
+          setWorkspaceFiles(msg.files);
+          break;
       }
     };
     window.addEventListener("message", handler);
     postMessage({ type: "ready" });
+    postMessage({ type: "getOpenEditors" });
     return () => window.removeEventListener("message", handler);
   }, [activeSession?.id]);
 
@@ -154,13 +163,14 @@ export function App() {
   );
 
   const handleSend = useCallback(
-    (text: string) => {
+    (text: string, files: FileAttachment[]) => {
       if (!activeSession) return;
       postMessage({
         type: "sendMessage",
         sessionId: activeSession.id,
         text,
         model: selectedModel ?? undefined,
+        files: files.length > 0 ? files : undefined,
       });
     },
     [activeSession, selectedModel],
@@ -216,6 +226,8 @@ export function App() {
             providers={providers}
             selectedModel={selectedModel}
             onModelSelect={handleModelSelect}
+            openEditors={openEditors}
+            workspaceFiles={workspaceFiles}
           />
         </>
       ) : (

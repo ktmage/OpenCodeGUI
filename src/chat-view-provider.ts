@@ -1,5 +1,12 @@
 import * as vscode from "vscode";
 import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider } from "./opencode-client";
+import * as path from "path";
+
+// --- File attachment ---
+type FileAttachment = {
+  filePath: string;
+  fileName: string;
+};
 
 // --- Extension Host → Webview ---
 export type ExtToWebviewMessage =
@@ -7,11 +14,13 @@ export type ExtToWebviewMessage =
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; default: Record<string, string> };
+  | { type: "providers"; providers: Provider[]; default: Record<string, string> }
+  | { type: "openEditors"; files: FileAttachment[] }
+  | { type: "workspaceFiles"; files: FileAttachment[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
-  | { type: "sendMessage"; sessionId: string; text: string; model?: { providerID: string; modelID: string } }
+  | { type: "sendMessage"; sessionId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "createSession"; title?: string }
   | { type: "listSessions" }
   | { type: "selectSession"; sessionId: string }
@@ -20,6 +29,8 @@ export type WebviewToExtMessage =
   | { type: "replyPermission"; sessionId: string; permissionId: string; response: "once" | "always" | "reject" }
   | { type: "abort"; sessionId: string }
   | { type: "getProviders" }
+  | { type: "getOpenEditors" }
+  | { type: "searchWorkspaceFiles"; query: string }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -60,6 +71,14 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
   }
 
   private async handleWebviewMessage(message: WebviewToExtMessage): Promise<void> {
+    try {
+      await this.handleWebviewMessageInner(message);
+    } catch (err) {
+      console.error(`[OpenCode] Error handling message '${message.type}':`, err);
+    }
+  }
+
+  private async handleWebviewMessageInner(message: WebviewToExtMessage): Promise<void> {
     switch (message.type) {
       case "ready": {
         // Webview の初期化完了時にセッション一覧、現在のセッション、プロバイダー一覧を送信する
@@ -71,7 +90,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         break;
       }
       case "sendMessage": {
-        await this.connection.sendMessage(message.sessionId, message.text, message.model);
+        await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files);
         break;
       }
       case "createSession": {
@@ -125,6 +144,36 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       case "getProviders": {
         const providersData = await this.connection.getProviders();
         this.postMessage({ type: "providers", providers: providersData.providers, default: providersData.default });
+        break;
+      }
+      case "getOpenEditors": {
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
+        const files: FileAttachment[] = vscode.window.tabGroups.all
+          .flatMap((group) => group.tabs)
+          .filter((tab) => tab.input instanceof vscode.TabInputText)
+          .map((tab) => {
+            const uri = (tab.input as vscode.TabInputText).uri;
+            const relativePath = workspaceFolder
+              ? path.relative(workspaceFolder.fsPath, uri.fsPath)
+              : path.basename(uri.fsPath);
+            return { filePath: relativePath, fileName: path.basename(uri.fsPath) };
+          })
+          // 重複除去
+          .filter((f, i, arr) => arr.findIndex((a) => a.filePath === f.filePath) === i);
+        this.postMessage({ type: "openEditors", files });
+        break;
+      }
+      case "searchWorkspaceFiles": {
+        const pattern = message.query ? `**/*${message.query}*` : "**/*";
+        const uris = await vscode.workspace.findFiles(pattern, "**/node_modules/**", 20);
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
+        const files: FileAttachment[] = uris.map((uri) => {
+          const relativePath = workspaceFolder
+            ? path.relative(workspaceFolder.fsPath, uri.fsPath)
+            : path.basename(uri.fsPath);
+          return { filePath: relativePath, fileName: path.basename(uri.fsPath) };
+        });
+        this.postMessage({ type: "workspaceFiles", files });
         break;
       }
     }

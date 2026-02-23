@@ -5,17 +5,25 @@
 
 import type { Event, Session, Message, Part, Provider } from "@opencode-ai/sdk";
 
+// --- File attachment ---
+export type FileAttachment = {
+  filePath: string;   // ワークスペース相対パス
+  fileName: string;   // 表示名
+};
+
 // --- Extension Host → Webview ---
 export type ExtToWebviewMessage =
   | { type: "sessions"; sessions: Session[] }
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; default: Record<string, string> };
+  | { type: "providers"; providers: Provider[]; default: Record<string, string> }
+  | { type: "openEditors"; files: FileAttachment[] }
+  | { type: "workspaceFiles"; files: FileAttachment[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
-  | { type: "sendMessage"; sessionId: string; text: string; model?: { providerID: string; modelID: string } }
+  | { type: "sendMessage"; sessionId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "createSession"; title?: string }
   | { type: "listSessions" }
   | { type: "selectSession"; sessionId: string }
@@ -24,6 +32,8 @@ export type WebviewToExtMessage =
   | { type: "replyPermission"; sessionId: string; permissionId: string; response: "once" | "always" | "reject" }
   | { type: "abort"; sessionId: string }
   | { type: "getProviders" }
+  | { type: "getOpenEditors" }
+  | { type: "searchWorkspaceFiles"; query: string }
   | { type: "ready" };
 
 interface VsCodeApi {
