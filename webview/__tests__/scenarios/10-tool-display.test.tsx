@@ -18,7 +18,9 @@ async function setupWithToolPart(toolPart: unknown) {
   });
 }
 
+// 10 Tool display
 describe("10 ツール表示", () => {
+  // "read" category tool shows "Read" label
   it("read カテゴリのツールに Read ラベルが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -33,6 +35,7 @@ describe("10 ツール表示", () => {
     expect(screen.getByText("src/main.ts")).toBeInTheDocument();
   });
 
+  // "edit" category tool shows diff view when expanded
   it("edit カテゴリのツールで差分ビューが展開時に表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -63,6 +66,7 @@ describe("10 ツール表示", () => {
     expect(diffLines.length).toBeGreaterThan(0);
   });
 
+  // "write" category tool shows file creation view
   it("write カテゴリのツールでファイル作成ビューが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -91,6 +95,7 @@ describe("10 ツール表示", () => {
     expect(addLines.length).toBeGreaterThan(0);
   });
 
+  // "run" category tool (bash) shows command
   it("run カテゴリのツール（bash）にコマンド表示", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -110,6 +115,7 @@ describe("10 ツール表示", () => {
     expect(screen.getByText("npm test")).toBeInTheDocument();
   });
 
+  // "search" category tool shows "Search" label
   it("search カテゴリのツールに Search ラベルが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -128,6 +134,7 @@ describe("10 ツール表示", () => {
     expect(screen.getByText("Search")).toBeInTheDocument();
   });
 
+  // Error state tool shows error message
   it("エラー状態のツールにエラーメッセージが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -150,6 +157,7 @@ describe("10 ツール表示", () => {
     expect(screen.getByText("Build failed: syntax error")).toBeInTheDocument();
   });
 
+  // Expand/collapse toggles details
   it("展開・折りたたみが切り替わる", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -180,6 +188,7 @@ describe("10 ツール表示", () => {
     expect(screen.queryByText("file content here")).not.toBeInTheDocument();
   });
 
+  // Running state shows spinner
   it("running 状態ではスピナーが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -199,6 +208,7 @@ describe("10 ツール表示", () => {
     expect(spinner).toBeTruthy();
   });
 
+  // "other" category tool shows "Tool" label
   it("other カテゴリのツールに Tool ラベルが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -217,6 +227,7 @@ describe("10 ツール表示", () => {
     expect(screen.getByText("Tool")).toBeInTheDocument();
   });
 
+  // MCP tool name resolves to correct category
   it("MCP ツール名がカテゴリに正しく解決される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -236,6 +247,7 @@ describe("10 ツール表示", () => {
     expect(screen.getByText("Read")).toBeInTheDocument();
   });
 
+  // Pending state shows spinner
   it("pending 状態でスピナーが表示される", async () => {
     await setupWithToolPart({
       id: "tp1",
@@ -252,6 +264,7 @@ describe("10 ツール表示", () => {
     expect(spinner).toBeTruthy();
   });
 
+  // todowrite tool shows TodoView with count label when expanded
   it("todowrite ツール展開時に TodoView が件数ラベル付きで表示される", async () => {
     const todos = [
       { content: "Task 1", status: "completed" },

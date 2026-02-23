@@ -26,7 +26,9 @@ async function setupWithReasoningPart(partOverrides: Record<string, unknown> = {
   });
 }
 
+// 12 Reasoning display (ReasoningPartView)
 describe("12 思考表示（ReasoningPartView）", () => {
+  // In-progress reasoning part shows spinner and "Thinking..."
   it("進行中のリーズニングパートでスピナーと「Thinking…」が表示される", async () => {
     // time.end が undefined → 進行中
     await setupWithReasoningPart({ time: { created: Date.now() } });
@@ -39,6 +41,7 @@ describe("12 思考表示（ReasoningPartView）", () => {
     expect(part!.querySelector(".tool-part-spinner")).toBeInTheDocument();
   });
 
+  // Completed reasoning part shows "Thought"
   it("完了したリーズニングパートで「Thought」が表示される", async () => {
     await setupWithReasoningPart({ time: { created: Date.now(), end: Date.now() } });
 
@@ -49,6 +52,7 @@ describe("12 思考表示（ReasoningPartView）", () => {
     expect(part!.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
   });
 
+  // Clicking header expands/collapses thought content
   it("ヘッダクリックで思考内容が展開・折りたたみされる", async () => {
     await setupWithReasoningPart({
       text: "Step 1: analyze the problem",

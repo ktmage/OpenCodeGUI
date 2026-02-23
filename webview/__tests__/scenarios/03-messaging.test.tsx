@@ -14,7 +14,9 @@ async function setupActiveSession() {
   return session;
 }
 
+// 03 Messaging
 describe("03 メッセージング", () => {
+  // Text input + Enter sends sendMessage
   it("テキスト入力 + Enter で sendMessage が送信される", async () => {
     const session = await setupActiveSession();
     const user = userEvent.setup();
@@ -31,6 +33,7 @@ describe("03 メッセージング", () => {
     );
   });
 
+  // Empty text + Enter does not send
   it("空テキスト + Enter では送信されない", async () => {
     await setupActiveSession();
     const user = userEvent.setup();
@@ -43,6 +46,7 @@ describe("03 メッセージング", () => {
     );
   });
 
+  // Received messages are displayed
   it("messages 受信でメッセージが表示される", async () => {
     await setupActiveSession();
 
@@ -64,6 +68,7 @@ describe("03 メッセージング", () => {
     expect(screen.getByText("Assistant answer")).toBeInTheDocument();
   });
 
+  // message.updated event appends a new message
   it("message.updated イベントで新しいメッセージが追加される", async () => {
     await setupActiveSession();
 
@@ -93,6 +98,7 @@ describe("03 メッセージング", () => {
     expect(screen.getByText("New response")).toBeInTheDocument();
   });
 
+  // session.status busy shows StreamingIndicator and stop button
   it("session.status busy で StreamingIndicator と停止ボタンが表示される", async () => {
     await setupActiveSession();
 
@@ -109,6 +115,7 @@ describe("03 メッセージング", () => {
     expect(screen.getByTitle("Stop")).toBeInTheDocument();
   });
 
+  // session.status idle restores send button
   it("session.status idle で送信ボタンに戻る", async () => {
     await setupActiveSession();
 
@@ -129,6 +136,7 @@ describe("03 メッセージング", () => {
     expect(screen.queryByTitle("Stop")).not.toBeInTheDocument();
   });
 
+  // Clicking stop button sends abort
   it("停止ボタン押下で abort が送信される", async () => {
     const session = await setupActiveSession();
 
@@ -146,6 +154,7 @@ describe("03 メッセージング", () => {
     });
   });
 
+  // message.removed event deletes the message
   it("message.removed イベントでメッセージが削除される", async () => {
     await setupActiveSession();
 
@@ -174,6 +183,7 @@ describe("03 メッセージング", () => {
     expect(screen.getByText("Keep this")).toBeInTheDocument();
   });
 
+  // Messages from a different session are ignored
   it("別セッションの messages は無視される", async () => {
     await setupActiveSession();
 
@@ -201,6 +211,7 @@ describe("03 メッセージング", () => {
     expect(screen.queryByText("Other session message")).not.toBeInTheDocument();
   });
 
+  // message.part.updated with non-existent messageID is ignored
   it("message.part.updated で存在しない messageID のパートは無視される", async () => {
     await setupActiveSession();
 
@@ -224,6 +235,7 @@ describe("03 メッセージング", () => {
     expect(screen.queryByText("Orphan")).not.toBeInTheDocument();
   });
 
+  // sendMessage includes selectedModel
   it("sendMessage に selectedModel が含まれる", async () => {
     renderApp();
 

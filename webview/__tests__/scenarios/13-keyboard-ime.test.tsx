@@ -23,7 +23,9 @@ async function setupInputReady() {
   await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
 }
 
+// 13 Keyboard and IME handling
 describe("13 キーボード・IME ハンドリング", () => {
+  // Enter during IME composition does not send
   it("IME 変換中に Enter を押しても送信されない", async () => {
     await setupInputReady();
 
@@ -48,6 +50,7 @@ describe("13 キーボード・IME ハンドリング", () => {
     expect(sendCalls).toHaveLength(0);
   });
 
+  // Shift+Enter inserts newline without sending
   it("Shift+Enter で送信されず改行が入力される", async () => {
     await setupInputReady();
 
@@ -67,6 +70,7 @@ describe("13 キーボード・IME ハンドリング", () => {
     expect(textarea).toHaveValue("line1\nline2");
   });
 
+  // Enter does not send while isBusy
   it("isBusy 状態で Enter を押しても送信されない", async () => {
     await setupInputReady();
 

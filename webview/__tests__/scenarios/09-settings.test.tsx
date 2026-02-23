@@ -25,7 +25,9 @@ async function setupForSettings() {
   vi.mocked(postMessage).mockClear();
 }
 
+// 09 Settings
 describe("09 設定", () => {
+  // Settings button opens/closes ToolConfigPanel
   it("設定ボタンで ToolConfigPanel が開閉する", async () => {
     await setupForSettings();
     const user = userEvent.setup();
@@ -37,6 +39,7 @@ describe("09 設定", () => {
     expect(screen.getByText("Settings")).toBeInTheDocument();
   });
 
+  // Changing locale updates persisted state
   it("ロケール変更で persisted state が更新される", async () => {
     await setupForSettings();
     const user = userEvent.setup();
@@ -52,6 +55,7 @@ describe("09 設定", () => {
     );
   });
 
+  // Config file link sends openConfigFile
   it("設定ファイルリンクで openConfigFile が送信される", async () => {
     await setupForSettings();
     const user = userEvent.setup();
@@ -67,6 +71,7 @@ describe("09 設定", () => {
     });
   });
 
+  // Project config file link sends openConfigFile
   it("プロジェクト設定ファイルリンクで openConfigFile が送信される", async () => {
     await setupForSettings();
     const user = userEvent.setup();
@@ -81,6 +86,7 @@ describe("09 設定", () => {
     });
   });
 
+  // Terminal button sends openTerminal
   it("ターミナルボタンで openTerminal が送信される", async () => {
     await setupForSettings();
     const user = userEvent.setup();
@@ -90,6 +96,7 @@ describe("09 設定", () => {
     expect(postMessage).toHaveBeenCalledWith({ type: "openTerminal" });
   });
 
+  // Switching locale to Japanese updates UI text
   it("ロケールを日本語に変えるとUIが日本語になる", async () => {
     await setupForSettings();
     const user = userEvent.setup();
@@ -102,6 +109,7 @@ describe("09 設定", () => {
     expect(screen.getByTitle("新しいチャット")).toBeInTheDocument();
   });
 
+  // toolConfig message sets paths and shows config links in the panel
   it("toolConfig メッセージで paths が設定され設定パネルにリンクが表示される", async () => {
     renderApp();
     const session = createSession({ id: "s1" });

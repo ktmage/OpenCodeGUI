@@ -14,7 +14,9 @@ async function setupWithSessions(sessions: ReturnType<typeof createSession>[]) {
   await sendExtMessage({ type: "sessions", sessions });
 }
 
+// 02 Session lifecycle
 describe("02 セッションライフサイクル", () => {
+  // Shows EmptyState when there are no sessions
   it("セッションなし → EmptyState が表示される", () => {
     renderApp();
 
@@ -22,6 +24,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByText("New Chat")).toBeInTheDocument();
   });
 
+  // New Chat button in EmptyState sends createSession
   it("EmptyState の New Chat ボタンで createSession が送信される", async () => {
     renderApp();
     const user = userEvent.setup();
@@ -31,6 +34,7 @@ describe("02 セッションライフサイクル", () => {
     expect(postMessage).toHaveBeenCalledWith({ type: "createSession" });
   });
 
+  // activeSession message shows InputArea
   it("activeSession メッセージで InputArea が表示される", async () => {
     renderApp();
 
@@ -39,6 +43,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)")).toBeInTheDocument();
   });
 
+  // Automatically sends getMessages on activeSession
   it("activeSession 受信時に getMessages が自動送信される", async () => {
     renderApp();
     vi.mocked(postMessage).mockClear();
@@ -49,6 +54,7 @@ describe("02 セッションライフサイクル", () => {
     expect(postMessage).toHaveBeenCalledWith({ type: "getMessages", sessionId: session.id });
   });
 
+  // Displays session title in the header
   it("ヘッダーにセッションタイトルが表示される", async () => {
     renderApp();
 
@@ -57,6 +63,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByText("My Conversation")).toBeInTheDocument();
   });
 
+  // Opens and closes session list
   it("セッションリストの開閉", async () => {
     const sessions = [createSession({ title: "Session A" }), createSession({ title: "Session B" })];
     await setupWithSessions(sessions);
@@ -76,6 +83,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.queryByText("Session A")).not.toBeInTheDocument();
   });
 
+  // Selecting a session sends selectSession and closes the list
   it("セッション選択で selectSession が送信されリストが閉じる", async () => {
     const session = createSession({ title: "Target Session" });
     await setupWithSessions([session]);
@@ -91,6 +99,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.queryByText("Target Session")).not.toBeInTheDocument();
   });
 
+  // Deleting a session sends deleteSession
   it("セッション削除で deleteSession が送信される", async () => {
     const session = createSession({ title: "To Delete" });
     await setupWithSessions([session]);
@@ -104,6 +113,7 @@ describe("02 セッションライフサイクル", () => {
     expect(postMessage).toHaveBeenCalledWith({ type: "deleteSession", sessionId: session.id });
   });
 
+  // session.created event adds a new session
   it("session.created イベントでセッションが追加される", async () => {
     renderApp();
 
@@ -123,6 +133,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByText("Existing")).toBeInTheDocument();
   });
 
+  // session.deleted event removes the session
   it("session.deleted イベントでセッションが削除される", async () => {
     const session = createSession({ title: "Will Be Deleted" });
     await setupWithSessions([session]);
@@ -139,6 +150,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByText("No sessions")).toBeInTheDocument();
   });
 
+  // session.updated event updates the title
   it("session.updated イベントでタイトルが更新される", async () => {
     const session = createSession({ title: "Original Title" });
     renderApp();
@@ -155,6 +167,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByText("Updated Title")).toBeInTheDocument();
   });
 
+  // Setting activeSession to null returns to EmptyState and clears messages
   it("activeSession を null にすると EmptyState に戻り messages がクリアされる", async () => {
     renderApp();
     const session = createSession({ id: "s1", title: "Active" });
@@ -178,6 +191,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.queryByText("Some response")).not.toBeInTheDocument();
   });
 
+  // session.updated updates title in both header and session list
   it("session.updated でアクティブセッションのタイトルがヘッダーとセッション一覧の両方で更新される", async () => {
     const session = createSession({ id: "s1", title: "Before Update" });
     renderApp();
@@ -202,6 +216,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getAllByText("After Update").length).toBeGreaterThanOrEqual(1);
   });
 
+  // Shows "No sessions" when session list is empty
   it("セッション一覧の空状態で No sessions が表示される", async () => {
     await setupWithSessions([]);
 
@@ -211,6 +226,7 @@ describe("02 セッションライフサイクル", () => {
     expect(screen.getByText("No sessions")).toBeInTheDocument();
   });
 
+  // Displays session summary (files/additions/deletions)
   it("セッションのサマリー（files/additions/deletions）が表示される", async () => {
     const session = createSession({
       title: "With Summary",

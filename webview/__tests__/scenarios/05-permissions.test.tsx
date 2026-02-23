@@ -24,7 +24,9 @@ async function setupWithPermission() {
   return session;
 }
 
+// 05 Permissions
 describe("05 パーミッション", () => {
+  // permission.updated event shows PermissionView
   it("permission.updated イベントで PermissionView が表示される", async () => {
     await setupWithPermission();
 
@@ -47,6 +49,7 @@ describe("05 パーミッション", () => {
     expect(screen.getByText("Deny")).toBeInTheDocument();
   });
 
+  // Allow button sends replyPermission with "always"
   it("Allow ボタンで replyPermission に always が送信される", async () => {
     const session = await setupWithPermission();
     const user = userEvent.setup();
@@ -69,6 +72,7 @@ describe("05 パーミッション", () => {
     });
   });
 
+  // Once button sends replyPermission with "once"
   it("Once ボタンで replyPermission に once が送信される", async () => {
     const session = await setupWithPermission();
     const user = userEvent.setup();
@@ -91,6 +95,7 @@ describe("05 パーミッション", () => {
     });
   });
 
+  // Deny button sends replyPermission with "reject"
   it("Deny ボタンで replyPermission に reject が送信される", async () => {
     const session = await setupWithPermission();
     const user = userEvent.setup();
@@ -113,6 +118,7 @@ describe("05 パーミッション", () => {
     });
   });
 
+  // permission.replied event hides PermissionView
   it("permission.replied イベントで PermissionView が非表示になる", async () => {
     await setupWithPermission();
 

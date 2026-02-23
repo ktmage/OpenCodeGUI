@@ -60,7 +60,9 @@ async function setupWithTokenUsage() {
   return session;
 }
 
+// 08 Context and compression
 describe("08 コンテキストとコンプレッション", () => {
+  // ContextIndicator is shown based on token usage
   it("トークン使用量に応じて ContextIndicator が表示される", async () => {
     await setupWithTokenUsage();
 
@@ -69,6 +71,7 @@ describe("08 コンテキストとコンプレッション", () => {
     expect(button).toBeInTheDocument();
   });
 
+  // Compress button sends compressSession
   it("圧縮ボタンで compressSession が送信される", async () => {
     const session = await setupWithTokenUsage();
     const user = userEvent.setup();
@@ -87,6 +90,7 @@ describe("08 コンテキストとコンプレッション", () => {
     );
   });
 
+  // Token usage is recalculated after message.removed
   it("message.removed 後にトークン使用量が再計算される", async () => {
     await setupWithTokenUsage();
 
@@ -104,6 +108,7 @@ describe("08 コンテキストとコンプレッション", () => {
     expect(screen.queryByTitle("Context: 40% used")).not.toBeInTheDocument();
   });
 
+  // ContextIndicator is hidden when inputTokens is 0
   it("inputTokens が 0 の場合 ContextIndicator が表示されない", async () => {
     renderApp();
 
@@ -127,6 +132,7 @@ describe("08 コンテキストとコンプレッション", () => {
     expect(button).toBeFalsy();
   });
 
+  // Warning color is applied at 80%+ usage
   it("使用率 80% 以上で警告色になる", async () => {
     renderApp();
 
@@ -167,6 +173,7 @@ describe("08 コンテキストとコンプレッション", () => {
     expect(screen.getByTitle("Context: 85% used")).toBeInTheDocument();
   });
 
+  // Popup shows token details
   it("ポップアップでトークン詳細が表示される", async () => {
     const session = await setupWithTokenUsage();
     const user = userEvent.setup();
@@ -179,6 +186,7 @@ describe("08 コンテキストとコンプレッション", () => {
     expect(screen.getByText("Context limit")).toBeInTheDocument();
   });
 
+  // Compressing state shows "Compressing..." text and disabled button
   it("圧縮中は Compressing テキストとボタン disabled", async () => {
     renderApp();
 

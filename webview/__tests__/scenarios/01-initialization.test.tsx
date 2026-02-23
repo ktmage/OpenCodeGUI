@@ -4,7 +4,9 @@ import { postMessage } from "../../vscode-api";
 import { renderApp, sendExtMessage } from "../helpers";
 import { createSession, createProvider, createAllProvidersData } from "../factories";
 
+// 01 Initialization
 describe("01 初期化", () => {
+  // Sends ready and getOpenEditors on mount
   it("マウント時に ready と getOpenEditors を送信する", () => {
     renderApp();
 
@@ -12,6 +14,7 @@ describe("01 初期化", () => {
     expect(postMessage).toHaveBeenCalledWith({ type: "getOpenEditors" });
   });
 
+  // Receives session list via sessions message
   it("sessions メッセージでセッションリストが受信される", async () => {
     renderApp();
 
@@ -29,6 +32,7 @@ describe("01 初期化", () => {
     expect(screen.getByText("Another")).toBeInTheDocument();
   });
 
+  // Selects model from configModel via providers message
   it("providers メッセージで configModel からモデルが選択される", async () => {
     renderApp();
 
@@ -52,6 +56,7 @@ describe("01 初期化", () => {
     expect(screen.getByText("Claude 4 Opus")).toBeInTheDocument();
   });
 
+  // Falls back to default when configModel is absent
   it("configModel なしの場合 default でフォールバックする", async () => {
     renderApp();
 
@@ -73,6 +78,7 @@ describe("01 初期化", () => {
     expect(screen.getByText("GPT-5")).toBeInTheDocument();
   });
 
+  // Switches to Japanese via locale message
   it("locale メッセージで日本語に切り替わる", async () => {
     renderApp();
 

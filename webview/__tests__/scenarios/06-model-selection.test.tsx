@@ -51,13 +51,16 @@ async function setupWithProviders() {
   vi.mocked(postMessage).mockClear();
 }
 
+// 06 Model selection
 describe("06 モデル選択", () => {
+  // Selected model name is shown on the button
   it("選択中のモデル名がボタンに表示される", async () => {
     await setupWithProviders();
 
     expect(screen.getByText("Claude 4 Opus")).toBeInTheDocument();
   });
 
+  // Clicking opens the model panel
   it("クリックでモデルパネルが開く", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
@@ -68,6 +71,7 @@ describe("06 モデル選択", () => {
     expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
   });
 
+  // Selecting a model sends setModel
   it("モデル選択で setModel が送信される", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
@@ -81,6 +85,7 @@ describe("06 モデル選択", () => {
     });
   });
 
+  // modelUpdated message updates the selected model
   it("modelUpdated 受信で選択モデルが更新される", async () => {
     await setupWithProviders();
 
@@ -94,6 +99,7 @@ describe("06 モデル選択", () => {
     expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
   });
 
+  // Disconnected providers show "Not connected" badge
   it("未接続プロバイダーは Not connected バッジが表示される", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
@@ -109,6 +115,7 @@ describe("06 モデル選択", () => {
     expect(screen.getByText("Not connected")).toBeInTheDocument();
   });
 
+  // Clicking provider name toggles model list fold/unfold
   it("プロバイダー名クリックでモデル一覧が折りたたまれる", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
@@ -126,6 +133,7 @@ describe("06 モデル選択", () => {
     expect(screen.getByText("Claude 4 Sonnet")).toBeInTheDocument();
   });
 
+  // "Show all providers" toggle shows/hides disconnected providers
   it("Show all providers トグルで未接続プロバイダーが表示・非表示される", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
@@ -144,6 +152,7 @@ describe("06 モデル選択", () => {
     expect(screen.queryByText("OpenAI")).not.toBeInTheDocument();
   });
 
+  // Dropdown closes after model selection
   it("モデル選択後にドロップダウンが閉じる", async () => {
     await setupWithProviders();
     const user = userEvent.setup();
@@ -157,6 +166,7 @@ describe("06 モデル選択", () => {
     expect(screen.queryByText("Anthropic")).not.toBeInTheDocument();
   });
 
+  // Shows "Select model" when selectedModel is null
   it("selectedModel が null のとき Select model が表示される", async () => {
     renderApp();
 

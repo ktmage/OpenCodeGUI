@@ -32,7 +32,9 @@ async function setupConversation() {
   return session;
 }
 
+// 04 Message editing and checkpoints
 describe("04 メッセージ編集とチェックポイント", () => {
+  // Clicking a user message enters edit mode
   it("ユーザーメッセージをクリックすると編集モードになる", async () => {
     await setupConversation();
     const user = userEvent.setup();
@@ -47,6 +49,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     expect(editTextarea.tagName).toBe("TEXTAREA");
   });
 
+  // Submitting edited text with Enter sends editAndResend
   it("編集テキストを Enter で送信すると editAndResend が送信される", async () => {
     await setupConversation();
     const user = userEvent.setup();
@@ -69,6 +72,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     );
   });
 
+  // Escape cancels editing
   it("Escape で編集がキャンセルされる", async () => {
     await setupConversation();
     const user = userEvent.setup();
@@ -84,6 +88,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     expect(screen.getByText("First question")).toBeInTheDocument();
   });
 
+  // Checkpoint separator is shown between assistant and user messages
   it("アシスタント→ユーザーの間にチェックポイント区切り線が表示される", async () => {
     await setupConversation();
 
@@ -91,6 +96,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     expect(screen.getByText("Retry from here")).toBeInTheDocument();
   });
 
+  // Clicking checkpoint sends revertToMessage and prefills the input
   it("チェックポイントをクリックすると revertToMessage が送信されテキストがプリフィルされる", async () => {
     await setupConversation();
     const user = userEvent.setup();
@@ -111,6 +117,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     expect(textarea).toHaveValue("Second question");
   });
 
+  // Editing the first message sends editAndResend with its own messageId
   it("最初のメッセージの編集では messageId 自体で editAndResend が送信される", async () => {
     await setupConversation();
     const user = userEvent.setup();
@@ -133,6 +140,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     );
   });
 
+  // Empty text prevents edit submission
   it("空テキストでは編集送信されない", async () => {
     await setupConversation();
     const user = userEvent.setup();
@@ -147,6 +155,7 @@ describe("04 メッセージ編集とチェックポイント", () => {
     expect(submitButton).toBeDisabled();
   });
 
+  // Attached files in user messages are shown as chips
   it("ユーザーメッセージの添付ファイルがチップとして表示される", async () => {
     renderApp();
     const session = createSession({ id: "s1", title: "Chat" });

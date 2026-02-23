@@ -31,7 +31,9 @@ async function setupWithTodos(todos: Array<{ content: string; status: string; pr
   });
 }
 
+// 11 Todo
 describe("11 Todo", () => {
+  // TodoHeader is shown from todowrite output
   it("todowrite 出力から TodoHeader が表示される", async () => {
     await setupWithTodos([
       { content: "First task", status: "completed" },
@@ -44,6 +46,7 @@ describe("11 Todo", () => {
     expect(screen.getByText("To Do")).toBeInTheDocument();
   });
 
+  // Expanding shows the todo list contents
   it("展開で Todo 一覧の内容が表示される", async () => {
     await setupWithTodos([
       { content: "Implement feature", status: "completed" },
@@ -58,6 +61,7 @@ describe("11 Todo", () => {
     expect(screen.getByText("high")).toBeInTheDocument();
   });
 
+  // TodoHeader is hidden when there are no todos
   it("Todo がない場合は TodoHeader が非表示", async () => {
     renderApp();
     await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
@@ -66,6 +70,7 @@ describe("11 Todo", () => {
     expect(screen.queryByText("To Do")).not.toBeInTheDocument();
   });
 
+  // Todos are also shown from todoread tool output
   it("todoread ツールの出力からも Todo が表示される", async () => {
     renderApp();
     await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
@@ -97,6 +102,7 @@ describe("11 Todo", () => {
     expect(screen.getByText("1/2")).toBeInTheDocument();
   });
 
+  // Count matches when all todos are completed
   it("全て完了のとき件数が一致する", async () => {
     await setupWithTodos([
       { content: "Task A", status: "completed" },
