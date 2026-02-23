@@ -29,7 +29,7 @@ jobs:
         run: npx vsce package -o opencodegui.vsix
 
       - name: Publish to Marketplace
-        run: npx vsce publish
+        run: npx vsce publish --skip-duplicate
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
