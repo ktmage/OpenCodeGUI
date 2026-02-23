@@ -62,7 +62,9 @@
     "watch:ext": "node esbuild.mjs --watch",
     "watch:webview": "vite build --watch",
     "test": "vitest run --config vitest.config.ts",
-    "test:watch": "vitest --config vitest.config.ts"
+    "test:watch": "vitest --config vitest.config.ts",
+    "package": "vsce package",
+    "publish": "vsce publish"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
@@ -73,6 +75,7 @@
     "@types/react-dom": "^19.0.0",
     "@types/vscode": "^1.100.0",
     "@vitejs/plugin-react": "^5.1.4",
+    "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.25.0",
     "jsdom": "^28.1.0",
     "marked": "^17.0.3",

@@ -38,10 +38,10 @@ npm test
 ### Pull Request の出し方
 
 1. リポジトリをフォークする
-2. `develop` ブランチからブランチを作成する
+2. `development` ブランチからブランチを作成する
 3. 変更を加える
 4. `npm run build` と `npm test` が通ることを確認する
-5. `develop` ブランチに対して Pull Request を出す
+5. `development` ブランチに対して Pull Request を出す
 
 PR は Squash merge でマージされます。
 

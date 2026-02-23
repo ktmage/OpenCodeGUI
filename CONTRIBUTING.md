@@ -38,10 +38,10 @@ For small fixes (typos, documentation improvements), you may open a PR directly.
 ### Submitting a Pull Request
 
 1. Fork the repository
-2. Create a branch from `develop`
+2. Create a branch from `development`
 3. Make your changes
 4. Ensure `npm run build` and `npm test` pass
-5. Open a pull request against `develop`
+5. Open a pull request against `development`
 
 PRs are squash-merged to keep the commit history clean.
 
