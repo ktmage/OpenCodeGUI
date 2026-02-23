@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider, type OpenCodePath, type ProviderListResult } from "./opencode-client";
 import * as path from "path";
+import * as fs from "fs/promises";
 
 // --- File attachment ---
 type FileAttachment = {
@@ -14,12 +15,13 @@ export type ExtToWebviewMessage =
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; allProviders: ProviderListResult; default: Record<string, string> }
+  | { type: "providers"; providers: Provider[]; allProviders: ProviderListResult; default: Record<string, string>; configModel?: string }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
   | { type: "toolConfig"; paths: OpenCodePath }
-  | { type: "locale"; vscodeLanguage: string };
+  | { type: "locale"; vscodeLanguage: string }
+  | { type: "modelUpdated"; model: string; default: Record<string, string> };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -39,6 +41,7 @@ export type WebviewToExtMessage =
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
+  | { type: "setModel"; model: string }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -99,8 +102,17 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           this.connection.getProviders(),
           this.connection.listAllProviders(),
         ]);
-        this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default });
+        // config ファイルから model を直接読み取る（config.get API は model を正しく返さない）
         const paths = await this.connection.getPath();
+        let configModel: string | undefined;
+        try {
+          const raw = await fs.readFile(path.join(paths.config, "opencode.json"), "utf-8");
+          const configJson = JSON.parse(raw);
+          configModel = configJson.model;
+        } catch {
+          // ファイルが存在しない場合は undefined のまま
+        }
+        this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default, configModel });
         this.postMessage({ type: "toolConfig", paths });
         break;
       }
@@ -157,11 +169,19 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         break;
       }
       case "getProviders": {
-        const [providersData, allProviders] = await Promise.all([
+        const [providersData, allProviders, paths] = await Promise.all([
           this.connection.getProviders(),
           this.connection.listAllProviders(),
+          this.connection.getPath(),
         ]);
-        this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default });
+        let configModel: string | undefined;
+        try {
+          const raw = await fs.readFile(path.join(paths.config, "opencode.json"), "utf-8");
+          configModel = JSON.parse(raw).model;
+        } catch {
+          // ignore
+        }
+        this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default, configModel });
         break;
       }
       case "getOpenEditors": {
@@ -245,6 +265,23 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         });
         terminal.show();
         terminal.sendText(`opencode ${args.map((a) => JSON.stringify(a)).join(" ")}`);
+        break;
+      }
+      case "setModel": {
+        // config.update API は model を永続化しないため、config ファイルを直接編集する
+        const paths = await this.connection.getPath();
+        const configFilePath = path.join(paths.config, "opencode.json");
+        let configJson: Record<string, unknown> = {};
+        try {
+          const raw = await fs.readFile(configFilePath, "utf-8");
+          configJson = JSON.parse(raw);
+        } catch {
+          // ファイルが存在しない場合は空オブジェクトから開始
+        }
+        configJson.model = message.model;
+        await fs.mkdir(path.dirname(configFilePath), { recursive: true });
+        await fs.writeFile(configFilePath, JSON.stringify(configJson, null, 2) + "\n");
+        this.postMessage({ type: "modelUpdated", model: message.model, default: {} });
         break;
       }
     }

@@ -53,12 +53,13 @@ export type ExtToWebviewMessage =
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; allProviders: AllProvidersData; default: Record<string, string> }
+  | { type: "providers"; providers: Provider[]; allProviders: AllProvidersData; default: Record<string, string>; configModel?: string }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
   | { type: "toolConfig"; paths: { home: string; config: string; state: string; directory: string } }
-  | { type: "locale"; vscodeLanguage: string };
+  | { type: "locale"; vscodeLanguage: string }
+  | { type: "modelUpdated"; model: string; default: Record<string, string> };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -78,6 +79,7 @@ export type WebviewToExtMessage =
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
+  | { type: "setModel"; model: string }
   | { type: "ready" };
 
 interface VsCodeApi {
@@ -87,7 +89,6 @@ interface VsCodeApi {
 }
 
 export interface WebviewPersistedState {
-  selectedModel?: { providerID: string; modelID: string } | null;
   localeSetting?: "auto" | "en" | "ja";
 }
 

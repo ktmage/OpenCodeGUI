@@ -25,9 +25,7 @@ export function App() {
   const [permissions, setPermissions] = useState<Map<string, Permission>>(new Map());
   const [providers, setProviders] = useState<Provider[]>([]);
   const [allProvidersData, setAllProvidersData] = useState<AllProvidersData | null>(null);
-  const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(
-    () => getPersistedState()?.selectedModel ?? null,
-  );
+  const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(null);
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
   // チェックポイントからの復元時にテキストを入力欄にプリフィルするためのステート
@@ -96,20 +94,16 @@ export function App() {
         case "providers": {
           setProviders(msg.providers);
           setAllProvidersData(msg.allProviders);
-          // 永続化された選択がなければデフォルトモデルを設定する
-          setSelectedModel((prev) => {
-            if (prev) return prev;
-            const defaultModel = msg.default["general"] || msg.default["code"] || Object.values(msg.default)[0];
-            if (!defaultModel) return null;
-            // default は "providerID/modelID" 形式
-            const slashIndex = defaultModel.indexOf("/");
+          // サーバーのモデル設定を反映する（config.model → default の順でフォールバック）
+          setSelectedModel(() => {
+            const modelStr = msg.configModel || msg.default["general"] || msg.default["code"] || Object.values(msg.default)[0];
+            if (!modelStr) return null;
+            const slashIndex = modelStr.indexOf("/");
             if (slashIndex < 0) return null;
-            const model = {
-              providerID: defaultModel.slice(0, slashIndex),
-              modelID: defaultModel.slice(slashIndex + 1),
+            return {
+              providerID: modelStr.slice(0, slashIndex),
+              modelID: modelStr.slice(slashIndex + 1),
             };
-            setPersistedState({ selectedModel: model });
-            return model;
           });
           break;
         }
@@ -125,6 +119,16 @@ export function App() {
         case "locale":
           setVscodeLanguage(msg.vscodeLanguage);
           break;
+        case "modelUpdated": {
+          const slashIndex = msg.model.indexOf("/");
+          if (slashIndex >= 0) {
+            setSelectedModel({
+              providerID: msg.model.slice(0, slashIndex),
+              modelID: msg.model.slice(slashIndex + 1),
+            });
+          }
+          break;
+        }
       }
     };
     window.addEventListener("message", handler);
@@ -250,7 +254,7 @@ export function App() {
 
   const handleModelSelect = useCallback((model: { providerID: string; modelID: string }) => {
     setSelectedModel(model);
-    setPersistedState({ selectedModel: model });
+    postMessage({ type: "setModel", model: `${model.providerID}/${model.modelID}` });
   }, []);
 
   const handleAbort = useCallback(() => {

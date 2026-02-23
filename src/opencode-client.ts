@@ -83,6 +83,8 @@ export class OpenCodeConnection {
 
   private async subscribeToEvents(): Promise<void> {
     const client = this.requireClient();
+    // 既存のストリームを閉じてから再購読する
+    this.sseAbortController?.abort();
     this.sseAbortController = new AbortController();
     const result = await client.event.subscribe({
       signal: this.sseAbortController.signal,
@@ -103,6 +105,11 @@ export class OpenCodeConnection {
         throw error;
       }
     })();
+  }
+
+  /** SSE ストリームを再接続する（config 変更後など） */
+  async resubscribeEvents(): Promise<void> {
+    await this.subscribeToEvents();
   }
 
   onEvent(listener: EventListener): vscode.Disposable {
