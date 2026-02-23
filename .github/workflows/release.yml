@@ -23,7 +23,7 @@ jobs:
       - run: npm test
 
       - name: Package extension
-        run: npx vsce package -o opencode-gui.vsix
+        run: npx vsce package -o opencodegui.vsix
 
       - name: Publish to Marketplace
         run: npx vsce publish
@@ -33,4 +33,4 @@ jobs:
       - name: Upload .vsix to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: opencode-gui.vsix
+          files: opencodegui.vsix
