@@ -8,6 +8,7 @@ Thumbs.db
 # Editor
 *.swp
 *.swo
+.vscode/settings.json
 
 # VS Code extension package
 *.vsix
