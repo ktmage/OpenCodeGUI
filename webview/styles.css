@@ -1002,7 +1002,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 3px 8px;
+  gap: 4px;
+  padding: 4px 8px;
   cursor: pointer;
   font-size: 12px;
 }
@@ -1016,15 +1017,73 @@ body {
   color: var(--vscode-list-activeSelectionForeground);
 }
 
+.session-item-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
 .session-item-title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.session-item-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.session-item.active .session-item-meta {
+  color: var(--vscode-list-activeSelectionForeground);
+  opacity: 0.7;
+}
+
+.session-item-time {
+  white-space: nowrap;
+}
+
+.session-item-stats {
+  display: flex;
+  gap: 3px;
+  white-space: nowrap;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 10px;
+}
+
+.session-item-files {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.session-item-additions {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #4caf50);
+}
+
+.session-item-deletions {
+  color: var(--vscode-gitDecoration-deletedResourceForeground, #f44336);
+}
+
+.session-item.active .session-item-files,
+.session-item.active .session-item-additions,
+.session-item.active .session-item-deletions {
+  color: inherit;
 }
 
 .session-item-delete {
   opacity: 0;
   transition: opacity 0.15s;
+  flex-shrink: 0;
 }
 
 .session-item:hover .session-item-delete {
