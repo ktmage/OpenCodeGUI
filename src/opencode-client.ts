@@ -17,6 +17,42 @@ import * as vscode from "vscode";
 
 export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath };
 
+// provider.list() が返す生データ型
+export type ProviderListResult = {
+  all: Array<ProviderInfo>;
+  default: Record<string, string>;
+  connected: string[];
+};
+
+export type ProviderInfo = {
+  id: string;
+  name: string;
+  env: string[];
+  api?: string;
+  npm?: string;
+  models: Record<string, ModelInfo>;
+};
+
+export type ModelInfo = {
+  id: string;
+  name: string;
+  release_date: string;
+  attachment: boolean;
+  reasoning: boolean;
+  temperature: boolean;
+  tool_call: boolean;
+  cost?: {
+    input: number;
+    output: number;
+    cache_read?: number;
+    cache_write?: number;
+  };
+  limit: { context: number; output: number };
+  status?: "alpha" | "beta" | "deprecated";
+  experimental?: boolean;
+  options: Record<string, unknown>;
+};
+
 type EventListener = (event: Event) => void;
 
 /**
@@ -168,6 +204,12 @@ export class OpenCodeConnection {
   async getProviders(): Promise<{ providers: Provider[]; default: Record<string, string> }> {
     const client = this.requireClient();
     const response = await client.config.providers();
+    return response.data!;
+  }
+
+  async listAllProviders(): Promise<ProviderListResult> {
+    const client = this.requireClient();
+    const response = await client.provider.list();
     return response.data!;
   }
 

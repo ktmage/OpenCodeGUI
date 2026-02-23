@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider, type McpStatus, type Config, type OpenCodePath } from "./opencode-client";
+import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider, type McpStatus, type Config, type OpenCodePath, type ProviderListResult } from "./opencode-client";
 import * as path from "path";
 
 // --- File attachment ---
@@ -14,7 +14,7 @@ export type ExtToWebviewMessage =
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; default: Record<string, string> }
+  | { type: "providers"; providers: Provider[]; allProviders: ProviderListResult; default: Record<string, string> }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
@@ -95,8 +95,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         const sessions = await this.connection.listSessions();
         this.postMessage({ type: "sessions", sessions });
         this.postMessage({ type: "activeSession", session: this.activeSession });
-        const providersData = await this.connection.getProviders();
-        this.postMessage({ type: "providers", providers: providersData.providers, default: providersData.default });
+        const [providersData, allProviders] = await Promise.all([
+          this.connection.getProviders(),
+          this.connection.listAllProviders(),
+        ]);
+        this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default });
         break;
       }
       case "sendMessage": {
@@ -152,8 +155,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         break;
       }
       case "getProviders": {
-        const providersData = await this.connection.getProviders();
-        this.postMessage({ type: "providers", providers: providersData.providers, default: providersData.default });
+        const [providersData, allProviders] = await Promise.all([
+          this.connection.getProviders(),
+          this.connection.listAllProviders(),
+        ]);
+        this.postMessage({ type: "providers", providers: providersData.providers, allProviders, default: providersData.default });
         break;
       }
       case "getOpenEditors": {

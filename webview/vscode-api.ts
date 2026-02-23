@@ -11,13 +11,49 @@ export type FileAttachment = {
   fileName: string;   // 表示名
 };
 
+// --- provider.list() の型 ---
+export type ProviderInfo = {
+  id: string;
+  name: string;
+  env: string[];
+  api?: string;
+  npm?: string;
+  models: Record<string, ModelInfo>;
+};
+
+export type ModelInfo = {
+  id: string;
+  name: string;
+  release_date: string;
+  attachment: boolean;
+  reasoning: boolean;
+  temperature: boolean;
+  tool_call: boolean;
+  cost?: {
+    input: number;
+    output: number;
+    cache_read?: number;
+    cache_write?: number;
+  };
+  limit: { context: number; output: number };
+  status?: "alpha" | "beta" | "deprecated";
+  experimental?: boolean;
+  options: Record<string, unknown>;
+};
+
+export type AllProvidersData = {
+  all: ProviderInfo[];
+  default: Record<string, string>;
+  connected: string[];
+};
+
 // --- Extension Host → Webview ---
 export type ExtToWebviewMessage =
   | { type: "sessions"; sessions: Session[] }
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; default: Record<string, string> }
+  | { type: "providers"; providers: Provider[]; allProviders: AllProvidersData; default: Record<string, string> }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }

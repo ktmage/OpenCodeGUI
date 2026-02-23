@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { Session, Message, Part, Event, Permission, Provider, McpStatus } from "@opencode-ai/sdk";
-import type { ExtToWebviewMessage, FileAttachment } from "./vscode-api";
+import type { ExtToWebviewMessage, FileAttachment, AllProvidersData } from "./vscode-api";
 import { postMessage, getPersistedState, setPersistedState } from "./vscode-api";
 import { ChatHeader } from "./components/ChatHeader";
 import { MessagesArea } from "./components/MessagesArea";
 import { InputArea } from "./components/InputArea";
 import { EmptyState } from "./components/EmptyState";
 import { SessionList } from "./components/SessionList";
+import { TodoHeader } from "./components/TodoHeader";
+import { parseTodos } from "./components/ToolPartView";
+import type { TodoItem } from "./components/ToolPartView";
 
 export type MessageWithParts = { info: Message; parts: Part[] };
 
@@ -19,6 +22,7 @@ export function App() {
   // パーミッションリクエストを messageID でグルーピングして管理する
   const [permissions, setPermissions] = useState<Map<string, Permission>>(new Map());
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [allProvidersData, setAllProvidersData] = useState<AllProvidersData | null>(null);
   const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(
     () => getPersistedState()?.selectedModel ?? null,
   );
@@ -79,6 +83,7 @@ export function App() {
           break;
         case "providers": {
           setProviders(msg.providers);
+          setAllProvidersData(msg.allProviders);
           // 永続化された選択がなければデフォルトモデルを設定する
           setSelectedModel((prev) => {
             if (prev) return prev;
@@ -318,6 +323,31 @@ export function App() {
     [activeSession],
   );
 
+  // メッセージから最新の ToDo リストを導出（todowrite/todoread ツールの最新の出力）
+  const latestTodos = useMemo<TodoItem[]>(() => {
+    for (let mi = messages.length - 1; mi >= 0; mi--) {
+      const parts = messages[mi].parts;
+      for (let pi = parts.length - 1; pi >= 0; pi--) {
+        const p = parts[pi];
+        if (p.type !== "tool") continue;
+        if (p.tool !== "todowrite" && p.tool !== "todoread") continue;
+        const st = p.state;
+        if (st.status === "completed" && st.output) {
+          const parsed = parseTodos(st.output);
+          if (parsed) return parsed;
+        }
+        if (st.status !== "pending") {
+          const input = st.input as Record<string, unknown> | undefined;
+          if (input) {
+            const parsed = parseTodos(input.todos ?? input);
+            if (parsed) return parsed;
+          }
+        }
+      }
+    }
+    return [];
+  }, [messages]);
+
   return (
     <div className="chat-container">
       <ChatHeader
@@ -344,11 +374,13 @@ export function App() {
             onEditAndResend={handleEditAndResend}
             onRevertToCheckpoint={handleRevertToCheckpoint}
           />
+          {latestTodos.length > 0 && <TodoHeader todos={latestTodos} />}
           <InputArea
             onSend={handleSend}
             onAbort={handleAbort}
             isBusy={sessionBusy}
             providers={providers}
+            allProvidersData={allProvidersData}
             selectedModel={selectedModel}
             onModelSelect={handleModelSelect}
             openEditors={openEditors}

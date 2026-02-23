@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback, useEffect, type KeyboardEvent, type CompositionEvent } from "react";
 import type { Provider } from "@opencode-ai/sdk";
-import type { FileAttachment } from "../vscode-api";
+import type { FileAttachment, AllProvidersData } from "../vscode-api";
 import { postMessage } from "../vscode-api";
 import { ModelSelector } from "./ModelSelector";
 import { ContextIndicator } from "./ContextIndicator";
@@ -12,6 +12,7 @@ type Props = {
   onAbort: () => void;
   isBusy: boolean;
   providers: Provider[];
+  allProvidersData: AllProvidersData | null;
   selectedModel: { providerID: string; modelID: string } | null;
   onModelSelect: (model: { providerID: string; modelID: string }) => void;
   openEditors: FileAttachment[];
@@ -34,7 +35,7 @@ type Props = {
 };
 
 export function InputArea({
-  onSend, onAbort, isBusy, providers, selectedModel, onModelSelect,
+  onSend, onAbort, isBusy, providers, allProvidersData, selectedModel, onModelSelect,
   openEditors, workspaceFiles, inputTokens, contextLimit, onCompress, isCompressing,
   prefillText, onPrefillConsumed,
   toolIds, toolSettings, mcpStatus, openCodePaths, onToggleTool, onToggleMcp, onOpenConfigFile, onOpenToolConfig, onOpenTerminal,
@@ -352,6 +353,7 @@ export function InputArea({
           <div className="input-actions-left">
             <ModelSelector
               providers={providers}
+              allProvidersData={allProvidersData}
               selectedModel={selectedModel}
               onSelect={onModelSelect}
             />
