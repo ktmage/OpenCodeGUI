@@ -8,10 +8,14 @@ import {
   type Message,
   type Part,
   type Provider,
+  type McpStatus,
+  type ToolListItem,
+  type Config,
+  type Path as OpenCodePath,
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
-export type { Event, Session, Message, Part, Provider };
+export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath };
 
 type EventListener = (event: Event) => void;
 
@@ -202,6 +206,53 @@ export class OpenCodeConnection {
       path: { id: sessionId },
       body: model,
     });
+  }
+
+  // --- MCP API ---
+
+  async getMcpStatus(): Promise<Record<string, McpStatus>> {
+    const client = this.requireClient();
+    const response = await client.mcp.status();
+    return response.data!;
+  }
+
+  async connectMcp(name: string): Promise<void> {
+    const client = this.requireClient();
+    await client.mcp.connect({ path: { name } });
+  }
+
+  async disconnectMcp(name: string): Promise<void> {
+    const client = this.requireClient();
+    await client.mcp.disconnect({ path: { name } });
+  }
+
+  // --- Tool API ---
+
+  async getToolIds(): Promise<string[]> {
+    const client = this.requireClient();
+    const response = await client.tool.ids();
+    return response.data!;
+  }
+
+  // --- Config API ---
+
+  async getConfig(): Promise<Config> {
+    const client = this.requireClient();
+    const response = await client.config.get();
+    return response.data!;
+  }
+
+  async updateConfig(config: Partial<Config>): Promise<void> {
+    const client = this.requireClient();
+    await client.config.update({ body: config });
+  }
+
+  // --- Path API ---
+
+  async getPath(): Promise<OpenCodePath> {
+    const client = this.requireClient();
+    const response = await client.path.get();
+    return response.data!;
   }
 
   // --- Lifecycle ---

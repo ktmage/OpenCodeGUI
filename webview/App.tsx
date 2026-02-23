@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { Session, Message, Part, Event, Permission, Provider } from "@opencode-ai/sdk";
+import type { Session, Message, Part, Event, Permission, Provider, McpStatus } from "@opencode-ai/sdk";
 import type { ExtToWebviewMessage, FileAttachment } from "./vscode-api";
 import { postMessage, getPersistedState, setPersistedState } from "./vscode-api";
 import { ChatHeader } from "./components/ChatHeader";
@@ -26,6 +26,11 @@ export function App() {
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
   // チェックポイントからの復元時にテキストを入力欄にプリフィルするためのステート
   const [prefillText, setPrefillText] = useState("");
+  // Tool & MCP 構成パネル用のステート
+  const [toolIds, setToolIds] = useState<string[]>([]);
+  const [toolSettings, setToolSettings] = useState<Record<string, boolean>>({});
+  const [mcpStatus, setMcpStatus] = useState<Record<string, McpStatus>>({});
+  const [openCodePaths, setOpenCodePaths] = useState<{ home: string; config: string; state: string; directory: string } | null>(null);
 
   // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
   const inputTokens = useMemo(() => {
@@ -96,6 +101,12 @@ export function App() {
           break;
         case "workspaceFiles":
           setWorkspaceFiles(msg.files);
+          break;
+        case "toolConfig":
+          setToolIds(msg.toolIds);
+          setToolSettings(msg.toolSettings);
+          setMcpStatus(msg.mcpStatus);
+          setOpenCodePaths(msg.paths);
           break;
       }
     };
@@ -239,6 +250,22 @@ export function App() {
     });
   }, [activeSession, selectedModel]);
 
+  const handleOpenToolConfig = useCallback(() => {
+    postMessage({ type: "getToolConfig" });
+  }, []);
+
+  const handleToggleTool = useCallback((toolId: string, enabled: boolean) => {
+    postMessage({ type: "toggleTool", toolId, enabled });
+  }, []);
+
+  const handleToggleMcp = useCallback((name: string, connect: boolean) => {
+    postMessage({ type: "toggleMcp", name, connect });
+  }, []);
+
+  const handleOpenConfigFile = useCallback((filePath: string) => {
+    postMessage({ type: "openConfigFile", filePath });
+  }, []);
+
   // ユーザーメッセージを編集して再送信する
   const handleEditAndResend = useCallback(
     (messageId: string, text: string) => {
@@ -328,6 +355,14 @@ export function App() {
             isCompressing={!!activeSession?.time?.compacting}
             prefillText={prefillText}
             onPrefillConsumed={() => setPrefillText("")}
+            toolIds={toolIds}
+            toolSettings={toolSettings}
+            mcpStatus={mcpStatus}
+            openCodePaths={openCodePaths}
+            onToggleTool={handleToggleTool}
+            onToggleMcp={handleToggleMcp}
+            onOpenConfigFile={handleOpenConfigFile}
+            onOpenToolConfig={handleOpenToolConfig}
           />
         </>
       ) : (

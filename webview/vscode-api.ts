@@ -3,7 +3,7 @@
  * Extension Host 側の chat-view-provider.ts で定義したプロトコルに対応する。
  */
 
-import type { Event, Session, Message, Part, Provider } from "@opencode-ai/sdk";
+import type { Event, Session, Message, Part, Provider, McpStatus } from "@opencode-ai/sdk";
 
 // --- File attachment ---
 export type FileAttachment = {
@@ -20,7 +20,8 @@ export type ExtToWebviewMessage =
   | { type: "providers"; providers: Provider[]; default: Record<string, string> }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
-  | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } };
+  | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
+  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: { home: string; config: string; state: string; directory: string } };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -38,6 +39,10 @@ export type WebviewToExtMessage =
   | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
   | { type: "revertToMessage"; sessionId: string; messageId: string }
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
+  | { type: "getToolConfig" }
+  | { type: "toggleTool"; toolId: string; enabled: boolean }
+  | { type: "toggleMcp"; name: string; connect: boolean }
+  | { type: "openConfigFile"; filePath: string }
   | { type: "ready" };
 
 interface VsCodeApi {

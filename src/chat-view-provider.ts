@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider } from "./opencode-client";
+import { OpenCodeConnection, type Event, type Session, type Message, type Part, type Provider, type McpStatus, type Config, type OpenCodePath } from "./opencode-client";
 import * as path from "path";
 
 // --- File attachment ---
@@ -17,7 +17,8 @@ export type ExtToWebviewMessage =
   | { type: "providers"; providers: Provider[]; default: Record<string, string> }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
-  | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } };
+  | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
+  | { type: "toolConfig"; toolIds: string[]; toolSettings: Record<string, boolean>; mcpStatus: Record<string, McpStatus>; paths: OpenCodePath };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -35,6 +36,10 @@ export type WebviewToExtMessage =
   | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
   | { type: "revertToMessage"; sessionId: string; messageId: string }
   | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
+  | { type: "getToolConfig" }
+  | { type: "toggleTool"; toolId: string; enabled: boolean }
+  | { type: "toggleMcp"; name: string; connect: boolean }
+  | { type: "openConfigFile"; filePath: string }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -201,6 +206,70 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         this.postMessage({ type: "messages", sessionId: message.sessionId, messages: msgs });
         // 2. 編集後のテキストを送信
         await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files);
+        break;
+      }
+      case "getToolConfig": {
+        const [toolIds, config, mcpStatus, paths] = await Promise.all([
+          this.connection.getToolIds(),
+          this.connection.getConfig(),
+          this.connection.getMcpStatus(),
+          this.connection.getPath(),
+        ]);
+        this.postMessage({
+          type: "toolConfig",
+          toolIds,
+          toolSettings: config.tools ?? {},
+          mcpStatus,
+          paths,
+        });
+        break;
+      }
+      case "toggleTool": {
+        const config = await this.connection.getConfig();
+        const tools = { ...config.tools, [message.toolId]: message.enabled };
+        await this.connection.updateConfig({ tools });
+        // 更新後のデータを返す
+        const [updatedToolIds, updatedConfig, updatedMcpStatus, updatedPaths] = await Promise.all([
+          this.connection.getToolIds(),
+          this.connection.getConfig(),
+          this.connection.getMcpStatus(),
+          this.connection.getPath(),
+        ]);
+        this.postMessage({
+          type: "toolConfig",
+          toolIds: updatedToolIds,
+          toolSettings: updatedConfig.tools ?? {},
+          mcpStatus: updatedMcpStatus,
+          paths: updatedPaths,
+        });
+        break;
+      }
+      case "toggleMcp": {
+        if (message.connect) {
+          await this.connection.connectMcp(message.name);
+        } else {
+          await this.connection.disconnectMcp(message.name);
+        }
+        // 更新後のステータスを返す
+        const [newToolIds, newConfig, newMcpStatus, newPaths] = await Promise.all([
+          this.connection.getToolIds(),
+          this.connection.getConfig(),
+          this.connection.getMcpStatus(),
+          this.connection.getPath(),
+        ]);
+        this.postMessage({
+          type: "toolConfig",
+          toolIds: newToolIds,
+          toolSettings: newConfig.tools ?? {},
+          mcpStatus: newMcpStatus,
+          paths: newPaths,
+        });
+        break;
+      }
+      case "openConfigFile": {
+        const uri = vscode.Uri.file(message.filePath);
+        const doc = await vscode.workspace.openTextDocument(uri);
+        await vscode.window.showTextDocument(doc);
         break;
       }
     }
