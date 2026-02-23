@@ -1,2 +1,17 @@
 node_modules/
 dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+
+# VS Code extension package
+*.vsix
+
+# Environment
+.env
+.env.*
