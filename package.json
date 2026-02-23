@@ -1,9 +1,31 @@
 {
   "name": "opencode-gui",
-  "displayName": "OpenCodeGUI",
-  "description": "OpenCode の VSCode チャットインターフェース",
+  "displayName": "%displayName%",
+  "description": "%description%",
   "version": "0.0.1",
   "publisher": "ktmage",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ktmage/OpenCodeGUI"
+  },
+  "homepage": "https://github.com/ktmage/OpenCodeGUI#readme",
+  "bugs": {
+    "url": "https://github.com/ktmage/OpenCodeGUI/issues"
+  },
+  "keywords": [
+    "opencode",
+    "ai",
+    "chat",
+    "llm",
+    "coding-assistant"
+  ],
+  "icon": "media/icon.png",
+  "preview": true,
+  "galleryBanner": {
+    "color": "#1e1e1e",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.100.0"
   },

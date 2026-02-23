@@ -1,84 +1,109 @@
-## OpenCodeGUI
+[日本語版はこちら / Japanese](README.ja.md)
 
-OpenCode の VSCode チャットインターフェース。GitHub Copilot ライクな UI/UX で、OpenCode の全機能をサイドバーから操作できる。
+# OpenCodeGUI
 
-## 前提条件
+A VS Code chat interface for [OpenCode](https://github.com/opencode-ai/opencode). GitHub Copilot-like UI/UX that lets you use all OpenCode features from the sidebar.
 
-- Node.js v22 以上
+## Features
+
+- Chat UI (send/receive messages, streaming display)
+- Markdown rendering
+- Tool call collapsible display
+- Permission approval UI (Allow / Once / Deny)
+- Session management (create, switch, delete)
+- Model selection
+- File context attachment
+- Context compression indicator
+- Todo display
+- i18n support (English, Japanese)
+
+## Requirements
+
+- [OpenCode](https://github.com/opencode-ai/opencode) installed
+- LLM provider authentication configured in OpenCode
+
+## Installation
+
+Search for **OpenCodeGUI** in the VS Code Extensions view (`Ctrl+Shift+X` / `Cmd+Shift+X`) and click **Install**.
+
+## Development
+
+### Prerequisites
+
+- Node.js v22+
 - npm
-- [OpenCode](https://github.com/opencode-ai/opencode) がインストール済みであること
-- OpenCode 側で LLM プロバイダの認証が完了していること
 
-## セットアップ
+### Setup
 
 ```sh
-# 依存パッケージのインストール
 npm install
-
-# Extension と Webview をビルド
 npm run build
 ```
 
-## 開発
-
-### ビルド
+### Build
 
 ```sh
-# 全体ビルド（Extension + Webview）
+# Full build (Extension + Webview)
 npm run build
 
-# Extension のみビルド
+# Extension only
 npm run build:ext
 
-# Webview のみビルド
+# Webview only
 npm run build:webview
 ```
 
-### Watch モード
+### Watch Mode
 
-ターミナルを 2 つ開いて、それぞれ実行する。
+Open two terminals and run each:
 
 ```sh
-# Extension の watch
+# Terminal 1: Extension watch
 npm run watch:ext
 
-# Webview の watch
+# Terminal 2: Webview watch
 npm run watch:webview
 ```
 
-### デバッグ実行
+### Debug
 
-1. `npm run build` でビルドする
-2. VSCode で `F5` を押して Extension Development Host を起動する
-3. サイドバーの OpenCode アイコンをクリックしてチャットパネルを開く
+1. Run `npm run build`
+2. Press `F5` in VS Code to launch the Extension Development Host
+3. Click the OpenCode icon in the sidebar to open the chat panel
 
-## プロジェクト構造
+### Test
 
-```
-src/                      # Extension Host（Node.js 側）
-  extension.ts            # エントリポイント
-  opencode-client.ts      # OpenCode サーバー接続管理
-  chat-view-provider.ts   # Webview パネルと通信プロトコル
-
-webview/                  # Webview（ブラウザ側、React）
-  main.tsx                # React エントリポイント
-  App.tsx                 # 状態管理と SSE イベントハンドリング
-  vscode-api.ts           # VSCode Webview API ラッパー
-  styles.css              # VSCode テーマ変数によるスタイル
-  components/             # React コンポーネント群
-
-dist/                     # ビルド出力（git 管理外）
-  extension.js            # Extension バンドル
-  webview/                # Webview バンドル
-
-esbuild.mjs               # Extension ビルド設定
-vite.config.ts             # Webview ビルド設定
+```sh
+npm test
 ```
 
-## 機能
+## Project Structure
 
-- チャット UI（メッセージ送受信、ストリーミング表示）
-- Markdown レンダリング
-- ツールコールの折りたたみ表示
-- パーミッション承認 UI（Allow / Once / Deny）
-- セッション管理（作成、切替、削除）
+```
+src/                      # Extension Host (Node.js)
+  extension.ts            # Entry point
+  opencode-client.ts      # OpenCode server connection
+  chat-view-provider.ts   # Webview panel & messaging protocol
+
+webview/                  # Webview (Browser, React)
+  main.tsx                # React entry point
+  App.tsx                 # State management & SSE event handling
+  vscode-api.ts           # VS Code Webview API wrapper
+  styles.css              # Styles using VS Code theme variables
+  components/             # React components
+
+dist/                     # Build output (not tracked by git)
+  extension.js            # Extension bundle
+  webview/                # Webview bundle
+
+esbuild.mjs               # Extension build config
+vite.config.ts             # Webview build config
+```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## License
+
+[MIT](LICENSE)

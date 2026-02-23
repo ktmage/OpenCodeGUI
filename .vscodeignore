@@ -3,7 +3,17 @@
 src/**
 webview/**
 node_modules/**
+.github/**
 tsconfig.json
 vite.config.ts
+vitest.config.ts
 esbuild.mjs
 .gitignore
+config.json
+*.vsix
+.DS_Store
+.env
+CONTRIBUTING.md
+CONTRIBUTING.ja.md
+CHANGELOG.md
+README.ja.md
