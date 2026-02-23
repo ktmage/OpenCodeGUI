@@ -45,6 +45,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@types/vscode": "^1.100.0",
+    "@vitejs/plugin-react": "^5.1.4",
     "esbuild": "^0.25.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
