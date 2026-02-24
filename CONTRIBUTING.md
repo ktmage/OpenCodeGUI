@@ -54,14 +54,24 @@ For small fixes (typos, documentation improvements), you may open a PR directly.
 1. Fork the repository
 2. Create a branch from `development`
 3. Make your changes
-4. Ensure `npm run build` and `npm test` pass
+4. Ensure `npm run check`, `npm run build` and `npm test` pass
 5. Open a pull request against `development`
 
 PRs are squash-merged to keep the commit history clean.
 
 ### Code Style
 
-There is no formal linter or formatter configured yet. Please follow the style of the existing codebase.
+This project uses [Biome](https://biomejs.dev/) for linting and formatting. Run the following before submitting a PR:
+
+```sh
+npm run check
+```
+
+To auto-fix issues:
+
+```sh
+npm run check:fix
+```
 
 ### Testing
 
@@ -122,14 +132,24 @@ npm test
 1. リポジトリをフォークする
 2. `development` ブランチからブランチを作成する
 3. 変更を加える
-4. `npm run build` と `npm test` が通ることを確認する
+4. `npm run check`、`npm run build`、`npm test` が通ることを確認する
 5. `development` ブランチに対して Pull Request を出す
 
 PR は Squash merge でマージされます。
 
 ### コードスタイル
 
-現在、Linter や Formatter は導入していません。既存のコードベースのスタイルに合わせてください。
+本プロジェクトでは [Biome](https://biomejs.dev/) を Linter/Formatter として使用しています。PR を出す前に以下を実行してください:
+
+```sh
+npm run check
+```
+
+問題を自動修正するには:
+
+```sh
+npm run check:fix
+```
 
 ### テスト
 
