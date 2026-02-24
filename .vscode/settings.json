@@ -34,7 +34,9 @@
     "https://*.netlify.app": true,
     "https://*.hotwired.dev": true,
     "https://*.opencode.ai": true,
-    "https://*.visualstudio.com": true
+    "https://*.visualstudio.com": true,
+    "https://*.zipcloud.ibsnet.co.jp": true,
+    "https://*.google.com": true
   },
   "chat.instructionsFilesLocations": {
     ".ktmage/instructions": true,
