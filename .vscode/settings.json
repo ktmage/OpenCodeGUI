@@ -33,7 +33,8 @@
     "https://*.wikipedia.org": true,
     "https://*.netlify.app": true,
     "https://*.hotwired.dev": true,
-    "https://*.opencode.ai": true
+    "https://*.opencode.ai": true,
+    "https://*.visualstudio.com": true
   },
   "chat.instructionsFilesLocations": {
     ".ktmage/instructions": true,
