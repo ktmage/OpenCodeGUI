@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale } from "../locales";
 
 type Props = {
@@ -51,19 +51,17 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
   const dashOffset = circumference * (1 - ratio);
 
   // 使用率に応じた色
-  const color =
-    percent >= 80
-      ? "var(--vscode-editorWarning-foreground)"
-      : "var(--vscode-textLink-foreground)";
+  const color = percent >= 80 ? "var(--vscode-editorWarning-foreground)" : "var(--vscode-textLink-foreground)";
 
   return (
     <div className="context-indicator-container" ref={containerRef}>
       <button
+        type="button"
         className="context-indicator-button"
         onClick={handleClick}
         title={t["context.title"](percent)}
       >
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <svg aria-hidden="true" width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           {/* 背景リング */}
           <circle
             cx={size / 2}
@@ -102,14 +100,15 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
             <span>{formatTokenCount(contextLimit)}</span>
           </div>
           <div className="context-indicator-popup-bar">
-            <div
-              className="context-indicator-popup-bar-fill"
-              style={{ width: `${percent}%` }}
-            />
+            <div className="context-indicator-popup-bar-fill" style={{ width: `${percent}%` }} />
           </div>
           <button
+            type="button"
             className="context-indicator-compress-button"
-            onClick={() => { onCompress(); setShowPopup(false); }}
+            onClick={() => {
+              onCompress();
+              setShowPopup(false);
+            }}
             disabled={isCompressing}
           >
             {isCompressing ? t["context.compressing"] : t["context.compress"]}

@@ -1,9 +1,9 @@
-import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it } from "vitest";
 import { postMessage } from "../../vscode-api";
+import { createAllProvidersData, createProvider, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createProvider, createAllProvidersData } from "../factories";
 
 // Initialization
 describe("初期化", () => {
@@ -61,9 +61,22 @@ describe("初期化", () => {
       await sendExtMessage({
         type: "providers",
         providers: [provider],
-        allProviders: createAllProvidersData(["anthropic"], [
-          { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-        ]),
+        allProviders: createAllProvidersData(
+          ["anthropic"],
+          [
+            {
+              id: "anthropic",
+              name: "Anthropic",
+              models: {
+                "claude-4-opus": {
+                  id: "claude-4-opus",
+                  name: "Claude 4 Opus",
+                  limit: { context: 200000, output: 4096 },
+                },
+              },
+            },
+          ],
+        ),
         default: { general: "anthropic/claude-4-opus" },
         configModel: "anthropic/claude-4-opus",
       });
@@ -87,9 +100,16 @@ describe("初期化", () => {
       await sendExtMessage({
         type: "providers",
         providers: [provider],
-        allProviders: createAllProvidersData(["openai"], [
-          { id: "openai", name: "OpenAI", models: { "gpt-5": { id: "gpt-5", name: "GPT-5", limit: { context: 128000, output: 4096 } } } },
-        ]),
+        allProviders: createAllProvidersData(
+          ["openai"],
+          [
+            {
+              id: "openai",
+              name: "OpenAI",
+              models: { "gpt-5": { id: "gpt-5", name: "GPT-5", limit: { context: 128000, output: 4096 } } },
+            },
+          ],
+        ),
         default: { general: "openai/gpt-5" },
       });
 

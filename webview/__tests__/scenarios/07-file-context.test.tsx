@@ -1,10 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
-import { renderApp, sendExtMessage } from "../helpers";
 import { createSession } from "../factories";
-import type { FileAttachment } from "../../vscode-api";
+import { renderApp, sendExtMessage } from "../helpers";
 
 /** ファイルコンテキストテスト用のアクティブセッションをセットアップする */
 async function setupWithFiles() {
@@ -52,8 +51,9 @@ describe("ファイルコンテキスト", () => {
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Add context"));
       const items = screen.getAllByText("main.ts");
-      const pickerItem = items.find((el) => el.closest(".file-picker-item"));
-      await user.click(pickerItem!.closest(".file-picker-item")!);
+      const clickTarget = items.find((el) => el.closest(".file-picker-item"))?.closest(".file-picker-item");
+      if (!clickTarget) throw new Error("file-picker-item not found");
+      await user.click(clickTarget);
     });
 
     // Chip is shown
@@ -76,8 +76,9 @@ describe("ファイルコンテキスト", () => {
     // ファイルを添付
     await user.click(screen.getByTitle("Add context"));
     const items = screen.getAllByText("main.ts");
-    const pickerItem = items.find((el) => el.closest(".file-picker-item"));
-    await user.click(pickerItem!.closest(".file-picker-item")!);
+    const clickTarget = items.find((el) => el.closest(".file-picker-item"))?.closest(".file-picker-item");
+    if (!clickTarget) throw new Error("file-picker-item not found");
+    await user.click(clickTarget);
 
     // チップが表示される
     expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
@@ -126,7 +127,7 @@ describe("ファイルコンテキスト", () => {
       textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "Look at #");
       const popup = document.querySelector(".hash-popup");
-      const popupItem = popup!.querySelector(".hash-popup-item");
+      const popupItem = popup?.querySelector(".hash-popup-item");
       await user.click(popupItem!);
     });
 
@@ -149,8 +150,9 @@ describe("ファイルコンテキスト", () => {
     // ファイルを添付
     await user.click(screen.getByTitle("Add context"));
     const items = screen.getAllByText("main.ts");
-    const pickerItem = items.find((el) => el.closest(".file-picker-item"));
-    await user.click(pickerItem!.closest(".file-picker-item")!);
+    const clickTarget = items.find((el) => el.closest(".file-picker-item"))?.closest(".file-picker-item");
+    if (!clickTarget) throw new Error("file-picker-item not found");
+    await user.click(clickTarget);
 
     // メッセージ送信
     const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");

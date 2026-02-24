@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createMessage, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createMessage } from "../factories";
 
 /** Reasoning パートを持つメッセージを表示するセットアップ */
 async function setupWithReasoningPart(partOverrides: Record<string, unknown> = {}) {
@@ -49,7 +49,7 @@ describe("思考表示（ReasoningPartView）", () => {
 
     // Shows spinner
     it("スピナーが表示されること", () => {
-      expect(part!.querySelector(".tool-part-spinner")).toBeInTheDocument();
+      expect(part?.querySelector(".tool-part-spinner")).toBeInTheDocument();
     });
   });
 
@@ -74,7 +74,7 @@ describe("思考表示（ReasoningPartView）", () => {
 
     // No spinner
     it("スピナーが表示されないこと", () => {
-      expect(part!.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
+      expect(part?.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
     });
   });
 

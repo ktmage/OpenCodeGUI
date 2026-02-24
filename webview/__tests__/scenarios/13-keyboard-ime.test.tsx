@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { screen, fireEvent } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
+import { createAllProvidersData, createProvider, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createProvider, createAllProvidersData } from "../factories";
 
 /** アクティブセッション + プロバイダ付きで InputArea が操作可能な状態にする */
 async function setupInputReady() {
@@ -14,9 +14,18 @@ async function setupInputReady() {
   await sendExtMessage({
     type: "providers",
     providers: [provider],
-    allProviders: createAllProvidersData(["anthropic"], [
-      { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-    ]),
+    allProviders: createAllProvidersData(
+      ["anthropic"],
+      [
+        {
+          id: "anthropic",
+          name: "Anthropic",
+          models: {
+            "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+          },
+        },
+      ],
+    ),
     default: { general: "anthropic/claude-4-opus" },
     configModel: "anthropic/claude-4-opus",
   });
@@ -44,9 +53,11 @@ describe("キーボード・IME ハンドリング", () => {
     fireEvent.compositionEnd(textarea);
 
     // sendMessage が呼ばれていないことを確認
-    const sendCalls = vi.mocked(postMessage).mock.calls.filter(
-      (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
-    );
+    const sendCalls = vi
+      .mocked(postMessage)
+      .mock.calls.filter(
+        (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
+      );
     expect(sendCalls).toHaveLength(0);
   });
 
@@ -63,9 +74,11 @@ describe("キーボード・IME ハンドリング", () => {
 
     // Does not send
     it("sendMessage が呼ばれないこと", () => {
-      const sendCalls = vi.mocked(postMessage).mock.calls.filter(
-        (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
-      );
+      const sendCalls = vi
+        .mocked(postMessage)
+        .mock.calls.filter(
+          (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
+        );
       expect(sendCalls).toHaveLength(0);
     });
 
@@ -86,15 +99,20 @@ describe("キーボード・IME ハンドリング", () => {
     await user.type(textarea, "test message");
 
     // isBusy 状態にする: session.status busy を送る
-    await sendExtMessage({ type: "event", event: { type: "session.status", properties: { sessionID: "s1", status: { type: "busy" } } } as any });
+    await sendExtMessage({
+      type: "event",
+      event: { type: "session.status", properties: { sessionID: "s1", status: { type: "busy" } } } as any,
+    });
 
     // Enter を押す
     await user.keyboard("{Enter}");
 
     // sendMessage が呼ばれていないことを確認
-    const sendCalls = vi.mocked(postMessage).mock.calls.filter(
-      (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
-    );
+    const sendCalls = vi
+      .mocked(postMessage)
+      .mock.calls.filter(
+        (call) => call[0] && typeof call[0] === "object" && "type" in call[0] && call[0].type === "sendMessage",
+      );
     expect(sendCalls).toHaveLength(0);
   });
 });

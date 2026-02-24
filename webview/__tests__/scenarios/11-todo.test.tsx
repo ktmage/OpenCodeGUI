@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createMessage, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createMessage } from "../factories";
 
 /** todowrite ツール出力付きのセッションをセットアップする */
 async function setupWithTodos(todos: Array<{ content: string; status: string; priority?: string }>) {

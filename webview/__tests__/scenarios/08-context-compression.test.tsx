@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
+import { createAllProvidersData, createMessage, createProvider, createSession, createTextPart } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createMessage, createTextPart, createToolPart, createProvider, createAllProvidersData } from "../factories";
 
 /** step-finish パート付きメッセージをセットアップする */
 async function setupWithTokenUsage() {
@@ -16,9 +16,18 @@ async function setupWithTokenUsage() {
   await sendExtMessage({
     type: "providers",
     providers: [provider],
-    allProviders: createAllProvidersData(["anthropic"], [
-      { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-    ]),
+    allProviders: createAllProvidersData(
+      ["anthropic"],
+      [
+        {
+          id: "anthropic",
+          name: "Anthropic",
+          models: {
+            "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+          },
+        },
+      ],
+    ),
     default: { general: "anthropic/claude-4-opus" },
     configModel: "anthropic/claude-4-opus",
   });
@@ -73,7 +82,7 @@ describe("コンテキストとコンプレッション", () => {
 
   // Compress button sends compressSession
   it("圧縮ボタンで compressSession が送信されること", async () => {
-    const session = await setupWithTokenUsage();
+    const _session = await setupWithTokenUsage();
     const user = userEvent.setup();
 
     // ContextIndicator をクリックしてポップアップを開く
@@ -122,9 +131,18 @@ describe("コンテキストとコンプレッション", () => {
     await sendExtMessage({
       type: "providers",
       providers: [provider],
-      allProviders: createAllProvidersData(["anthropic"], [
-        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-      ]),
+      allProviders: createAllProvidersData(
+        ["anthropic"],
+        [
+          {
+            id: "anthropic",
+            name: "Anthropic",
+            models: {
+              "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+            },
+          },
+        ],
+      ),
       default: { general: "anthropic/claude-4-opus" },
       configModel: "anthropic/claude-4-opus",
     });
@@ -146,9 +164,18 @@ describe("コンテキストとコンプレッション", () => {
     await sendExtMessage({
       type: "providers",
       providers: [provider],
-      allProviders: createAllProvidersData(["anthropic"], [
-        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 100000, output: 4096 } } } },
-      ]),
+      allProviders: createAllProvidersData(
+        ["anthropic"],
+        [
+          {
+            id: "anthropic",
+            name: "Anthropic",
+            models: {
+              "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 100000, output: 4096 } },
+            },
+          },
+        ],
+      ),
       default: { general: "anthropic/claude-4-opus" },
       configModel: "anthropic/claude-4-opus",
     });
@@ -214,14 +241,30 @@ describe("コンテキストとコンプレッション", () => {
       await sendExtMessage({
         type: "providers",
         providers: [provider],
-        allProviders: createAllProvidersData(["anthropic"], [
-          { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-        ]),
+        allProviders: createAllProvidersData(
+          ["anthropic"],
+          [
+            {
+              id: "anthropic",
+              name: "Anthropic",
+              models: {
+                "claude-4-opus": {
+                  id: "claude-4-opus",
+                  name: "Claude 4 Opus",
+                  limit: { context: 200000, output: 4096 },
+                },
+              },
+            },
+          ],
+        ),
         default: { general: "anthropic/claude-4-opus" },
         configModel: "anthropic/claude-4-opus",
       });
 
-      const session = createSession({ id: "s1", time: { created: Date.now(), updated: Date.now(), compacting: Date.now() } } as any);
+      const session = createSession({
+        id: "s1",
+        time: { created: Date.now(), updated: Date.now(), compacting: Date.now() },
+      } as any);
       await sendExtMessage({ type: "activeSession", session });
 
       const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });

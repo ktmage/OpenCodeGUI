@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
+import { createMessage, createSession, createTextPart } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createMessage, createTextPart, createPermission } from "../factories";
 
 /** パーミッション付きのアクティブセッションをセットアップする */
 async function setupWithPermission() {

@@ -1,17 +1,17 @@
-import * as path from "path";
+import * as path from "node:path";
 import {
+  type Config,
   createOpencodeClient,
   createOpencodeServer,
-  type OpencodeClient,
   type Event,
-  type Session,
+  type McpStatus,
   type Message,
+  type Path as OpenCodePath,
+  type OpencodeClient,
   type Part,
   type Provider,
-  type McpStatus,
+  type Session,
   type ToolListItem,
-  type Config,
-  type Path as OpenCodePath,
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
@@ -152,9 +152,7 @@ export class OpenCodeConnection {
 
   // --- Message API ---
 
-  async getMessages(
-    sessionId: string,
-  ): Promise<Array<{ info: Message; parts: Part[] }>> {
+  async getMessages(sessionId: string): Promise<Array<{ info: Message; parts: Part[] }>> {
     const client = this.requireClient();
     const response = await client.session.messages({
       path: { id: sessionId },
@@ -173,9 +171,8 @@ export class OpenCodeConnection {
     files?: Array<{ filePath: string; fileName: string }>,
   ): Promise<void> {
     const client = this.requireClient();
-    const parts: Array<{ type: "text"; text: string } | { type: "file"; mime: string; url: string; filename: string }> = [
-      { type: "text", text },
-    ];
+    const parts: Array<{ type: "text"; text: string } | { type: "file"; mime: string; url: string; filename: string }> =
+      [{ type: "text", text }];
     if (files) {
       for (const file of files) {
         // filePath はワークスペース相対パス。cwd 基準で絶対パスに変換する。
@@ -236,10 +233,7 @@ export class OpenCodeConnection {
 
   // --- Revert API ---
 
-  async revertSession(
-    sessionId: string,
-    messageID: string,
-  ): Promise<Session> {
+  async revertSession(sessionId: string, messageID: string): Promise<Session> {
     const client = this.requireClient();
     const response = await client.session.revert({
       path: { id: sessionId },
@@ -250,10 +244,7 @@ export class OpenCodeConnection {
 
   // --- Summarize API ---
 
-  async summarizeSession(
-    sessionId: string,
-    model?: { providerID: string; modelID: string },
-  ): Promise<void> {
+  async summarizeSession(sessionId: string, model?: { providerID: string; modelID: string }): Promise<void> {
     const client = this.requireClient();
     await client.session.summarize({
       path: { id: sessionId },
@@ -321,9 +312,7 @@ export class OpenCodeConnection {
 
   private requireClient(): OpencodeClient {
     if (!this.client) {
-      throw new Error(
-        "OpenCode client is not connected. Call connect() first.",
-      );
+      throw new Error("OpenCode client is not connected. Call connect() first.");
     }
     return this.client;
   }

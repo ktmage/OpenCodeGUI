@@ -3,12 +3,12 @@
  * Extension Host 側の chat-view-provider.ts で定義したプロトコルに対応する。
  */
 
-import type { Event, Session, Message, Part, Provider } from "@opencode-ai/sdk";
+import type { Event, Message, Part, Provider, Session } from "@opencode-ai/sdk";
 
 // --- File attachment ---
 export type FileAttachment = {
-  filePath: string;   // ワークスペース相対パス
-  fileName: string;   // 表示名
+  filePath: string; // ワークスペース相対パス
+  fileName: string; // 表示名
 };
 
 // --- provider.list() の型 ---
@@ -53,7 +53,13 @@ export type ExtToWebviewMessage =
   | { type: "messages"; sessionId: string; messages: Array<{ info: Message; parts: Part[] }> }
   | { type: "event"; event: Event }
   | { type: "activeSession"; session: Session | null }
-  | { type: "providers"; providers: Provider[]; allProviders: AllProvidersData; default: Record<string, string>; configModel?: string }
+  | {
+      type: "providers";
+      providers: Provider[];
+      allProviders: AllProvidersData;
+      default: Record<string, string>;
+      configModel?: string;
+    }
   | { type: "openEditors"; files: FileAttachment[] }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
@@ -63,7 +69,13 @@ export type ExtToWebviewMessage =
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
-  | { type: "sendMessage"; sessionId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
+  | {
+      type: "sendMessage";
+      sessionId: string;
+      text: string;
+      model?: { providerID: string; modelID: string };
+      files?: FileAttachment[];
+    }
   | { type: "createSession"; title?: string }
   | { type: "listSessions" }
   | { type: "selectSession"; sessionId: string }
@@ -76,7 +88,14 @@ export type WebviewToExtMessage =
   | { type: "searchWorkspaceFiles"; query: string }
   | { type: "compressSession"; sessionId: string; model?: { providerID: string; modelID: string } }
   | { type: "revertToMessage"; sessionId: string; messageId: string }
-  | { type: "editAndResend"; sessionId: string; messageId: string; text: string; model?: { providerID: string; modelID: string }; files?: FileAttachment[] }
+  | {
+      type: "editAndResend";
+      sessionId: string;
+      messageId: string;
+      text: string;
+      model?: { providerID: string; modelID: string };
+      files?: FileAttachment[];
+    }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }

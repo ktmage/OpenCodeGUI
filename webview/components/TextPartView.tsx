@@ -1,6 +1,6 @@
-import { useMemo } from "react";
-import { marked } from "marked";
 import type { TextPart } from "@opencode-ai/sdk";
+import { marked } from "marked";
+import { useMemo } from "react";
 
 // marked のデフォルト設定: XSS 対策のため HTML タグをエスケープする
 marked.setOptions({
@@ -16,9 +16,6 @@ export function TextPartView({ part }: Props) {
     return marked.parse(part.text, { async: false }) as string;
   }, [part.text]);
 
-  return (
-    <span
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: marked v17 はデフォルトで HTML タグをエスケープするため、sanitize 済み HTML の描画に使用する
+  return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }

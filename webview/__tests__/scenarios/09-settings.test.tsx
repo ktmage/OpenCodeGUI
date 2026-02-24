@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage, setPersistedState } from "../../vscode-api";
-import { renderApp, sendExtMessage } from "../helpers";
 import { createSession } from "../factories";
+import { renderApp, sendExtMessage } from "../helpers";
 
 /** 設定パネル用のアクティブセッションをセットアップする */
 async function setupForSettings() {
@@ -50,9 +50,7 @@ describe("設定", () => {
     // 「日本語」ラジオボタンをクリック
     await user.click(screen.getByText("日本語"));
 
-    expect(setPersistedState).toHaveBeenCalledWith(
-      expect.objectContaining({ localeSetting: "ja" }),
-    );
+    expect(setPersistedState).toHaveBeenCalledWith(expect.objectContaining({ localeSetting: "ja" }));
   });
 
   // Config file link sends openConfigFile

@@ -1,9 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createMessage, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createMessage } from "../factories";
-import type { ToolPart } from "@opencode-ai/sdk";
 
 /** ツール表示テスト用のセットアップ。指定した toolPart を持つアシスタントメッセージを表示する。 */
 async function setupWithToolPart(toolPart: unknown) {
@@ -29,7 +28,12 @@ describe("ツール表示", () => {
         tool: "read",
         messageID: "m1",
         time: { created: Date.now(), updated: Date.now() },
-        state: { status: "completed", title: "src/main.ts", input: { filePath: "src/main.ts" }, output: "file content" },
+        state: {
+          status: "completed",
+          title: "src/main.ts",
+          input: { filePath: "src/main.ts" },
+          output: "file content",
+        },
       });
     });
 

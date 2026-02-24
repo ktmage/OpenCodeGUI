@@ -1,6 +1,6 @@
-import { render, act } from "@testing-library/react";
-import type { ExtToWebviewMessage } from "../vscode-api";
+import { act, render } from "@testing-library/react";
 import { App } from "../App";
+import type { ExtToWebviewMessage } from "../vscode-api";
 
 /**
  * Extension Host → Webview メッセージを擬似送信する。

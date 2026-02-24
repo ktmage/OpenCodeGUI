@@ -1,4 +1,4 @@
-import type { Session, Message, Part, TextPart, ToolPart, Permission, Provider, Event } from "@opencode-ai/sdk";
+import type { Event, Message, Permission, Provider, Session, TextPart, ToolPart } from "@opencode-ai/sdk";
 
 // --- Session ---
 
@@ -73,7 +73,13 @@ export function createPermission(overrides: Partial<Permission> = {}): Permissio
 
 // --- Provider ---
 
-export function createProvider(id: string, models: Record<string, { id: string; name: string; limit?: { context: number; output: number }; status?: string }> = {}): Provider {
+export function createProvider(
+  id: string,
+  models: Record<
+    string,
+    { id: string; name: string; limit?: { context: number; output: number }; status?: string }
+  > = {},
+): Provider {
   return {
     id,
     name: id.charAt(0).toUpperCase() + id.slice(1),

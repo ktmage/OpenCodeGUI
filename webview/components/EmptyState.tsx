@@ -9,10 +9,8 @@ export function EmptyState({ onNewSession }: Props) {
   return (
     <div className="empty-state">
       <div className="empty-state-title">{t["empty.title"]}</div>
-      <div className="empty-state-description">
-        {t["empty.description"]}
-      </div>
-      <button className="btn" onClick={onNewSession}>
+      <div className="empty-state-description">{t["empty.description"]}</div>
+      <button type="button" className="btn" onClick={onNewSession}>
         {t["empty.newChat"]}
       </button>
     </div>
