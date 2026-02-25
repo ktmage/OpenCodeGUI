@@ -209,7 +209,7 @@ body {
 }
 
 .checkpoint-divider:hover {
-  opacity: 1 !important;
+  opacity: 1;
 }
 
 .checkpoint-line {
@@ -360,8 +360,12 @@ body {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* アクション種別ラベル（Read, Edit, Create, Run, Search） */
@@ -1582,8 +1586,6 @@ body {
   background-color: var(--vscode-toolbar-hoverBackground);
 }
 
-
-
 .context-indicator-popup {
   position: absolute;
   bottom: 100%;
@@ -1668,8 +1670,6 @@ body {
   color: var(--vscode-foreground);
   background-color: var(--vscode-toolbar-hoverBackground);
 }
-
-
 
 .tool-config-panel {
   position: absolute;

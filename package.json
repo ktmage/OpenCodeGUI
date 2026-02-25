@@ -1,5 +1,5 @@
 {
-  "name": "opencode-gui",
+  "name": "opencodegui",
   "displayName": "%displayName%",
   "description": "%description%",
   "version": "0.1.0",
@@ -62,12 +62,16 @@
     "build:webview": "vite build",
     "watch:ext": "node esbuild.mjs --watch",
     "watch:webview": "vite build --watch",
+    "check": "biome check .",
+    "check:fix": "biome check --fix .",
+    "format": "biome format --write .",
     "test": "vitest run --config vitest.config.ts",
     "test:watch": "vitest --config vitest.config.ts",
     "package": "vsce package",
     "publish": "vsce publish"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.4.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

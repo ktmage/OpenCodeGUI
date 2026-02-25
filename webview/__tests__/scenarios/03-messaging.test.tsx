@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
+import { createMessage, createSession, createTextPart } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createMessage, createTextPart } from "../factories";
 
 /** アクティブセッションを持つ状態をセットアップする */
 async function setupActiveSession() {
@@ -41,9 +41,7 @@ describe("メッセージング", () => {
     const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
     await user.type(textarea, "{Enter}");
 
-    expect(postMessage).not.toHaveBeenCalledWith(
-      expect.objectContaining({ type: "sendMessage" }),
-    );
+    expect(postMessage).not.toHaveBeenCalledWith(expect.objectContaining({ type: "sendMessage" }));
   });
 
   // Received messages are displayed
@@ -287,9 +285,18 @@ describe("メッセージング", () => {
     await sendExtMessage({
       type: "providers",
       providers: [provider],
-      allProviders: createAllProvidersData(["anthropic"], [
-        { id: "anthropic", name: "Anthropic", models: { "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } } } },
-      ]),
+      allProviders: createAllProvidersData(
+        ["anthropic"],
+        [
+          {
+            id: "anthropic",
+            name: "Anthropic",
+            models: {
+              "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
+            },
+          },
+        ],
+      ),
       default: { general: "anthropic/claude-4-opus" },
       configModel: "anthropic/claude-4-opus",
     });

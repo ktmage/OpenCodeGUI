@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect, useMemo } from "react";
 import type { Provider } from "@opencode-ai/sdk";
-import type { AllProvidersData, ProviderInfo, ModelInfo } from "../vscode-api";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "../locales";
+import type { AllProvidersData, ModelInfo, ProviderInfo } from "../vscode-api";
 
 type Props = {
   providers: Provider[];
@@ -76,10 +76,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
     return allDisplayProviders.filter((p) => p.connected);
   }, [allDisplayProviders, showAll]);
 
-  const hasDisconnected = useMemo(
-    () => allDisplayProviders.some((p) => !p.connected),
-    [allDisplayProviders],
-  );
+  const hasDisconnected = useMemo(() => allDisplayProviders.some((p) => !p.connected), [allDisplayProviders]);
 
   const selectedModelName = useMemo(() => {
     if (!selectedModel) return t["model.selectModel"];
@@ -88,7 +85,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
       if (model) return model.name || selectedModel.modelID;
     }
     return selectedModel.modelID;
-  }, [selectedModel, allDisplayProviders]);
+  }, [selectedModel, allDisplayProviders, t["model.selectModel"]]);
 
   const toggleProvider = (id: string) => {
     setCollapsedProviders((prev) => {
@@ -102,13 +99,14 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
   return (
     <div className="model-selector" ref={containerRef}>
       <button
+        type="button"
         className="model-selector-button"
         onClick={() => setOpen((s) => !s)}
         title={t["model.selectModel"]}
       >
         <span className="model-selector-label">{selectedModelName}</span>
         <span className={`chevron-icon ${open ? "expanded" : ""}`}>
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
             <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
           </svg>
         </span>
@@ -126,7 +124,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                     onClick={() => toggleProvider(provider.id)}
                   >
                     <span className={`chevron-icon ${isCollapsed ? "" : "expanded"}`}>
-                      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                      <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
                       </svg>
                     </span>
@@ -135,39 +133,35 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                       <span className="model-panel-section-badge">{t["model.notConnected"]}</span>
                     )}
                   </div>
-                  {!isCollapsed && provider.models.map((model) => {
-                    const isSelected =
-                      selectedModel?.providerID === provider.id &&
-                      selectedModel?.modelID === model.id;
-                    const disabled = !provider.connected;
-                    const badge = statusBadge(model.status);
-                    return (
-                      <div
-                        key={model.id}
-                        className={`model-panel-item${isSelected ? " active" : ""}${disabled ? " disabled" : ""}`}
-                        onClick={() => {
-                          if (disabled) return;
-                          onSelect({ providerID: provider.id, modelID: model.id });
-                          setOpen(false);
-                        }}
-                      >
-                        <span className="model-panel-item-check">
-                          {isSelected ? "✓" : ""}
-                        </span>
-                        <span className="model-panel-item-name">
-                          {model.name || model.id}
-                          {badge && <span className={`model-panel-item-badge ${badge}`}>{badge}</span>}
-                        </span>
-                        {model.limit && (
-                          <span className="model-panel-item-meta">
-                            <span className="model-panel-item-context">
-                              {formatContextK(model.limit.context)}
-                            </span>
+                  {!isCollapsed &&
+                    provider.models.map((model) => {
+                      const isSelected =
+                        selectedModel?.providerID === provider.id && selectedModel?.modelID === model.id;
+                      const disabled = !provider.connected;
+                      const badge = statusBadge(model.status);
+                      return (
+                        <div
+                          key={model.id}
+                          className={`model-panel-item${isSelected ? " active" : ""}${disabled ? " disabled" : ""}`}
+                          onClick={() => {
+                            if (disabled) return;
+                            onSelect({ providerID: provider.id, modelID: model.id });
+                            setOpen(false);
+                          }}
+                        >
+                          <span className="model-panel-item-check">{isSelected ? "✓" : ""}</span>
+                          <span className="model-panel-item-name">
+                            {model.name || model.id}
+                            {badge && <span className={`model-panel-item-badge ${badge}`}>{badge}</span>}
                           </span>
-                        )}
-                      </div>
-                    );
-                  })}
+                          {model.limit && (
+                            <span className="model-panel-item-meta">
+                              <span className="model-panel-item-context">{formatContextK(model.limit.context)}</span>
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
                 </div>
               );
             })}
@@ -175,11 +169,12 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
           {hasDisconnected && (
             <div className="model-panel-footer">
               <button
+                type="button"
                 className="model-panel-link"
                 onClick={() => setShowAll((s) => !s)}
                 title={showAll ? t["model.hideDisconnected"] : t["model.showAll"]}
               >
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
                   {showAll ? (
                     <path d="M8 3C4.5 3 1.7 5.1 0.5 8c1.2 2.9 4 5 7.5 5s6.3-2.1 7.5-5c-1.2-2.9-4-5-7.5-5zm0 8.5C5.5 11.5 3.5 10 2.2 8 3.5 6 5.5 4.5 8 4.5S12.5 6 13.8 8c-1.3 2-3.3 3.5-5.8 3.5zM8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zm0 4a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
                   ) : (

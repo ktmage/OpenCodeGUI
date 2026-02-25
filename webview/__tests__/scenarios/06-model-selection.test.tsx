@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
+import { createAllProvidersData, createProvider, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
-import { createSession, createProvider, createAllProvidersData } from "../factories";
 
 /** プロバイダー付きアクティブセッションをセットアップする */
 async function setupWithProviders() {
@@ -13,7 +13,7 @@ async function setupWithProviders() {
     "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
     "claude-4-sonnet": { id: "claude-4-sonnet", name: "Claude 4 Sonnet", limit: { context: 200000, output: 4096 } },
   });
-  const openai = createProvider("openai", {
+  const _openai = createProvider("openai", {
     "gpt-5": { id: "gpt-5", name: "GPT-5", limit: { context: 128000, output: 4096 } },
   });
 
@@ -25,7 +25,11 @@ async function setupWithProviders() {
         name: "Anthropic",
         models: {
           "claude-4-opus": { id: "claude-4-opus", name: "Claude 4 Opus", limit: { context: 200000, output: 4096 } },
-          "claude-4-sonnet": { id: "claude-4-sonnet", name: "Claude 4 Sonnet", limit: { context: 200000, output: 4096 } },
+          "claude-4-sonnet": {
+            id: "claude-4-sonnet",
+            name: "Claude 4 Sonnet",
+            limit: { context: 200000, output: 4096 },
+          },
         },
       },
       {
