@@ -1,36 +1,34 @@
-import type { Event, Message, Part, Permission, Provider, Session } from "@opencode-ai/sdk";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import type { Event } from "@opencode-ai/sdk";
+import { useCallback, useEffect, useState } from "react";
 import { ChatHeader } from "./components/ChatHeader";
 import { EmptyState } from "./components/EmptyState";
 import { InputArea } from "./components/InputArea";
 import { MessagesArea } from "./components/MessagesArea";
 import { SessionList } from "./components/SessionList";
 import { TodoHeader } from "./components/TodoHeader";
-import type { TodoItem } from "./utils/todo";
-import { parseTodos } from "./utils/todo";
-import type { LocaleSetting } from "./locales";
-import { getStrings, LocaleProvider, resolveLocale } from "./locales";
-import type { AllProvidersData, ExtToWebviewMessage, FileAttachment } from "./vscode-api";
-import { getPersistedState, postMessage, setPersistedState } from "./vscode-api";
+import { AppContextProvider, type AppContextValue } from "./contexts/AppContext";
+import { useLocale } from "./hooks/useLocale";
+import { useMessages } from "./hooks/useMessages";
+import { usePermissions } from "./hooks/usePermissions";
+import { useProviders } from "./hooks/useProviders";
+import { useSession } from "./hooks/useSession";
+import { LocaleProvider } from "./locales";
+import type { ExtToWebviewMessage, FileAttachment } from "./vscode-api";
+import { postMessage } from "./vscode-api";
 
-export type MessageWithParts = { info: Message; parts: Part[] };
+// re-export for consumers that import from App.tsx
+export type { MessageWithParts } from "./hooks/useMessages";
 
 export function App() {
-  const [sessions, setSessions] = useState<Session[]>([]);
-  const [activeSession, setActiveSession] = useState<Session | null>(null);
-  const [messages, setMessages] = useState<MessageWithParts[]>([]);
-  const [showSessionList, setShowSessionList] = useState(false);
-  const [sessionBusy, setSessionBusy] = useState(false);
-  // パーミッションリクエストを messageID でグルーピングして管理する
-  const [permissions, setPermissions] = useState<Map<string, Permission>>(new Map());
-  const [providers, setProviders] = useState<Provider[]>([]);
-  const [allProvidersData, setAllProvidersData] = useState<AllProvidersData | null>(null);
-  const [selectedModel, setSelectedModel] = useState<{ providerID: string; modelID: string } | null>(null);
+  const session = useSession();
+  const msg = useMessages();
+  const prov = useProviders();
+  const perm = usePermissions();
+  const locale = useLocale();
+
+  // Extension Host → Webview メッセージでのみ更新される単純なステート
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
-  // チェックポイントからの復元時にテキストを入力欄にプリフィルするためのステート
-  const [prefillText, setPrefillText] = useState("");
-  // 設定パネル用のステート
   const [openCodePaths, setOpenCodePaths] = useState<{
     home: string;
     config: string;
@@ -38,151 +36,55 @@ export function App() {
     directory: string;
   } | null>(null);
 
-  // ロケール管理
-  const [localeSetting, setLocaleSetting] = useState<LocaleSetting>(
-    () => (getPersistedState()?.localeSetting as LocaleSetting) ?? "auto",
+  const handleOpenConfigFile = useCallback((filePath: string) => {
+    postMessage({ type: "openConfigFile", filePath });
+  }, []);
+
+  const handleOpenTerminal = useCallback(() => {
+    postMessage({ type: "openTerminal" });
+  }, []);
+
+  // SSE event handler — dispatches to domain-specific hooks
+  const handleEvent = useCallback(
+    (event: Event) => {
+      session.handleSessionEvent(event);
+      msg.handleMessageEvent(event);
+      perm.handlePermissionEvent(event);
+    },
+    [session.handleSessionEvent, msg.handleMessageEvent, perm.handlePermissionEvent],
   );
-  const [vscodeLanguage, setVscodeLanguage] = useState("en");
-  const resolvedLocale = useMemo(() => resolveLocale(localeSetting, vscodeLanguage), [localeSetting, vscodeLanguage]);
-  const strings = useMemo(() => getStrings(resolvedLocale), [resolvedLocale]);
 
-  const handleLocaleSettingChange = useCallback((setting: LocaleSetting) => {
-    setLocaleSetting(setting);
-    setPersistedState({ ...getPersistedState(), localeSetting: setting });
-  }, []);
-
-  // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
-  const inputTokens = useMemo(() => {
-    let total = 0;
-    for (const m of messages) {
-      for (const p of m.parts) {
-        if (p.type === "step-finish" && p.tokens) {
-          total += p.tokens.input;
-        }
-      }
-    }
-    return total;
-  }, [messages]);
-
-  // 選択中のモデルのコンテキストリミットを算出
-  const contextLimit = useMemo(() => {
-    if (!selectedModel) return 0;
-    const provider = providers.find((p) => p.id === selectedModel.providerID);
-    if (!provider) return 0;
-    const model = provider.models[selectedModel.modelID];
-    return model?.limit?.context ?? 0;
-  }, [providers, selectedModel]);
-
-  const handleEvent = useCallback((event: Event) => {
-    switch (event.type) {
-      case "message.updated": {
-        const info = event.properties.info;
-        setMessages((prev) => {
-          const idx = prev.findIndex((m) => m.info.id === info.id);
-          if (idx >= 0) {
-            const updated = [...prev];
-            updated[idx] = { ...updated[idx], info };
-            return updated;
-          }
-          return [...prev, { info, parts: [] }];
-        });
-        break;
-      }
-      case "message.part.updated": {
-        const part = event.properties.part;
-        setMessages((prev) => {
-          const idx = prev.findIndex((m) => m.info.id === part.messageID);
-          if (idx < 0) return prev;
-          const updated = [...prev];
-          const msg = { ...updated[idx] };
-          const partIdx = msg.parts.findIndex((p) => p.id === part.id);
-          if (partIdx >= 0) {
-            msg.parts = [...msg.parts];
-            msg.parts[partIdx] = part;
-          } else {
-            msg.parts = [...msg.parts, part];
-          }
-          updated[idx] = msg;
-          return updated;
-        });
-        break;
-      }
-      case "session.status": {
-        setSessionBusy(event.properties.status.type === "busy");
-        break;
-      }
-      case "permission.updated": {
-        const permission = event.properties;
-        setPermissions((prev) => {
-          const next = new Map(prev);
-          next.set(permission.id, permission);
-          return next;
-        });
-        break;
-      }
-      case "permission.replied": {
-        const permissionID = event.properties.permissionID;
-        setPermissions((prev) => {
-          const next = new Map(prev);
-          next.delete(permissionID);
-          return next;
-        });
-        break;
-      }
-      case "message.removed": {
-        // 圧縮時にメッセージが削除される → messages から除去すると inputTokens も自動的に再計算される
-        const { messageID } = event.properties;
-        setMessages((prev) => prev.filter((m) => m.info.id !== messageID));
-        break;
-      }
-      case "session.updated": {
-        const info = event.properties.info;
-        setSessions((prev) => prev.map((s) => (s.id === info.id ? info : s)));
-        setActiveSession((prev) => (prev?.id === info.id ? info : prev));
-        break;
-      }
-      case "session.created": {
-        setSessions((prev) => [event.properties.info, ...prev]);
-        break;
-      }
-      case "session.deleted": {
-        const deletedId = event.properties.info.id;
-        setSessions((prev) => prev.filter((s) => s.id !== deletedId));
-        break;
-      }
-    }
-  }, []);
-
+  // Extension Host → Webview message listener
   useEffect(() => {
     const handler = (e: MessageEvent<ExtToWebviewMessage>) => {
-      const msg = e.data;
-      switch (msg.type) {
+      const data = e.data;
+      switch (data.type) {
         case "sessions":
-          setSessions(msg.sessions);
+          session.setSessions(data.sessions);
           break;
         case "messages":
-          if (msg.sessionId === activeSession?.id) {
-            setMessages(msg.messages);
+          if (data.sessionId === session.activeSession?.id) {
+            msg.setMessages(data.messages);
           }
           break;
         case "activeSession":
-          setActiveSession(msg.session);
-          if (msg.session) {
-            postMessage({ type: "getMessages", sessionId: msg.session.id });
+          session.setActiveSession(data.session);
+          if (data.session) {
+            postMessage({ type: "getMessages", sessionId: data.session.id });
           } else {
-            setMessages([]);
+            msg.setMessages([]);
           }
           break;
         case "event":
-          handleEvent(msg.event);
+          handleEvent(data.event);
           break;
         case "providers": {
-          setProviders(msg.providers);
-          setAllProvidersData(msg.allProviders);
+          prov.setProviders(data.providers);
+          prov.setAllProvidersData(data.allProviders);
           // サーバーのモデル設定を反映する（config.model → default の順でフォールバック）
-          setSelectedModel(() => {
+          prov.setSelectedModel(() => {
             const modelStr =
-              msg.configModel || msg.default.general || msg.default.code || Object.values(msg.default)[0];
+              data.configModel || data.default.general || data.default.code || Object.values(data.default)[0];
             if (!modelStr) return null;
             const slashIndex = modelStr.indexOf("/");
             if (slashIndex < 0) return null;
@@ -194,23 +96,23 @@ export function App() {
           break;
         }
         case "openEditors":
-          setOpenEditors(msg.files);
+          setOpenEditors(data.files);
           break;
         case "workspaceFiles":
-          setWorkspaceFiles(msg.files);
+          setWorkspaceFiles(data.files);
           break;
         case "toolConfig":
-          setOpenCodePaths(msg.paths);
+          setOpenCodePaths(data.paths);
           break;
         case "locale":
-          setVscodeLanguage(msg.vscodeLanguage);
+          locale.setVscodeLanguage(data.vscodeLanguage);
           break;
         case "modelUpdated": {
-          const slashIndex = msg.model.indexOf("/");
+          const slashIndex = data.model.indexOf("/");
           if (slashIndex >= 0) {
-            setSelectedModel({
-              providerID: msg.model.slice(0, slashIndex),
-              modelID: msg.model.slice(slashIndex + 1),
+            prov.setSelectedModel({
+              providerID: data.model.slice(0, slashIndex),
+              modelID: data.model.slice(slashIndex + 1),
             });
           }
           break;
@@ -221,191 +123,178 @@ export function App() {
     postMessage({ type: "ready" });
     postMessage({ type: "getOpenEditors" });
     return () => window.removeEventListener("message", handler);
-  }, [activeSession?.id, handleEvent]);
+  }, [session.activeSession?.id, handleEvent, session, msg, prov, perm, locale]);
+
+  // Cross-cutting action handlers (span multiple hooks)
 
   const handleSend = useCallback(
     (text: string, files: FileAttachment[]) => {
-      if (!activeSession) return;
+      if (!session.activeSession) return;
       postMessage({
         type: "sendMessage",
-        sessionId: activeSession.id,
+        sessionId: session.activeSession.id,
         text,
-        model: selectedModel ?? undefined,
-        files: files.length > 0 ? files : undefined,
-      });
-    },
-    [activeSession, selectedModel],
+model: prov.selectedModel ?? undefined,
+      files: files.length > 0 ? files : undefined,
+    });
+  },
+    [session.activeSession, prov.selectedModel],
   );
 
-  const handleNewSession = useCallback(() => {
-    postMessage({ type: "createSession" });
-    setShowSessionList(false);
-  }, []);
-
-  const handleSelectSession = useCallback((sessionId: string) => {
-    postMessage({ type: "selectSession", sessionId });
-    setShowSessionList(false);
-  }, []);
-
-  const handleDeleteSession = useCallback((sessionId: string) => {
-    postMessage({ type: "deleteSession", sessionId });
-  }, []);
-
-  const handleModelSelect = useCallback((model: { providerID: string; modelID: string }) => {
-    setSelectedModel(model);
-    postMessage({ type: "setModel", model: `${model.providerID}/${model.modelID}` });
-  }, []);
-
   const handleAbort = useCallback(() => {
-    if (!activeSession) return;
-    postMessage({ type: "abort", sessionId: activeSession.id });
-  }, [activeSession]);
+    if (!session.activeSession) return;
+    postMessage({ type: "abort", sessionId: session.activeSession.id });
+  }, [session.activeSession]);
 
   const handleCompress = useCallback(() => {
-    if (!activeSession) return;
+    if (!session.activeSession) return;
     postMessage({
       type: "compressSession",
-      sessionId: activeSession.id,
-      model: selectedModel ?? undefined,
+      sessionId: session.activeSession.id,
+      model: prov.selectedModel ?? undefined,
     });
-  }, [activeSession, selectedModel]);
-
-  const handleOpenConfigFile = useCallback((filePath: string) => {
-    postMessage({ type: "openConfigFile", filePath });
-  }, []);
-
-  const handleOpenTerminal = useCallback(() => {
-    postMessage({ type: "openTerminal" });
-  }, []);
+  }, [session.activeSession, prov.selectedModel]);
 
   // ユーザーメッセージを編集して再送信する
   const handleEditAndResend = useCallback(
     (messageId: string, text: string) => {
-      if (!activeSession) return;
+      if (!session.activeSession) return;
       // messageId は編集対象のユーザーメッセージ。
       // その直前のメッセージまで巻き戻し、編集後のテキストを送信する。
-      const msgIndex = messages.findIndex((m) => m.info.id === messageId);
+      const msgIndex = msg.messages.findIndex((m) => m.info.id === messageId);
       if (msgIndex < 0) return;
       if (msgIndex === 0) {
         // 最初のメッセージの場合: 新規セッションを作成して送信する方がクリーン
         // ただし revert API のフォールバックとして、messageId 自体で revert
         postMessage({
           type: "editAndResend",
-          sessionId: activeSession.id,
+          sessionId: session.activeSession.id,
           messageId,
           text,
-          model: selectedModel ?? undefined,
+          model: prov.selectedModel ?? undefined,
         });
       } else {
         // 直前のメッセージまで巻き戻して再送信
-        const prevMessageId = messages[msgIndex - 1].info.id;
+        const prevMessageId = msg.messages[msgIndex - 1].info.id;
         postMessage({
           type: "editAndResend",
-          sessionId: activeSession.id,
+          sessionId: session.activeSession.id,
           messageId: prevMessageId,
           text,
-          model: selectedModel ?? undefined,
+          model: prov.selectedModel ?? undefined,
         });
       }
     },
-    [activeSession, messages, selectedModel],
+    [session.activeSession, msg.messages, prov.selectedModel],
   );
 
   // チェックポイントまで巻き戻す + ユーザーメッセージのテキストを入力欄に復元
   const handleRevertToCheckpoint = useCallback(
     (assistantMessageId: string, userText: string | null) => {
-      if (!activeSession) return;
+      if (!session.activeSession) return;
       postMessage({
         type: "revertToMessage",
-        sessionId: activeSession.id,
+        sessionId: session.activeSession.id,
         messageId: assistantMessageId,
       });
       // ユーザーメッセージのテキストを入力欄にプリフィルする
-      setPrefillText(userText ?? "");
+      msg.setPrefillText(userText ?? "");
     },
-    [activeSession],
+    [session.activeSession, msg],
   );
 
-  // メッセージから最新の ToDo リストを導出（todowrite/todoread ツールの最新の出力）
-  const latestTodos = useMemo<TodoItem[]>(() => {
-    for (let mi = messages.length - 1; mi >= 0; mi--) {
-      const parts = messages[mi].parts;
-      for (let pi = parts.length - 1; pi >= 0; pi--) {
-        const p = parts[pi];
-        if (p.type !== "tool") continue;
-        if (p.tool !== "todowrite" && p.tool !== "todoread") continue;
-        const st = p.state;
-        if (st.status === "completed" && st.output) {
-          const parsed = parseTodos(st.output);
-          if (parsed) return parsed;
-        }
-        if (st.status !== "pending") {
-          const input = st.input as Record<string, unknown> | undefined;
-          if (input) {
-            const parsed = parseTodos(input.todos ?? input);
-            if (parsed) return parsed;
-          }
-        }
-      }
-    }
-    return [];
-  }, [messages]);
+  const contextValue: AppContextValue = {
+    sessions: session.sessions,
+    activeSession: session.activeSession,
+    sessionBusy: session.sessionBusy,
+    showSessionList: session.showSessionList,
+    onNewSession: session.handleNewSession,
+    onSelectSession: session.handleSelectSession,
+    onDeleteSession: session.handleDeleteSession,
+    onToggleSessionList: session.toggleSessionList,
+    messages: msg.messages,
+    inputTokens: msg.inputTokens,
+    latestTodos: msg.latestTodos,
+    prefillText: msg.prefillText,
+    onPrefillConsumed: msg.consumePrefill,
+    providers: prov.providers,
+    allProvidersData: prov.allProvidersData,
+    selectedModel: prov.selectedModel,
+    onModelSelect: prov.handleModelSelect,
+    contextLimit: prov.contextLimit,
+    permissions: perm.permissions,
+    openEditors,
+    workspaceFiles,
+    onSend: handleSend,
+    onAbort: handleAbort,
+    onCompress: handleCompress,
+    isCompressing: !!session.activeSession?.time?.compacting,
+    onEditAndResend: handleEditAndResend,
+    onRevertToCheckpoint: handleRevertToCheckpoint,
+    openCodePaths,
+    onOpenConfigFile: handleOpenConfigFile,
+    onOpenTerminal: handleOpenTerminal,
+    localeSetting: locale.localeSetting,
+    onLocaleSettingChange: locale.handleLocaleSettingChange,
+  };
 
   return (
-    <LocaleProvider value={strings}>
-      <div className="chat-container">
-        <ChatHeader
-          activeSession={activeSession}
-          onNewSession={handleNewSession}
-          onToggleSessionList={() => setShowSessionList((s) => !s)}
-        />
-        {showSessionList && (
-          <SessionList
-            sessions={sessions}
-            activeSessionId={activeSession?.id ?? null}
-            onSelect={handleSelectSession}
-            onDelete={handleDeleteSession}
-            onClose={() => setShowSessionList(false)}
+    <LocaleProvider value={locale.strings}>
+      <AppContextProvider value={contextValue}>
+        <div className="chat-container">
+          <ChatHeader
+            activeSession={session.activeSession}
+            onNewSession={session.handleNewSession}
+            onToggleSessionList={session.toggleSessionList}
           />
-        )}
-        {activeSession ? (
-          <>
-            <MessagesArea
-              messages={messages}
-              sessionBusy={sessionBusy}
-              activeSessionId={activeSession.id}
-              permissions={permissions}
-              onEditAndResend={handleEditAndResend}
-              onRevertToCheckpoint={handleRevertToCheckpoint}
+          {session.showSessionList && (
+            <SessionList
+              sessions={session.sessions}
+              activeSessionId={session.activeSession?.id ?? null}
+              onSelect={session.handleSelectSession}
+              onDelete={session.handleDeleteSession}
+              onClose={session.toggleSessionList}
             />
-            {latestTodos.length > 0 && <TodoHeader todos={latestTodos} />}
-            <InputArea
-              onSend={handleSend}
-              onAbort={handleAbort}
-              isBusy={sessionBusy}
-              providers={providers}
-              allProvidersData={allProvidersData}
-              selectedModel={selectedModel}
-              onModelSelect={handleModelSelect}
-              openEditors={openEditors}
-              workspaceFiles={workspaceFiles}
-              inputTokens={inputTokens}
-              contextLimit={contextLimit}
-              onCompress={handleCompress}
-              isCompressing={!!activeSession?.time?.compacting}
-              prefillText={prefillText}
-              onPrefillConsumed={() => setPrefillText("")}
-              openCodePaths={openCodePaths}
-              onOpenConfigFile={handleOpenConfigFile}
-              onOpenTerminal={handleOpenTerminal}
-              localeSetting={localeSetting}
-              onLocaleSettingChange={handleLocaleSettingChange}
-            />
-          </>
-        ) : (
-          <EmptyState onNewSession={handleNewSession} />
-        )}
-      </div>
+          )}
+          {session.activeSession ? (
+            <>
+              <MessagesArea
+                messages={msg.messages}
+                sessionBusy={session.sessionBusy}
+                activeSessionId={session.activeSession.id}
+                permissions={perm.permissions}
+                onEditAndResend={handleEditAndResend}
+                onRevertToCheckpoint={handleRevertToCheckpoint}
+              />
+              {msg.latestTodos.length > 0 && <TodoHeader todos={msg.latestTodos} />}
+              <InputArea
+                onSend={handleSend}
+                onAbort={handleAbort}
+                isBusy={session.sessionBusy}
+                providers={prov.providers}
+                allProvidersData={prov.allProvidersData}
+                selectedModel={prov.selectedModel}
+                onModelSelect={prov.handleModelSelect}
+                openEditors={openEditors}
+                workspaceFiles={workspaceFiles}
+                inputTokens={msg.inputTokens}
+                contextLimit={prov.contextLimit}
+                onCompress={handleCompress}
+                isCompressing={!!session.activeSession?.time?.compacting}
+                prefillText={msg.prefillText}
+                onPrefillConsumed={msg.consumePrefill}
+                openCodePaths={openCodePaths}
+                onOpenConfigFile={handleOpenConfigFile}
+                onOpenTerminal={handleOpenTerminal}
+                localeSetting={locale.localeSetting}
+                onLocaleSettingChange={locale.handleLocaleSettingChange}
+              />
+            </>
+          ) : (
+            <EmptyState onNewSession={session.handleNewSession} />
+          )}
+        </div>
+      </AppContextProvider>
     </LocaleProvider>
   );
 }
