@@ -1,6 +1,17 @@
 import type { ToolPart } from "@opencode-ai/sdk";
 import { useMemo, useState } from "react";
 import { useLocale } from "../locales";
+import {
+  ChevronRightIcon,
+  EditActionIcon,
+  ErrorCircleIcon,
+  ReadActionIcon,
+  RunActionIcon,
+  SearchActionIcon,
+  SpinnerIcon,
+  ToolIcon,
+  WriteActionIcon,
+} from "./atoms/icons";
 
 type Props = {
   part: ToolPart;
@@ -246,41 +257,17 @@ function FileCreateView({ content }: { content: string }) {
 function ActionIcon({ category }: { category: ToolCategory }) {
   switch (category) {
     case "read":
-      return (
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M1.5 1h11l1.5 2v10.5a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 0 13.5V2.5A1.5 1.5 0 0 1 1.5 1zm0 1a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V3.5L12 2H1.5zM3 5h8v1H3V5zm0 3h8v1H3V8zm0 3h5v1H3v-1z" />
-        </svg>
-      );
+      return <ReadActionIcon />;
     case "edit":
-      return (
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M13.23 1h-1.46L3.52 9.25l-.16.22L1 13.59 2.41 15l4.12-2.36.22-.16L15 4.23V2.77L13.23 1zM2.41 13.59l1.51-3 1.45 1.45-2.96 1.55zm3.83-2.06L4.47 9.76l8-8 1.77 1.77-8 8z" />
-        </svg>
-      );
+      return <EditActionIcon />;
     case "write":
-      return (
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M9 1h4.5a1.5 1.5 0 0 1 1.5 1.5v11a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 13.5V2.5A1.5 1.5 0 0 1 2.5 1H7v1H2.5a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h11a.5.5 0 0 0 .5-.5V2.5a.5.5 0 0 0-.5-.5H9V1zM8 4l4 4H9v4H7V8H4l4-4z" />
-        </svg>
-      );
+      return <WriteActionIcon />;
     case "run":
-      return (
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M2 2.5A1.5 1.5 0 0 1 3.5 1h9A1.5 1.5 0 0 1 14 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5v-11zM3.5 2a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5h-9zM5 6l4 2.5L5 11V6z" />
-        </svg>
-      );
+      return <RunActionIcon />;
     case "search":
-      return (
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M15.25 11.8l-3.5-3.5a5.51 5.51 0 1 0-1.45 1.45l3.5 3.5a1.028 1.028 0 0 0 1.45-1.45zM6.5 10A3.5 3.5 0 1 1 10 6.5 3.504 3.504 0 0 1 6.5 10z" />
-        </svg>
-      );
+      return <SearchActionIcon />;
     default:
-      return (
-        <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zM10 1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V5h-3V1z" />
-        </svg>
-      );
+      return <ToolIcon />;
   }
 }
 
@@ -334,22 +321,9 @@ export function ToolPartView({ part }: Props) {
       <div className="tool-part-header" onClick={() => setExpanded((s) => !s)} title={t["tool.toggleDetails"]}>
         <span className="tool-part-icon">
           {isActive ? (
-            <svg
-              aria-hidden="true"
-              className="tool-part-spinner"
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-            >
-              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" opacity="0.3" />
-              <path d="M14 8a6 6 0 0 0-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <SpinnerIcon className="tool-part-spinner" />
           ) : isError ? (
-            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12z" />
-              <path d="M7.25 4h1.5v5h-1.5V4zm0 6h1.5v1.5h-1.5V10z" />
-            </svg>
+            <ErrorCircleIcon />
           ) : (
             <ActionIcon category={category} />
           )}
@@ -361,9 +335,7 @@ export function ToolPartView({ part }: Props) {
           </span>
         )}
         <span className={`tool-part-chevron ${expanded ? "expanded" : ""}`}>
-          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
-          </svg>
+          <ChevronRightIcon />
         </span>
       </div>
       {expanded && (

@@ -2,6 +2,7 @@ import type { Provider } from "@opencode-ai/sdk";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale } from "../locales";
 import type { AllProvidersData, ModelInfo, ProviderInfo } from "../vscode-api";
+import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "./atoms/icons";
 
 type Props = {
   providers: Provider[];
@@ -106,9 +107,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
       >
         <span className="model-selector-label">{selectedModelName}</span>
         <span className={`chevron-icon ${open ? "expanded" : ""}`}>
-          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
-          </svg>
+          <ChevronRightIcon />
         </span>
       </button>
       {open && (
@@ -124,9 +123,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                     onClick={() => toggleProvider(provider.id)}
                   >
                     <span className={`chevron-icon ${isCollapsed ? "" : "expanded"}`}>
-                      <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                        <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
-                      </svg>
+                      <ChevronRightIcon />
                     </span>
                     <span className="model-panel-section-name">{provider.name}</span>
                     {!provider.connected && (
@@ -174,13 +171,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                 onClick={() => setShowAll((s) => !s)}
                 title={showAll ? t["model.hideDisconnected"] : t["model.showAll"]}
               >
-                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                  {showAll ? (
-                    <path d="M8 3C4.5 3 1.7 5.1 0.5 8c1.2 2.9 4 5 7.5 5s6.3-2.1 7.5-5c-1.2-2.9-4-5-7.5-5zm0 8.5C5.5 11.5 3.5 10 2.2 8 3.5 6 5.5 4.5 8 4.5S12.5 6 13.8 8c-1.3 2-3.3 3.5-5.8 3.5zM8 5.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zm0 4a1.5 1.5 0 110-3 1.5 1.5 0 010 3z" />
-                  ) : (
-                    <path d="M8 3C4.5 3 1.7 5.1 0.5 8c.5 1.2 1.3 2.3 2.3 3.1l1-1c-.7-.6-1.3-1.3-1.7-2.1C3.5 6 5.5 4.5 8 4.5c.8 0 1.6.2 2.3.4l1.1-1.1C10.4 3.3 9.2 3 8 3zm4.9 1.9l-1 1c.7.6 1.3 1.3 1.7 2.1-1.3 2-3.3 3.5-5.8 3.5-.8 0-1.5-.1-2.2-.4l-1.1 1.1c1 .5 2.1.8 3.3.8 3.5 0 6.3-2.1 7.5-5-.6-1.3-1.4-2.4-2.4-3.1zM2.3 1.3L1 2.6l2.5 2.5C2 6.2 1 7 0.5 8c1.2 2.9 4 5 7.5 5 1.1 0 2.2-.2 3.1-.6l2.3 2.3 1.3-1.3L2.3 1.3zM8 11.5c-2.5 0-4.5-1.5-5.8-3.5.5-.9 1.2-1.7 2-2.3l1.5 1.5c-.1.3-.2.5-.2.8a2.5 2.5 0 003.3 2.3l1.1 1.1c-.6.1-1.2.1-1.9.1z" />
-                  )}
-                </svg>
+                {showAll ? <EyeIcon /> : <EyeOffIcon />}
                 <span>{showAll ? t["model.connectedOnly"] : t["model.showAll"]}</span>
               </button>
             </div>

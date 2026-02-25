@@ -2,6 +2,7 @@ import type { Permission, ReasoningPart as ReasoningPartType, TextPart } from "@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MessageWithParts } from "../App";
 import { useLocale } from "../locales";
+import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "./atoms/icons";
 import { PermissionView } from "./PermissionView";
 import { TextPartView } from "./TextPartView";
 import { ToolPartView } from "./ToolPartView";
@@ -117,9 +118,7 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
             <div className="message-user-bubble" onClick={handleStartEdit} title={t["message.clickToEdit"]}>
               <div className="message-content">{userText}</div>
               <div className="message-edit-icon">
-                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-                  <path d="M13.23 1h-1.46L3.52 9.25l-.16.22L1 13.59 2.41 15l4.12-2.36.22-.16L15 4.23V2.77L13.23 1zM2.41 13.59l1.51-3 1.45 1.45-2.96 1.55zm3.83-2.06L4.47 9.76l8-8 1.77 1.77-8 8z" />
-                </svg>
+                <EditIcon width={12} height={12} />
               </div>
             </div>
           )}
@@ -167,29 +166,14 @@ function ReasoningPartView({ part }: { part: ReasoningPartType }) {
       <div className="reasoning-part-header" onClick={() => setExpanded((s) => !s)} title={t["message.toggleThought"]}>
         <span className="reasoning-part-icon">
           {isComplete ? (
-            <svg aria-hidden="true" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 1a7 7 0 1 0 0 14A7 7 0 0 0 8 1zm0 13A6 6 0 1 1 8 2a6 6 0 0 1 0 12z" />
-              <path d="M7.5 4.5h1v4h-1zM7.5 10h1v1.5h-1z" />
-            </svg>
+            <InfoCircleIcon />
           ) : (
-            <svg
-              aria-hidden="true"
-              className="tool-part-spinner"
-              width="14"
-              height="14"
-              viewBox="0 0 16 16"
-              fill="none"
-            >
-              <circle cx="8" cy="8" r="6" stroke="currentColor" strokeWidth="2" opacity="0.3" />
-              <path d="M14 8a6 6 0 0 0-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <SpinnerIcon className="tool-part-spinner" width={14} height={14} />
           )}
         </span>
         <span className="reasoning-part-label">{isComplete ? t["message.thought"] : t["message.thinking"]}</span>
         <span className={`tool-part-chevron ${expanded ? "expanded" : ""}`}>
-          <svg aria-hidden="true" width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M5.7 13.7L5 13l4.6-4.6L5 3.7l.7-.7 5.3 5.3-5.3 5.4z" />
-          </svg>
+          <ChevronRightIcon />
         </span>
       </div>
       {expanded && <div className="reasoning-part-body">{part.text}</div>}
