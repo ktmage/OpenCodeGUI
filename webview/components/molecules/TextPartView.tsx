@@ -1,8 +1,9 @@
 import type { TextPart } from "@opencode-ai/sdk";
+import DOMPurify from "dompurify";
 import { marked } from "marked";
 import { useMemo } from "react";
 
-// marked のデフォルト設定: XSS 対策のため HTML タグをエスケープする
+// marked のデフォルト設定
 marked.setOptions({
   breaks: true,
 });
@@ -13,9 +14,10 @@ type Props = {
 
 export function TextPartView({ part }: Props) {
   const html = useMemo(() => {
-    return marked.parse(part.text, { async: false }) as string;
+    const raw = marked.parse(part.text, { async: false }) as string;
+    return DOMPurify.sanitize(raw);
   }, [part.text]);
 
-  // biome-ignore lint/security/noDangerouslySetInnerHtml: marked v17 はデフォルトで HTML タグをエスケープするため、sanitize 済み HTML の描画に使用する
+  // biome-ignore lint/security/noDangerouslySetInnerHtml: DOMPurify でサニタイズ済みの HTML を描画する
   return <span dangerouslySetInnerHTML={{ __html: html }} />;
 }
