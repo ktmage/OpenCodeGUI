@@ -42,5 +42,18 @@
     ".ktmage/instructions": true,
     ".ktmage/project/instructions": true
   },
-  "chat.agent.maxRequests": 100
+  "chat.agent.maxRequests": 100,
+  "accessibility.signalOptions.volume": 70,
+  "accessibility.signals.chatEditModifiedFile": {
+    "sound": "on"
+  },
+  "accessibility.signals.chatRequestSent": {
+    "sound": "on"
+  },
+  "accessibility.signals.chatResponseReceived": {
+    "sound": "on"
+  },
+  "accessibility.signals.chatUserActionRequired": {
+    "sound": "on"
+  }
 }
