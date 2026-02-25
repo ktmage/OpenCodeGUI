@@ -123,7 +123,7 @@ export function App() {
     postMessage({ type: "ready" });
     postMessage({ type: "getOpenEditors" });
     return () => window.removeEventListener("message", handler);
-  }, [session.activeSession?.id, handleEvent, session, msg, prov, perm, locale]);
+  }, [session.activeSession?.id, handleEvent]);
 
   // Cross-cutting action handlers (span multiple hooks)
 
