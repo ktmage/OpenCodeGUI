@@ -1,6 +1,6 @@
 import type { Permission } from "@opencode-ai/sdk";
-import { useLocale } from "../locales";
-import { postMessage } from "../vscode-api";
+import { useLocale } from "../../locales";
+import { postMessage } from "../../vscode-api";
 
 type Props = {
   permission: Permission;

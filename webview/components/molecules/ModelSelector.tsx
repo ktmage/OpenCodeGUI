@@ -1,8 +1,8 @@
 import type { Provider } from "@opencode-ai/sdk";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useLocale } from "../locales";
-import type { AllProvidersData, ModelInfo, ProviderInfo } from "../vscode-api";
-import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "./atoms/icons";
+import { useLocale } from "../../locales";
+import type { AllProvidersData, ModelInfo, ProviderInfo } from "../../vscode-api";
+import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "../atoms/icons";
 
 type Props = {
   providers: Provider[];

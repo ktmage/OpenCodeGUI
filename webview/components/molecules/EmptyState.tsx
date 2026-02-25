@@ -1,4 +1,4 @@
-import { useLocale } from "../locales";
+import { useLocale } from "../../locales";
 
 type Props = {
   onNewSession: () => void;

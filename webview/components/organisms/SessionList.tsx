@@ -1,6 +1,6 @@
 import type { Session } from "@opencode-ai/sdk";
-import { useLocale } from "../locales";
-import { DeleteIcon, FileIcon } from "./atoms/icons";
+import { useLocale } from "../../locales";
+import { DeleteIcon, FileIcon } from "../atoms/icons";
 
 type Props = {
   sessions: Session[];

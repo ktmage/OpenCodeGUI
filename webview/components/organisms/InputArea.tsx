@@ -1,22 +1,21 @@
 import type { Provider } from "@opencode-ai/sdk";
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
-import type { LocaleSetting } from "../locales";
-import { useLocale } from "../locales";
-import type { AllProvidersData, FileAttachment } from "../vscode-api";
-import { postMessage } from "../vscode-api";
+import type { LocaleSetting } from "../../locales";
+import { useLocale } from "../../locales";
+import type { AllProvidersData, FileAttachment } from "../../vscode-api";
+import { postMessage } from "../../vscode-api";
 import {
   ChevronRightIcon,
-  ClipIcon,
-  CloseIcon,
   GearIcon,
-  PlusIcon,
   SendIcon,
   StopIcon,
   TerminalIcon,
-} from "./atoms/icons";
-import { ContextIndicator } from "./ContextIndicator";
-import { ModelSelector } from "./ModelSelector";
-import { ToolConfigPanel } from "./ToolConfigPanel";
+} from "../atoms/icons";
+import { ContextIndicator } from "../atoms/ContextIndicator";
+import { FileAttachmentBar } from "../molecules/FileAttachmentBar";
+import { HashFilePopup } from "../molecules/HashFilePopup";
+import { ModelSelector } from "../molecules/ModelSelector";
+import { ToolConfigPanel } from "../organisms/ToolConfigPanel";
 
 type Props = {
   onSend: (text: string, files: FileAttachment[]) => void;
@@ -286,67 +285,19 @@ export function InputArea({
       <div className="input-wrapper">
         {/* コンテキストバー: クリップボタン + 添付ファイルチップ + quick-add を1行に */}
         <div className="context-bar">
-          <div className="context-bar-left">
-            {/* クリップボタン */}
-            <div className="context-clip-container" ref={filePickerRef}>
-              <button
-                type="button"
-                className="context-clip-button"
-                onClick={handleClipClick}
-                title={t["input.addContext"]}
-              >
-                <ClipIcon />
-              </button>
-              {showFilePicker && (
-                <div className="file-picker-dropdown">
-                  <input
-                    className="file-picker-search"
-                    placeholder={t["input.searchFiles"]}
-                    value={filePickerQuery}
-                    onChange={(e) => handleFilePickerSearch(e.target.value)}
-                  />
-                  <div className="file-picker-list">
-                    {pickerFiles.length > 0 ? (
-                      pickerFiles.slice(0, 15).map((file) => (
-                        <div key={file.filePath} className="file-picker-item" onClick={() => addFile(file)}>
-                          <span className="file-picker-item-name">{file.fileName}</span>
-                          <span className="file-picker-item-path">{file.filePath}</span>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="file-picker-empty">{t["input.noFiles"]}</div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-            {/* 添付されたファイルチップ (インライン) */}
-            {attachedFiles.map((file) => (
-              <div key={file.filePath} className="attached-file-chip">
-                <span className="attached-file-name">{file.fileName}</span>
-                <button
-                  type="button"
-                  className="attached-file-remove"
-                  onClick={() => removeFile(file.filePath)}
-                  title={t["input.remove"]}
-                >
-                  <CloseIcon width={12} height={12} />
-                </button>
-              </div>
-            ))}
-            {/* 現在開いているファイルの quick-add ボタン */}
-            {activeEditorFile && !isActiveAttached && (
-              <button
-                type="button"
-                className="context-file-button"
-                onClick={() => addFile(activeEditorFile)}
-                title={t["input.addFile"](activeEditorFile.filePath)}
-              >
-                <PlusIcon />
-                <span>{activeEditorFile.fileName}</span>
-              </button>
-            )}
-          </div>
+          <FileAttachmentBar
+            attachedFiles={attachedFiles}
+            activeEditorFile={activeEditorFile}
+            isActiveAttached={isActiveAttached}
+            showFilePicker={showFilePicker}
+            filePickerQuery={filePickerQuery}
+            pickerFiles={pickerFiles}
+            onClipClick={handleClipClick}
+            onFilePickerSearch={handleFilePickerSearch}
+            onAddFile={addFile}
+            onRemoveFile={removeFile}
+            filePickerRef={filePickerRef}
+          />
           {/* コンテキストウィンドウ使用率インジケーター (右側) */}
           {contextLimit > 0 && (
             <ContextIndicator
@@ -378,18 +329,7 @@ export function InputArea({
           />
           {/* # トリガー ファイル候補ポップアップ */}
           {hashTrigger.active && (
-            <div className="hash-popup" ref={hashPopupRef}>
-              {hashFiles.length > 0 ? (
-                hashFiles.map((file) => (
-                  <div key={file.filePath} className="hash-popup-item" onClick={() => addFile(file)}>
-                    <span className="hash-popup-item-name">{file.fileName}</span>
-                    <span className="hash-popup-item-path">{file.filePath}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="hash-popup-empty">{t["input.noFiles"]}</div>
-              )}
-            </div>
+            <HashFilePopup hashFiles={hashFiles} onAddFile={addFile} hashPopupRef={hashPopupRef} />
           )}
         </div>
 

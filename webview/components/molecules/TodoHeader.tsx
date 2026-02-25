@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useLocale } from "../locales";
-import type { TodoItem } from "../utils/todo";
-import { CheckboxIcon, ChevronRightIcon } from "./atoms/icons";
+import { useLocale } from "../../locales";
+import type { TodoItem } from "../../utils/todo";
+import { CheckboxIcon, ChevronRightIcon } from "../atoms/icons";
 
 type Props = {
   todos: TodoItem[];

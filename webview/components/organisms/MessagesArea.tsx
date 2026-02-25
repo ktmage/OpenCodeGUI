@@ -1,10 +1,10 @@
 import type { Permission } from "@opencode-ai/sdk";
 import { useEffect, useRef } from "react";
-import type { MessageWithParts } from "../App";
-import { useLocale } from "../locales";
-import { RevertIcon } from "./atoms/icons";
+import type { MessageWithParts } from "../../App";
+import { useLocale } from "../../locales";
+import { RevertIcon } from "../atoms/icons";
 import { MessageItem } from "./MessageItem";
-import { StreamingIndicator } from "./StreamingIndicator";
+import { StreamingIndicator } from "../atoms/StreamingIndicator";
 
 type Props = {
   messages: MessageWithParts[];

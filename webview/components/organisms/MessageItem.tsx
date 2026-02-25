@@ -1,10 +1,10 @@
 import type { Permission, ReasoningPart as ReasoningPartType, TextPart } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { MessageWithParts } from "../App";
-import { useLocale } from "../locales";
-import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "./atoms/icons";
+import type { MessageWithParts } from "../../App";
+import { useLocale } from "../../locales";
+import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../atoms/icons";
 import { PermissionView } from "./PermissionView";
-import { TextPartView } from "./TextPartView";
+import { TextPartView } from "../molecules/TextPartView";
 import { ToolPartView } from "./ToolPartView";
 
 type Props = {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useLocale } from "../locales";
+import { useLocale } from "../../locales";
 
 type Props = {
   inputTokens: number;
@@ -8,7 +8,7 @@ type Props = {
   isCompressing: boolean;
 };
 
-function formatTokenCount(n: number): string {
+export function formatTokenCount(n: number): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
   if (n >= 1_000) return `${(n / 1_000).toFixed(1)}K`;
   return String(n);

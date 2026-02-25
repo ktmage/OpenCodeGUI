@@ -1,11 +1,11 @@
 import type { Event } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useState } from "react";
-import { ChatHeader } from "./components/ChatHeader";
-import { EmptyState } from "./components/EmptyState";
-import { InputArea } from "./components/InputArea";
-import { MessagesArea } from "./components/MessagesArea";
-import { SessionList } from "./components/SessionList";
-import { TodoHeader } from "./components/TodoHeader";
+import { ChatHeader } from "./components/organisms/ChatHeader";
+import { EmptyState } from "./components/molecules/EmptyState";
+import { InputArea } from "./components/organisms/InputArea";
+import { MessagesArea } from "./components/organisms/MessagesArea";
+import { SessionList } from "./components/organisms/SessionList";
+import { TodoHeader } from "./components/molecules/TodoHeader";
 import { AppContextProvider, type AppContextValue } from "./contexts/AppContext";
 import { useLocale } from "./hooks/useLocale";
 import { useMessages } from "./hooks/useMessages";

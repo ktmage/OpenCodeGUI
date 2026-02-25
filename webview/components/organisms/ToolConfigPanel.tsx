@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
-import type { LocaleSetting } from "../locales";
-import { useLocale } from "../locales";
-import { CloseIcon, FileIcon } from "./atoms/icons";
+import type { LocaleSetting } from "../../locales";
+import { useLocale } from "../../locales";
+import { CloseIcon, FileIcon } from "../atoms/icons";
 
 type Props = {
   paths: { home: string; config: string; state: string; directory: string } | null;

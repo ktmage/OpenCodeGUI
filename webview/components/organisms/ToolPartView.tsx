@@ -1,10 +1,8 @@
 import type { ToolPart } from "@opencode-ai/sdk";
 import { useMemo, useState } from "react";
-import { useLocale } from "../locales";
-import type { TodoItem } from "../utils/todo";
-import { parseTodos } from "../utils/todo";
-import { CATEGORY_LABEL_KEYS, getCategory } from "../utils/tool-categories";
-import { computeLineDiff } from "../utils/diff";
+import { useLocale } from "../../locales";
+import { parseTodos } from "../../utils/todo";
+import { CATEGORY_LABEL_KEYS, type ToolCategory, getCategory } from "../../utils/tool-categories";
 import {
   ChevronRightIcon,
   EditActionIcon,
@@ -15,7 +13,10 @@ import {
   SpinnerIcon,
   ToolIcon,
   WriteActionIcon,
-} from "./atoms/icons";
+} from "../atoms/icons";
+import { DiffView } from "../molecules/DiffView";
+import { FileCreateView } from "../molecules/FileCreateView";
+import { TodoView } from "../molecules/TodoView";
 
 type Props = {
   part: ToolPart;
@@ -23,17 +24,9 @@ type Props = {
 
 /** タイトル（ファイルパスなど）をフォーマット */
 function formatTitle(part: ToolPart): string | null {
-  const { state, tool } = part;
+  const { state } = part;
   const title = state.status === "completed" ? state.title : state.status === "running" ? state.title : null;
-  if (!title) return null;
-  // bash の場合はコマンド説明
-  if (tool === "bash" || tool === "task") return title;
-  return title;
-}
-
-/** ファイルパスの末尾ファイル名を取得 */
-function _basename(p: string): string {
-  return p.split("/").pop() ?? p;
+  return title ?? null;
 }
 
 /** input からファイルパスを抽出 */
@@ -51,81 +44,6 @@ function isFileCreateInput(input: Record<string, unknown>): boolean {
   return typeof input.content === "string" && getFilePath(input) !== null && typeof input.oldString !== "string";
 }
 
-function TodoView({ todos }: { todos: TodoItem[] }) {
-  const t = useLocale();
-  const completed = todos.filter((td) => td.status === "completed" || td.status === "done").length;
-  const total = todos.length;
-
-  return (
-    <div className="tool-todo">
-      <div className="tool-todo-summary">{t["tool.completed"](completed, total)}</div>
-      <ul className="tool-todo-list">
-        {todos.map((todo, i) => {
-          const isDone = todo.status === "completed" || todo.status === "done";
-          const priorityClass = todo.priority === "high" ? "high" : todo.priority === "low" ? "low" : "";
-          return (
-            <li key={i} className={`tool-todo-item ${isDone ? "done" : ""} ${priorityClass}`}>
-              <span className="tool-todo-check">{isDone ? "✓" : "○"}</span>
-              <span className="tool-todo-content">{todo.content}</span>
-              {todo.priority && <span className={`tool-todo-priority ${priorityClass}`}>{todo.priority}</span>}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
-}
-
-// --- サブコンポーネント ---
-
-function DiffView({ oldStr, newStr }: { oldStr: string; newStr: string }) {
-  const lines = useMemo(() => computeLineDiff(oldStr, newStr), [oldStr, newStr]);
-  const addCount = lines.filter((l) => l.type === "add").length;
-  const removeCount = lines.filter((l) => l.type === "remove").length;
-
-  return (
-    <div className="tool-diff">
-      <div className="tool-diff-stats">
-        {addCount > 0 && <span className="tool-diff-stat-add">+{addCount}</span>}
-        {removeCount > 0 && <span className="tool-diff-stat-remove">−{removeCount}</span>}
-      </div>
-      <div className="tool-diff-lines">
-        {lines.map((line, i) => (
-          <div key={i} className={`tool-diff-line tool-diff-line-${line.type}`}>
-            <span className="tool-diff-line-marker">
-              {line.type === "add" ? "+" : line.type === "remove" ? "−" : " "}
-            </span>
-            <span className="tool-diff-line-text">{line.text || "\u00A0"}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FileCreateView({ content }: { content: string }) {
-  const t = useLocale();
-  const lines = content.split("\n");
-  const displayLines = lines.length > 30 ? [...lines.slice(0, 30), t["tool.moreLines"](lines.length - 30)] : lines;
-  return (
-    <div className="tool-diff">
-      <div className="tool-diff-stats">
-        <span className="tool-diff-stat-add">{t["tool.addLines"](lines.length)}</span>
-      </div>
-      <div className="tool-diff-lines">
-        {displayLines.map((line, i) => (
-          <div key={i} className="tool-diff-line tool-diff-line-add">
-            <span className="tool-diff-line-marker">+</span>
-            <span className="tool-diff-line-text">{line || "\u00A0"}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// --- アクションアイコン ---
-
 function ActionIcon({ category }: { category: ToolCategory }) {
   switch (category) {
     case "read":
@@ -142,8 +60,6 @@ function ActionIcon({ category }: { category: ToolCategory }) {
       return <ToolIcon />;
   }
 }
-
-// --- メインコンポーネント ---
 
 export function ToolPartView({ part }: Props) {
   const t = useLocale();
