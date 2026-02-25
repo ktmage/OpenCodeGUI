@@ -1,6 +1,8 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { SessionList } from "../../../components/organisms/SessionList";
+import { SessionList, formatRelativeTime } from "../../../components/organisms/SessionList";
+import { en } from "../../../locales/en";
+import { ja } from "../../../locales/ja";
 import { createSession } from "../../factories";
 
 const sessions = [
@@ -60,6 +62,60 @@ describe("SessionList", () => {
     it("空メッセージを表示すること", () => {
       const { container } = render(<SessionList {...defaultProps} sessions={[]} />);
       expect(container.querySelector(".session-item")).not.toBeInTheDocument();
+    });
+  });
+});
+
+describe("formatRelativeTime", () => {
+  // when timestamp is less than 60 seconds ago
+  context("60秒未満前の場合", () => {
+    // returns "now" in English
+    it("英語で \"now\" を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 30_000, en)).toBe("now");
+    });
+
+    // returns "今" in Japanese
+    it("日本語で \"今\" を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 30_000, ja)).toBe("今");
+    });
+  });
+
+  // when timestamp is minutes ago
+  context("数分前の場合", () => {
+    // returns minutes in English format
+    it("英語で \"5m\" 形式を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 5 * 60_000, en)).toBe("5m");
+    });
+
+    // returns minutes in Japanese format
+    it("日本語で \"5分\" 形式を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 5 * 60_000, ja)).toBe("5分");
+    });
+  });
+
+  // when timestamp is hours ago
+  context("数時間前の場合", () => {
+    // returns hours in English format
+    it("英語で \"3h\" 形式を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 3 * 3_600_000, en)).toBe("3h");
+    });
+
+    // returns hours in Japanese format
+    it("日本語で \"3時間\" 形式を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 3 * 3_600_000, ja)).toBe("3時間");
+    });
+  });
+
+  // when timestamp is days ago
+  context("数日前の場合", () => {
+    // returns days in English format
+    it("英語で \"2d\" 形式を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 2 * 86_400_000, en)).toBe("2d");
+    });
+
+    // returns days in Japanese format
+    it("日本語で \"2日\" 形式を返すこと", () => {
+      expect(formatRelativeTime(Date.now() - 2 * 86_400_000, ja)).toBe("2日");
     });
   });
 });

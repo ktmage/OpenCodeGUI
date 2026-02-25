@@ -1,4 +1,5 @@
 import type { Session } from "@opencode-ai/sdk";
+import type { en } from "../../locales/en";
 import { useLocale } from "../../locales";
 import { DeleteIcon, FileIcon } from "../atoms/icons";
 
@@ -10,17 +11,17 @@ type Props = {
   onClose: () => void;
 };
 
-function formatRelativeTime(timestamp: number): string {
+export function formatRelativeTime(timestamp: number, t: typeof en): string {
   const now = Date.now();
   const diff = now - timestamp;
   const seconds = Math.floor(diff / 1000);
-  if (seconds < 60) return "now";
+  if (seconds < 60) return t["time.now"];
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m`;
+  if (minutes < 60) return t["time.minutes"](minutes);
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h`;
+  if (hours < 24) return t["time.hours"](hours);
   const days = Math.floor(hours / 24);
-  return `${days}d`;
+  return t["time.days"](days);
 }
 
 export function SessionList({ sessions, activeSessionId, onSelect, onDelete, onClose }: Props) {
@@ -48,7 +49,7 @@ export function SessionList({ sessions, activeSessionId, onSelect, onDelete, onC
                 <div className="session-item-content">
                   <span className="session-item-title">{session.title || t["session.untitled"]}</span>
                   <span className="session-item-meta">
-                    <span className="session-item-time">{formatRelativeTime(session.time.updated)}</span>
+                    <span className="session-item-time">{formatRelativeTime(session.time.updated, t)}</span>
                     {hasSummary && (
                       <span className="session-item-stats">
                         <span className="session-item-files">

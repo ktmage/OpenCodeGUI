@@ -47,6 +47,12 @@ export const ja: typeof en = {
   "session.delete": "削除",
   "session.select": "セッションを選択",
 
+  // Time (relative)
+  "time.now": "今",
+  "time.minutes": (n: number) => `${n}分`,
+  "time.hours": (n: number) => `${n}時間`,
+  "time.days": (n: number) => `${n}日`,
+
   // ToolPartView - category labels
   "tool.read": "読み取り",
   "tool.edit": "編集",
