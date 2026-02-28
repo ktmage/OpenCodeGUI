@@ -1,7 +1,7 @@
 import type { Session } from "@opencode-ai/sdk";
 import { useLocale } from "../../../locales";
 import { IconButton } from "../../atoms/IconButton";
-import { AddIcon, BackIcon, ListIcon, ShareIcon, UnshareIcon } from "../../atoms/icons";
+import { AddIcon, BackIcon, ListIcon, RedoIcon, ShareIcon, UndoIcon, UnshareIcon } from "../../atoms/icons";
 import styles from "./ChatHeader.module.css";
 
 type Props = {
@@ -11,6 +11,11 @@ type Props = {
   onShareSession?: () => void;
   onUnshareSession?: () => void;
   onNavigateToParent?: () => void;
+  onUndo?: () => void;
+  onRedo?: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  isBusy: boolean;
 };
 
 export function ChatHeader({
@@ -20,6 +25,11 @@ export function ChatHeader({
   onShareSession,
   onUnshareSession,
   onNavigateToParent,
+  onUndo,
+  onRedo,
+  canUndo,
+  canRedo,
+  isBusy,
 }: Props) {
   const t = useLocale();
   // 共有中かどうかは session.share?.url の有無で判定する
@@ -37,6 +47,17 @@ export function ChatHeader({
       )}
       <span className={styles.title}>{activeSession?.title || t["header.title.fallback"]}</span>
       <div className={styles.actions}>
+        {/* Undo/Redo ボタン: セッションがあり、子セッション閲覧中でない場合に表示 */}
+        {activeSession && !onNavigateToParent && (
+          <>
+            <IconButton onClick={onUndo} disabled={!canUndo || isBusy} title={t["header.undo"]}>
+              <UndoIcon />
+            </IconButton>
+            <IconButton onClick={onRedo} disabled={!canRedo || isBusy} title={t["header.redo"]}>
+              <RedoIcon />
+            </IconButton>
+          </>
+        )}
         {/* 共有ボタン: セッションがあり、子セッション閲覧中でない場合に表示。
             未共有時は onShareSession が渡されている場合のみ表示する
             （メッセージのない空セッションでは SDK がエラーを返すため）。 */}

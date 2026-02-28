@@ -1,5 +1,5 @@
 import type { Agent, Event, Session, Todo } from "@opencode-ai/sdk";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
 import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
 import { TodoHeader } from "./components/molecules/TodoHeader";
@@ -41,6 +41,11 @@ export function App() {
     state: string;
     directory: string;
   } | null>(null);
+  // handleEvent 内で activeSession を参照するために ref で追跡する。
+  // これにより handleEvent の依存配列から session.activeSession（オブジェクト参照）を除外でき、
+  // session.updated イベントのたびに useEffect が再登録される問題を防ぐ。
+  const activeSessionRef = useRef(session.activeSession);
+  activeSessionRef.current = session.activeSession;
 
   const handleOpenConfigFile = useCallback((filePath: string) => {
     postMessage({ type: "openConfigFile", filePath });
@@ -51,6 +56,8 @@ export function App() {
   }, []);
 
   // SSE event handler — dispatches to domain-specific hooks
+  // activeSessionRef を使うことで session.activeSession（オブジェクト参照）への依存を排除し、
+  // handleEvent を安定した参照に保つ。これにより useEffect の不要な再登録を防ぐ。
   const handleEvent = useCallback(
     (event: Event) => {
       session.handleSessionEvent(event);
@@ -58,25 +65,26 @@ export function App() {
       perm.handlePermissionEvent(event);
       fileChanges.handleFileChangeEvent(event);
 
+      const currentSession = activeSessionRef.current;
+
       // file.edited イベント時にセッション差分を再取得する
-      if (event.type === "file.edited" && session.activeSession) {
-        postMessage({ type: "getSessionDiff", sessionId: session.activeSession.id });
+      if (event.type === "file.edited" && currentSession) {
+        postMessage({ type: "getSessionDiff", sessionId: currentSession.id });
       }
 
       // todo.updated イベント時にアクティブセッションの Todo を更新する
-      if (event.type === "todo.updated" && event.properties.sessionID === session.activeSession?.id) {
+      if (event.type === "todo.updated" && event.properties.sessionID === currentSession?.id) {
         setTodos(event.properties.todos as Todo[]);
       }
 
       // session.created イベント時にアクティブセッションの子セッションを再取得する
       // （サブエージェントが起動すると子セッションが作成されるため）
-      if (event.type === "session.created" && session.activeSession) {
-        postMessage({ type: "getChildSessions", sessionId: session.activeSession.id });
+      if (event.type === "session.created" && currentSession) {
+        postMessage({ type: "getChildSessions", sessionId: currentSession.id });
       }
     },
     [
       session.handleSessionEvent,
-      session.activeSession,
       msg.handleMessageEvent,
       perm.handlePermissionEvent,
       fileChanges.handleFileChangeEvent,
@@ -319,6 +327,56 @@ export function App() {
     postMessage({ type: "unshareSession", sessionId: session.activeSession.id });
   }, [session.activeSession]);
 
+  // Undo: 最後のアシスタントメッセージまで巻き戻す
+  // 巻き戻しで消えるユーザーメッセージのテキストを入力欄に復元する。
+  const handleUndo = useCallback(() => {
+    if (!session.activeSession) return;
+    const messages = msg.messages;
+    // 最後のアシスタントメッセージを探す
+    const lastAssistantIdx = [...messages].reverse().findIndex((m) => m.info.role === "assistant");
+    if (lastAssistantIdx < 0) return;
+    const assistantIdx = messages.length - 1 - lastAssistantIdx;
+    const lastAssistantMsg = messages[assistantIdx];
+
+    // アシスタントメッセージの直後にあるユーザーメッセージのテキストを取得する
+    const nextUserMsg = messages[assistantIdx + 1];
+    if (nextUserMsg && nextUserMsg.info.role === "user") {
+      const textParts = nextUserMsg.parts.filter((p) => p.type === "text" && !(p as any).synthetic);
+      const fallback = textParts.length > 0 ? textParts : nextUserMsg.parts.filter((p) => p.type === "text");
+      const text = fallback.map((p) => (p as any).text).join("") || "";
+      msg.setPrefillText(text);
+    } else {
+      // ユーザーメッセージがない場合（アシスタントが最後のメッセージ）は空にしない
+      // revert はアシスタントメッセージ自体を消すので、その前のユーザーメッセージのテキストを復元する
+      const prevUserMsg = [...messages].slice(0, assistantIdx).reverse().find((m) => m.info.role === "user");
+      if (prevUserMsg) {
+        const textParts = prevUserMsg.parts.filter((p) => p.type === "text" && !(p as any).synthetic);
+        const fallback = textParts.length > 0 ? textParts : prevUserMsg.parts.filter((p) => p.type === "text");
+        const text = fallback.map((p) => (p as any).text).join("") || "";
+        msg.setPrefillText(text);
+      }
+    }
+
+    postMessage({
+      type: "undoSession",
+      sessionId: session.activeSession.id,
+      messageId: lastAssistantMsg.info.id,
+    });
+  }, [session.activeSession, msg.messages, msg.setPrefillText]);
+
+  // Redo: Undo で取り消したメッセージを復元する
+  // メッセージが復元されるので入力欄のプリフィルをクリアする。
+  const handleRedo = useCallback(() => {
+    if (!session.activeSession) return;
+    msg.setPrefillText("");
+    postMessage({ type: "redoSession", sessionId: session.activeSession.id });
+  }, [session.activeSession, msg.setPrefillText]);
+
+  // Undo 可能判定: メッセージが 2 つ以上（ユーザー + アシスタント）あり、ビジーでない
+  const canUndo = msg.messages.length >= 2 && !session.sessionBusy;
+  // Redo 可能判定: session.revert フィールドが存在する（Undo 済みの状態）
+  const canRedo = !!session.activeSession?.revert && !session.sessionBusy;
+
   // 子セッションにナビゲートする
   const handleNavigateToChild = useCallback(
     (sessionId: string) => {
@@ -390,6 +448,11 @@ export function App() {
             onShareSession={msg.messages.length > 0 ? handleShareSession : undefined}
             onUnshareSession={handleUnshareSession}
             onNavigateToParent={isChildSession ? handleNavigateToParent : undefined}
+            onUndo={handleUndo}
+            onRedo={handleRedo}
+            canUndo={canUndo}
+            canRedo={canRedo}
+            isBusy={session.sessionBusy}
           />
           {session.showSessionList && (
             <SessionList

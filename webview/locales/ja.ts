@@ -39,6 +39,10 @@ export const ja: typeof en = {
   "checkpoint.retryFromHere": "ここからやり直す",
   "checkpoint.forkFromHere": "ここから分岐",
 
+  // Undo/Redo
+  "header.undo": "元に戻す",
+  "header.redo": "やり直し",
+
   // PermissionView
   "permission.allow": "許可",
   "permission.once": "一度だけ",
