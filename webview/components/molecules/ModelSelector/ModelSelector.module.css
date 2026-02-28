@@ -1,5 +1,5 @@
+/* position:relative は Popover コンポーネントが提供 */
 .root {
-  position: relative;
 }
 
 .button {

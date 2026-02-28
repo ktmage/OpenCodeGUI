@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { type ButtonHTMLAttributes, type ReactNode, forwardRef } from "react";
 import styles from "./IconButton.module.css";
 
 type Props = {
@@ -14,14 +14,18 @@ type Props = {
  * アイコンを表示する透明背景のボタン。
  * デザインはコンポーネントに内包され、レイアウト調整のみ `className` で行う。
  */
-export function IconButton({ variant = "default", size = "md", className, children, ...rest }: Props) {
-  const classes = [styles.root, variant !== "default" && styles[variant], size !== "md" && styles[size], className]
-    .filter(Boolean)
-    .join(" ");
+export const IconButton = forwardRef<HTMLButtonElement, Props>(
+  ({ variant = "default", size = "md", className, children, ...rest }, ref) => {
+    const classes = [styles.root, variant !== "default" && styles[variant], size !== "md" && styles[size], className]
+      .filter(Boolean)
+      .join(" ");
 
-  return (
-    <button type="button" className={classes} {...rest}>
-      {children}
-    </button>
-  );
-}
+    return (
+      <button type="button" ref={ref} className={classes} {...rest}>
+        {children}
+      </button>
+    );
+  },
+);
+
+IconButton.displayName = "IconButton";

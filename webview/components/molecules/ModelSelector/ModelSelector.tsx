@@ -1,10 +1,10 @@
 import type { Provider } from "@opencode-ai/sdk";
-import { useMemo, useRef, useState } from "react";
-import { useClickOutside } from "../../../hooks/useClickOutside";
+import { useMemo, useState } from "react";
 import { useLocale } from "../../../locales";
 import type { AllProvidersData, ModelInfo, ProviderInfo } from "../../../vscode-api";
 import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "../../atoms/icons";
 import { LinkButton } from "../../atoms/LinkButton";
+import { Popover } from "../../atoms/Popover";
 import styles from "./ModelSelector.module.css";
 
 type Props = {
@@ -32,12 +32,8 @@ const badgeClass: Record<string, string> = {
 
 export function ModelSelector({ providers, allProvidersData, selectedModel, onSelect }: Props) {
   const t = useLocale();
-  const [open, setOpen] = useState(false);
   const [collapsedProviders, setCollapsedProviders] = useState<Set<string>>(new Set());
   const [showAll, setShowAll] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useClickOutside(containerRef, () => setOpen(false), open);
 
   // 表示用プロバイダーリスト: allProvidersData があればそちらを使い、なければ従来の providers を使う
   const allDisplayProviders = useMemo(() => {
@@ -98,14 +94,17 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
   };
 
   return (
-    <div className={styles.root} ref={containerRef}>
-      <button type="button" className={styles.button} onClick={() => setOpen((s) => !s)} title={t["model.selectModel"]}>
-        <span className={styles.label}>{selectedModelName}</span>
-        <span className={`${styles.chevron} ${open ? styles.expanded : ""}`}>
-          <ChevronRightIcon />
-        </span>
-      </button>
-      {open && (
+    <Popover
+      className={styles.root}
+      trigger={({ open, toggle }) => (
+        <button type="button" className={styles.button} onClick={toggle} title={t["model.selectModel"]}>
+          <span className={styles.label}>{selectedModelName}</span>
+          <span className={`${styles.chevron} ${open ? styles.expanded : ""}`}>
+            <ChevronRightIcon />
+          </span>
+        </button>
+      )}
+      panel={({ close }) => (
         <div className={styles.panel}>
           <div className={styles.panelBody}>
             {displayProviders.map((provider) => {
@@ -138,7 +137,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                           onClick={() => {
                             if (disabled) return;
                             onSelect({ providerID: provider.id, modelID: model.id });
-                            setOpen(false);
+                            close();
                           }}
                         >
                           <span className={styles.itemCheck}>{isSelected ? "✓" : ""}</span>
@@ -171,6 +170,6 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
           )}
         </div>
       )}
-    </div>
+    />
   );
 }

@@ -1,7 +1,5 @@
-import { useRef } from "react";
-import { useClickOutside } from "../../../hooks/useClickOutside";
-import type { LocaleSetting } from "../../../locales";
 import { useLocale } from "../../../locales";
+import type { LocaleSetting } from "../../../locales";
 import { IconButton } from "../../atoms/IconButton";
 import { CloseIcon, FileIcon } from "../../atoms/icons";
 import { LinkButton } from "../../atoms/LinkButton";
@@ -17,12 +15,9 @@ type Props = {
 
 export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSetting, onLocaleSettingChange }: Props) {
   const t = useLocale();
-  const panelRef = useRef<HTMLDivElement>(null);
-
-  useClickOutside(panelRef, onClose);
 
   return (
-    <div className={styles.root} ref={panelRef}>
+    <div className={styles.root}>
       <div className={styles.header}>
         <span className={styles.title}>{t["config.title"]}</span>
         <IconButton variant="muted" size="sm" onClick={onClose} title={t["config.close"]}>

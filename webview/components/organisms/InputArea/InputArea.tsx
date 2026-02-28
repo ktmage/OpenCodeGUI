@@ -8,6 +8,7 @@ import { postMessage } from "../../../vscode-api";
 import { ContextIndicator } from "../../atoms/ContextIndicator";
 import { IconButton } from "../../atoms/IconButton";
 import { ChevronRightIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
+import { Popover } from "../../atoms/Popover";
 import { FileAttachmentBar } from "../../molecules/FileAttachmentBar";
 import { HashFilePopup } from "../../molecules/HashFilePopup";
 import { ModelSelector } from "../../molecules/ModelSelector";
@@ -64,7 +65,6 @@ export function InputArea({
   const [attachedFiles, setAttachedFiles] = useState<FileAttachment[]>([]);
   const [showFilePicker, setShowFilePicker] = useState(false);
   const [filePickerQuery, setFilePickerQuery] = useState("");
-  const [showToolConfig, setShowToolConfig] = useState(false);
   // # トリガー用
   const [hashTrigger, setHashTrigger] = useState<{ active: boolean; startIndex: number }>({
     active: false,
@@ -324,21 +324,25 @@ export function InputArea({
             <IconButton variant="muted" onClick={onOpenTerminal} title={t["input.openTerminal"]}>
               <TerminalIcon />
             </IconButton>
-            <IconButton variant="muted" onClick={() => setShowToolConfig((s) => !s)} title={t["input.settings"]}>
-              <GearIcon />
-              <span className={`${styles.chevron} ${showToolConfig ? styles.expanded : ""}`}>
-                <ChevronRightIcon />
-              </span>
-            </IconButton>
-            {showToolConfig && (
-              <ToolConfigPanel
-                paths={openCodePaths}
-                onOpenConfigFile={onOpenConfigFile}
-                onClose={() => setShowToolConfig(false)}
-                localeSetting={localeSetting}
-                onLocaleSettingChange={onLocaleSettingChange}
-              />
-            )}
+            <Popover
+              trigger={({ open, toggle }) => (
+                <IconButton variant="muted" onClick={toggle} title={t["input.settings"]}>
+                  <GearIcon />
+                  <span className={`${styles.chevron} ${open ? styles.expanded : ""}`}>
+                    <ChevronRightIcon />
+                  </span>
+                </IconButton>
+              )}
+              panel={({ close }) => (
+                <ToolConfigPanel
+                  paths={openCodePaths}
+                  onOpenConfigFile={onOpenConfigFile}
+                  onClose={close}
+                  localeSetting={localeSetting}
+                  onLocaleSettingChange={onLocaleSettingChange}
+                />
+              )}
+            />
           </div>
           {isBusy ? (
             <IconButton className={styles.sendButton} onClick={onAbort} title={t["input.stop"]}>
