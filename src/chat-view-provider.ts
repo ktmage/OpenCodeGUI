@@ -3,6 +3,7 @@ import * as path from "node:path";
 import * as vscode from "vscode";
 import type {
   Event,
+  FileDiff,
   Message,
   OpenCodeConnection,
   OpenCodePath,
@@ -36,7 +37,8 @@ export type ExtToWebviewMessage =
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
   | { type: "toolConfig"; paths: OpenCodePath }
   | { type: "locale"; vscodeLanguage: string }
-  | { type: "modelUpdated"; model: string; default: Record<string, string> };
+  | { type: "modelUpdated"; model: string; default: Record<string, string> }
+  | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -71,6 +73,8 @@ export type WebviewToExtMessage =
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }
+  | { type: "getSessionDiff"; sessionId: string }
+  | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -324,6 +328,23 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         await fs.mkdir(path.dirname(configFilePath), { recursive: true });
         await fs.writeFile(configFilePath, `${JSON.stringify(configJson, null, 2)}\n`);
         this.postMessage({ type: "modelUpdated", model: message.model, default: {} });
+        break;
+      }
+      case "getSessionDiff": {
+        const diffs = await this.connection.getSessionDiff(message.sessionId);
+        this.postMessage({ type: "sessionDiff", sessionId: message.sessionId, diffs });
+        break;
+      }
+      case "openDiffEditor": {
+        // 仮想ドキュメントを使って VS Code のネイティブ diff エディタを開く
+        const beforeUri = vscode.Uri.parse(
+          `opencode-diff-before:${message.filePath}?${encodeURIComponent(message.before)}`,
+        );
+        const afterUri = vscode.Uri.parse(
+          `opencode-diff-after:${message.filePath}?${encodeURIComponent(message.after)}`,
+        );
+        const fileName = path.basename(message.filePath);
+        await vscode.commands.executeCommand("vscode.diff", beforeUri, afterUri, `${fileName} (Changes)`);
         break;
       }
     }
