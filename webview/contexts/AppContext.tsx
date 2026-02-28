@@ -1,8 +1,7 @@
-import type { FileDiff, Permission, Provider, Session } from "@opencode-ai/sdk";
+import type { FileDiff, Permission, Provider, Session, Todo } from "@opencode-ai/sdk";
 import { createContext, useContext } from "react";
 import type { MessageWithParts } from "../hooks/useMessages";
 import type { LocaleSetting } from "../locales";
-import type { TodoItem } from "../utils/todo";
 import type { AllProvidersData, FileAttachment } from "../vscode-api";
 
 export type AppContextValue = {
@@ -19,7 +18,7 @@ export type AppContextValue = {
   // Messages
   messages: MessageWithParts[];
   inputTokens: number;
-  latestTodos: TodoItem[];
+  latestTodos: Todo[];
   prefillText: string;
   onPrefillConsumed: () => void;
 

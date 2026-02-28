@@ -3,7 +3,7 @@
  * Extension Host 側の chat-view-provider.ts で定義したプロトコルに対応する。
  */
 
-import type { Event, FileDiff, Message, Part, Provider, Session } from "@opencode-ai/sdk";
+import type { Event, FileDiff, Message, Part, Provider, Session, Todo } from "@opencode-ai/sdk";
 
 // --- File attachment ---
 export type FileAttachment = {
@@ -66,7 +66,8 @@ export type ExtToWebviewMessage =
   | { type: "toolConfig"; paths: { home: string; config: string; state: string; directory: string } }
   | { type: "locale"; vscodeLanguage: string }
   | { type: "modelUpdated"; model: string; default: Record<string, string> }
-  | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] };
+  | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] }
+  | { type: "sessionTodos"; sessionId: string; todos: Todo[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -102,6 +103,7 @@ export type WebviewToExtMessage =
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }
   | { type: "getSessionDiff"; sessionId: string }
+  | { type: "getSessionTodos"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 

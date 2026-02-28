@@ -1,13 +1,13 @@
+import type { Todo } from "@opencode-ai/sdk";
 import { useState } from "react";
 import { useLocale } from "../../../locales";
-import type { TodoItem } from "../../../utils/todo";
 import { CheckboxIcon, ChevronRightIcon } from "../../atoms/icons";
 import type { BadgeVariant } from "../../atoms/StatusItem";
 import { StatusItem } from "../../atoms/StatusItem";
 import styles from "./TodoHeader.module.css";
 
 type Props = {
-  todos: TodoItem[];
+  todos: Todo[];
 };
 
 export function TodoHeader({ todos }: Props) {

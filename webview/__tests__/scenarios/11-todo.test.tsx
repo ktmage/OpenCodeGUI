@@ -1,45 +1,25 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it } from "vitest";
-import { createMessage, createSession } from "../factories";
+import { createEvent, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
 
-/** todowrite ツール出力付きのセッションをセットアップする */
-async function setupWithTodos(todos: Array<{ content: string; status: string; priority?: string }>) {
+/** session.todo() API 経由で Todo 付きのセッションをセットアップする */
+async function setupWithTodos(todos: Array<{ id: string; content: string; status: string; priority: string }>) {
   renderApp();
   await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
-
-  const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
-  const todoPart = {
-    id: "tp1",
-    type: "tool" as const,
-    tool: "todowrite",
-    messageID: "m1",
-    time: { created: Date.now(), updated: Date.now() },
-    state: {
-      status: "completed",
-      title: "todowrite",
-      input: { todos },
-      output: JSON.stringify(todos),
-    },
-  };
-
-  await sendExtMessage({
-    type: "messages",
-    sessionId: "s1",
-    messages: [{ info: msg, parts: [todoPart as any] }],
-  });
+  await sendExtMessage({ type: "sessionTodos", sessionId: "s1", todos });
 }
 
 // Todo
 describe("Todo", () => {
-  // TodoHeader is shown from todowrite output
-  context("todowrite 出力から TodoHeader を表示した場合", () => {
+  // TodoHeader is shown from session.todo() API
+  context("session.todo() API から TodoHeader を表示した場合", () => {
     beforeEach(async () => {
       await setupWithTodos([
-        { content: "First task", status: "completed" },
-        { content: "Second task", status: "in-progress" },
-        { content: "Third task", status: "pending" },
+        { id: "t1", content: "First task", status: "completed", priority: "medium" },
+        { id: "t2", content: "Second task", status: "in_progress", priority: "medium" },
+        { id: "t3", content: "Third task", status: "pending", priority: "low" },
       ]);
     });
 
@@ -58,8 +38,8 @@ describe("Todo", () => {
   context("Todo 一覧を展開した場合", () => {
     beforeEach(async () => {
       await setupWithTodos([
-        { content: "Implement feature", status: "completed" },
-        { content: "Write tests", status: "in-progress", priority: "high" },
+        { id: "t1", content: "Implement feature", status: "completed", priority: "medium" },
+        { id: "t2", content: "Write tests", status: "in_progress", priority: "high" },
       ]);
 
       const user = userEvent.setup();
@@ -87,37 +67,25 @@ describe("Todo", () => {
     renderApp();
     await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
 
-    // メッセージなし → TodoHeader なし
+    // Todo なし → TodoHeader なし
     expect(screen.queryByText("To Do")).not.toBeInTheDocument();
   });
 
-  // Todos are also shown from todoread tool output
-  it("todoread ツールの出力からも Todo が表示されること", async () => {
+  // todo.updated SSE event updates TodoHeader in real-time
+  it("todo.updated SSE イベントで TodoHeader がリアルタイム更新されること", async () => {
     renderApp();
     await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
 
-    const msg = createMessage({ id: "m1", sessionID: "s1", role: "assistant" });
-    const todoPart = {
-      id: "tp1",
-      type: "tool" as const,
-      tool: "todoread",
-      messageID: "m1",
-      time: { created: Date.now(), updated: Date.now() },
-      state: {
-        status: "completed",
-        title: "todoread",
-        input: {},
-        output: JSON.stringify([
-          { content: "Read task 1", status: "completed" },
-          { content: "Read task 2", status: "pending" },
-        ]),
-      },
-    };
-
+    // todo.updated イベントで Todo を受信
     await sendExtMessage({
-      type: "messages",
-      sessionId: "s1",
-      messages: [{ info: msg, parts: [todoPart as any] }],
+      type: "event",
+      event: createEvent("todo.updated", {
+        sessionID: "s1",
+        todos: [
+          { id: "t1", content: "SSE task 1", status: "completed", priority: "medium" },
+          { id: "t2", content: "SSE task 2", status: "pending", priority: "low" },
+        ],
+      }),
     });
 
     expect(screen.getByText("1/2")).toBeInTheDocument();
@@ -126,10 +94,53 @@ describe("Todo", () => {
   // Count matches when all todos are completed
   it("全て完了のとき件数が一致すること", async () => {
     await setupWithTodos([
-      { content: "Task A", status: "completed" },
-      { content: "Task B", status: "done" },
+      { id: "t1", content: "Task A", status: "completed", priority: "medium" },
+      { id: "t2", content: "Task B", status: "completed", priority: "low" },
     ]);
 
     expect(screen.getByText("2/2")).toBeInTheDocument();
+  });
+
+  // Todos are cleared when switching to a session without todos
+  it("セッション切替で Todo がクリアされること", async () => {
+    await setupWithTodos([{ id: "t1", content: "Some task", status: "pending", priority: "medium" }]);
+    expect(screen.getByText("To Do")).toBeInTheDocument();
+
+    // 別のセッション（Todo なし）に切替
+    await sendExtMessage({ type: "activeSession", session: createSession({ id: "s2" }) });
+    // 新セッションの sessionTodos 応答（空）でクリアされる
+    await sendExtMessage({ type: "sessionTodos", sessionId: "s2", todos: [] });
+
+    expect(screen.queryByText("To Do")).not.toBeInTheDocument();
+  });
+
+  // todo.updated for a different session is ignored
+  it("別セッションの todo.updated イベントは無視されること", async () => {
+    renderApp();
+    await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
+
+    // 別セッション (s999) の todo.updated
+    await sendExtMessage({
+      type: "event",
+      event: createEvent("todo.updated", {
+        sessionID: "s999",
+        todos: [{ id: "t1", content: "Other session task", status: "pending", priority: "medium" }],
+      }),
+    });
+
+    expect(screen.queryByText("To Do")).not.toBeInTheDocument();
+  });
+
+  // Todos are preserved when activeSession message is re-sent for the same session
+  it("同じセッションの activeSession 再送で Todo がクリアされないこと", async () => {
+    await setupWithTodos([{ id: "t1", content: "Persistent task", status: "pending", priority: "medium" }]);
+    expect(screen.getByText("To Do")).toBeInTheDocument();
+
+    // 同じセッション s1 の activeSession が再送される（session.updated 等で発生しうる）
+    await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
+
+    // Todo はクリアされず維持される
+    expect(screen.getByText("To Do")).toBeInTheDocument();
+    expect(screen.getByText("0/1")).toBeInTheDocument();
   });
 });
