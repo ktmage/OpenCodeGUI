@@ -3,6 +3,7 @@ import { useClickOutside } from "../../hooks/useClickOutside";
 import type { LocaleSetting } from "../../locales";
 import { useLocale } from "../../locales";
 import { IconButton } from "../atoms/IconButton";
+import { LinkButton } from "../atoms/LinkButton";
 import { CloseIcon, FileIcon } from "../atoms/icons";
 
 type Props = {
@@ -55,22 +56,14 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
       {/* 設定ファイルへのリンク */}
       {paths && (
         <div className="tool-config-footer">
-          <button
-            type="button"
-            className="tool-config-link"
-            onClick={() => onOpenConfigFile(`${paths.directory}/opencode.json`)}
-          >
+          <LinkButton onClick={() => onOpenConfigFile(`${paths.directory}/opencode.json`)}>
             <FileIcon />
             {t["config.projectConfig"]}
-          </button>
-          <button
-            type="button"
-            className="tool-config-link"
-            onClick={() => onOpenConfigFile(`${paths.config}/opencode.json`)}
-          >
+          </LinkButton>
+          <LinkButton onClick={() => onOpenConfigFile(`${paths.config}/opencode.json`)}>
             <FileIcon />
             {t["config.globalConfig"]}
-          </button>
+          </LinkButton>
         </div>
       )}
     </div>

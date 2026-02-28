@@ -37,7 +37,7 @@ describe("ToolConfigPanel", () => {
     // renders config file links
     it("設定ファイルリンクをレンダリングすること", () => {
       const { container } = render(<ToolConfigPanel {...defaultProps} />);
-      expect(container.querySelectorAll(".tool-config-link")).toHaveLength(2);
+      expect(container.querySelectorAll(".link-button")).toHaveLength(2);
     });
   });
 
@@ -46,7 +46,7 @@ describe("ToolConfigPanel", () => {
     // does not render config file links
     it("設定ファイルリンクをレンダリングしないこと", () => {
       const { container } = render(<ToolConfigPanel {...defaultProps} paths={null} />);
-      expect(container.querySelector(".tool-config-link")).not.toBeInTheDocument();
+      expect(container.querySelector(".link-button")).not.toBeInTheDocument();
     });
   });
 });

@@ -4,6 +4,7 @@ import { useClickOutside } from "../../hooks/useClickOutside";
 import { useLocale } from "../../locales";
 import type { AllProvidersData, ModelInfo, ProviderInfo } from "../../vscode-api";
 import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "../atoms/icons";
+import { LinkButton } from "../atoms/LinkButton";
 
 type Props = {
   providers: Provider[];
@@ -157,15 +158,13 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
           </div>
           {hasDisconnected && (
             <div className="model-panel-footer">
-              <button
-                type="button"
-                className="model-panel-link"
+              <LinkButton
                 onClick={() => setShowAll((s) => !s)}
                 title={showAll ? t["model.hideDisconnected"] : t["model.showAll"]}
               >
                 {showAll ? <EyeIcon /> : <EyeOffIcon />}
                 <span>{showAll ? t["model.connectedOnly"] : t["model.showAll"]}</span>
-              </button>
+              </LinkButton>
             </div>
           )}
         </div>

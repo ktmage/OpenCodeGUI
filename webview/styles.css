@@ -1316,25 +1316,6 @@ body {
   flex-shrink: 0;
 }
 
-.model-panel-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  color: var(--vscode-textLink-foreground);
-  font-size: 11px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 3px;
-  user-select: none;
-}
-
-.model-panel-link:hover {
-  color: var(--vscode-textLink-activeForeground);
-  background-color: var(--vscode-toolbar-hoverBackground);
-}
-
 /* --- Context bar --- */
 
 .context-bar {
@@ -1702,7 +1683,9 @@ body {
   flex-shrink: 0;
 }
 
-.tool-config-link {
+/* --- Link button (shared atom) --- */
+
+.link-button {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1713,9 +1696,10 @@ body {
   cursor: pointer;
   padding: 2px 4px;
   border-radius: 3px;
+  user-select: none;
 }
 
-.tool-config-link:hover {
+.link-button:hover {
   color: var(--vscode-textLink-activeForeground);
   background-color: var(--vscode-toolbar-hoverBackground);
 }
