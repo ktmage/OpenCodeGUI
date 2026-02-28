@@ -720,20 +720,49 @@ body {
   background-color: var(--vscode-button-secondaryHoverBackground);
 }
 
-.btn-icon {
+/* --- Icon button (shared atom) --- */
+
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 4px;
   background: none;
   border: none;
   color: var(--vscode-icon-foreground);
   cursor: pointer;
   border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
-.btn-icon:hover {
+.icon-button:hover {
   background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.icon-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.icon-button--muted {
+  color: var(--vscode-descriptionForeground);
+}
+
+.icon-button--muted:hover {
+  color: var(--vscode-foreground);
+}
+
+.icon-button--outlined {
+  color: var(--vscode-descriptionForeground);
+  border: 1px solid var(--vscode-input-border);
+}
+
+.icon-button--outlined:hover {
+  color: var(--vscode-foreground);
+  border-color: var(--vscode-foreground);
+}
+
+.icon-button--sm {
+  padding: 2px;
 }
 
 /* --- ToDo header (above input area) --- */
@@ -903,25 +932,7 @@ body {
 }
 
 .send-button {
-  padding: 4px;
-  background: none;
-  border: none;
-  color: var(--vscode-icon-foreground);
-  cursor: pointer;
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   flex-shrink: 0;
-}
-
-.send-button:hover {
-  background-color: var(--vscode-toolbar-hoverBackground);
-}
-
-.send-button:disabled {
-  opacity: 0.5;
-  cursor: default;
 }
 
 /* --- Empty state --- */
@@ -1356,24 +1367,7 @@ body {
   position: relative;
 }
 
-.context-clip-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2px 4px;
-  background: none;
-  border: 1px solid var(--vscode-input-border);
-  color: var(--vscode-descriptionForeground);
-  cursor: pointer;
-  border-radius: 4px;
-  line-height: 1;
-}
-
-.context-clip-button:hover {
-  background-color: var(--vscode-toolbar-hoverBackground);
-  color: var(--vscode-foreground);
-  border-color: var(--vscode-foreground);
-}
+/* context-clip-button は icon-button--outlined --sm  で代替済み */
 
 .context-file-button {
   display: inline-flex;
@@ -1570,15 +1564,7 @@ body {
 }
 
 .context-indicator-button {
-  display: inline-flex;
-  align-items: center;
   gap: 4px;
-  background: none;
-  border: none;
-  color: var(--vscode-descriptionForeground);
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
   line-height: 1;
 }
 
@@ -1654,22 +1640,7 @@ body {
 
 /* --- Tool Config Button & Panel --- */
 
-.tool-config-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  color: var(--vscode-descriptionForeground);
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 4px;
-}
-
-.tool-config-button:hover {
-  color: var(--vscode-foreground);
-  background-color: var(--vscode-toolbar-hoverBackground);
-}
+/* --- Tool config panel --- */
 
 .tool-config-panel {
   position: absolute;
@@ -1700,22 +1671,6 @@ body {
   font-size: 12px;
   font-weight: 600;
   color: var(--vscode-foreground);
-}
-
-.tool-config-close {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  color: var(--vscode-descriptionForeground);
-  cursor: pointer;
-  padding: 2px;
-  border-radius: 4px;
-}
-
-.tool-config-close:hover {
-  color: var(--vscode-foreground);
-  background-color: var(--vscode-toolbar-hoverBackground);
 }
 
 .tool-config-body {

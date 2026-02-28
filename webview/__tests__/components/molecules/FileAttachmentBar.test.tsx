@@ -30,7 +30,7 @@ describe("FileAttachmentBar", () => {
     // renders clip button
     it("クリップボタンをレンダリングすること", () => {
       const { container } = render(<FileAttachmentBar {...defaultProps} />);
-      expect(container.querySelector(".context-clip-button")).toBeInTheDocument();
+      expect(container.querySelector(".icon-button--outlined")).toBeInTheDocument();
     });
   });
 
@@ -40,7 +40,7 @@ describe("FileAttachmentBar", () => {
     it("onClipClick が呼ばれること", () => {
       const onClipClick = vi.fn();
       const { container } = render(<FileAttachmentBar {...defaultProps} onClipClick={onClipClick} />);
-      fireEvent.click(container.querySelector(".context-clip-button")!);
+      fireEvent.click(container.querySelector(".icon-button--outlined")!);
       expect(onClipClick).toHaveBeenCalledOnce();
     });
   });

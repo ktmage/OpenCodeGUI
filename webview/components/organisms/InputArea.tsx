@@ -5,6 +5,7 @@ import type { LocaleSetting } from "../../locales";
 import { useLocale } from "../../locales";
 import type { AllProvidersData, FileAttachment } from "../../vscode-api";
 import { postMessage } from "../../vscode-api";
+import { IconButton } from "../atoms/IconButton";
 import {
   ChevronRightIcon,
   GearIcon,
@@ -325,25 +326,15 @@ export function InputArea({
               selectedModel={selectedModel}
               onSelect={onModelSelect}
             />
-            <button
-              type="button"
-              className="tool-config-button"
-              onClick={onOpenTerminal}
-              title={t["input.openTerminal"]}
-            >
+            <IconButton variant="muted" onClick={onOpenTerminal} title={t["input.openTerminal"]}>
               <TerminalIcon />
-            </button>
-            <button
-              type="button"
-              className="tool-config-button"
-              onClick={() => setShowToolConfig((s) => !s)}
-              title={t["input.settings"]}
-            >
+            </IconButton>
+            <IconButton variant="muted" onClick={() => setShowToolConfig((s) => !s)} title={t["input.settings"]}>
               <GearIcon />
               <span className={`chevron-icon ${showToolConfig ? "expanded" : ""}`}>
                 <ChevronRightIcon />
               </span>
-            </button>
+            </IconButton>
             {showToolConfig && (
               <ToolConfigPanel
                 paths={openCodePaths}
@@ -355,19 +346,18 @@ export function InputArea({
             )}
           </div>
           {isBusy ? (
-            <button type="button" className="send-button" onClick={onAbort} title={t["input.stop"]}>
+            <IconButton className="send-button" onClick={onAbort} title={t["input.stop"]}>
               <StopIcon />
-            </button>
+            </IconButton>
           ) : (
-            <button
-              type="button"
+            <IconButton
               className="send-button"
               onClick={handleSend}
               disabled={!text.trim()}
               title={t["input.send"]}
             >
               <SendIcon />
-            </button>
+            </IconButton>
           )}
         </div>
       </div>

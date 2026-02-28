@@ -1,5 +1,6 @@
 import type { Session } from "@opencode-ai/sdk";
 import { useLocale } from "../../locales";
+import { IconButton } from "../atoms/IconButton";
 import { AddIcon, ListIcon } from "../atoms/icons";
 
 type Props = {
@@ -12,14 +13,14 @@ export function ChatHeader({ activeSession, onNewSession, onToggleSessionList }:
   const t = useLocale();
   return (
     <div className="chat-header">
-      <button type="button" className="btn-icon" onClick={onToggleSessionList} title={t["header.sessions"]}>
+      <IconButton onClick={onToggleSessionList} title={t["header.sessions"]}>
         <ListIcon />
-      </button>
+      </IconButton>
       <span className="chat-header-title">{activeSession?.title || t["header.title.fallback"]}</span>
       <div className="chat-header-actions">
-        <button type="button" className="btn-icon" onClick={onNewSession} title={t["header.newChat"]}>
+        <IconButton onClick={onNewSession} title={t["header.newChat"]}>
           <AddIcon />
-        </button>
+        </IconButton>
       </div>
     </div>
   );

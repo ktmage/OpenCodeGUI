@@ -22,7 +22,7 @@ describe("ToolConfigPanel", () => {
     // renders close button
     it("閉じるボタンをレンダリングすること", () => {
       const { container } = render(<ToolConfigPanel {...defaultProps} />);
-      expect(container.querySelector(".tool-config-close")).toBeInTheDocument();
+      expect(container.querySelector(".icon-button--muted.icon-button--sm")).toBeInTheDocument();
     });
 
     // renders language options

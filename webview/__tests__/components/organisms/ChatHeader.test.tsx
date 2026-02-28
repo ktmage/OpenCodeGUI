@@ -21,7 +21,7 @@ describe("ChatHeader", () => {
     // renders the session list button
     it("セッションリストボタンをレンダリングすること", () => {
       const { container } = render(<ChatHeader {...defaultProps} />);
-      expect(container.querySelectorAll(".btn-icon").length).toBeGreaterThan(0);
+      expect(container.querySelectorAll(".icon-button").length).toBeGreaterThan(0);
     });
   });
 
@@ -31,8 +31,8 @@ describe("ChatHeader", () => {
     it("onNewSession が呼ばれること", () => {
       const onNewSession = vi.fn();
       const { container } = render(<ChatHeader {...defaultProps} onNewSession={onNewSession} />);
-      const buttons = container.querySelectorAll(".btn-icon");
-      // New chat button is the second btn-icon
+      const buttons = container.querySelectorAll(".icon-button");
+      // New chat button is the second icon-button
       fireEvent.click(buttons[buttons.length - 1]!);
       expect(onNewSession).toHaveBeenCalledOnce();
     });
@@ -44,7 +44,7 @@ describe("ChatHeader", () => {
     it("onToggleSessionList が呼ばれること", () => {
       const onToggleSessionList = vi.fn();
       const { container } = render(<ChatHeader {...defaultProps} onToggleSessionList={onToggleSessionList} />);
-      const buttons = container.querySelectorAll(".btn-icon");
+      const buttons = container.querySelectorAll(".icon-button");
       fireEvent.click(buttons[0]!);
       expect(onToggleSessionList).toHaveBeenCalledOnce();
     });

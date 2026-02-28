@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import type { LocaleSetting } from "../../locales";
 import { useLocale } from "../../locales";
+import { IconButton } from "../atoms/IconButton";
 import { CloseIcon, FileIcon } from "../atoms/icons";
 
 type Props = {
@@ -22,9 +23,9 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
     <div className="tool-config-panel" ref={panelRef}>
       <div className="tool-config-header">
         <span className="tool-config-title">{t["config.title"]}</span>
-        <button type="button" className="tool-config-close" onClick={onClose} title={t["config.close"]}>
+        <IconButton variant="muted" size="sm" onClick={onClose} title={t["config.close"]}>
           <CloseIcon />
-        </button>
+        </IconButton>
       </div>
 
       <div className="tool-config-body">

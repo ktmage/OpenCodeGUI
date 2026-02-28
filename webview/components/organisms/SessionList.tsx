@@ -1,6 +1,7 @@
 import type { Session } from "@opencode-ai/sdk";
 import type { en } from "../../locales/en";
 import { useLocale } from "../../locales";
+import { IconButton } from "../atoms/IconButton";
 import { DeleteIcon, FileIcon } from "../atoms/icons";
 
 type Props = {
@@ -62,9 +63,8 @@ export function SessionList({ sessions, activeSessionId, onSelect, onDelete, onC
                     )}
                   </span>
                 </div>
-                <button
-                  type="button"
-                  className="btn-icon session-item-delete"
+                <IconButton
+                  className="session-item-delete"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDelete(session.id);
@@ -72,7 +72,7 @@ export function SessionList({ sessions, activeSessionId, onSelect, onDelete, onC
                   title={t["session.delete"]}
                 >
                   <DeleteIcon />
-                </button>
+                </IconButton>
               </div>
             );
           })

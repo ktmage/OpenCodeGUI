@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useLocale } from "../../locales";
+import { IconButton } from "./IconButton";
 
 type Props = {
   inputTokens: number;
@@ -46,8 +47,9 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
 
   return (
     <div className="context-indicator-container" ref={containerRef}>
-      <button
-        type="button"
+      <IconButton
+        variant="muted"
+        size="sm"
         className="context-indicator-button"
         onClick={handleClick}
         title={t["context.title"](percent)}
@@ -77,7 +79,7 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
             transform={`rotate(-90 ${size / 2} ${size / 2})`}
           />
         </svg>
-      </button>
+      </IconButton>
 
       {showPopup && (
         <div className="context-indicator-popup">

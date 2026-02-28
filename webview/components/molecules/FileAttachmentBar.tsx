@@ -1,5 +1,6 @@
 import { useLocale } from "../../locales";
 import type { FileAttachment } from "../../vscode-api";
+import { IconButton } from "../atoms/IconButton";
 import { ClipIcon, CloseIcon, PlusIcon } from "../atoms/icons";
 
 type Props = {
@@ -35,14 +36,9 @@ export function FileAttachmentBar({
     <div className="context-bar-left">
       {/* クリップボタン */}
       <div className="context-clip-container" ref={filePickerRef}>
-        <button
-          type="button"
-          className="context-clip-button"
-          onClick={onClipClick}
-          title={t["input.addContext"]}
-        >
+        <IconButton variant="outlined" size="sm" onClick={onClipClick} title={t["input.addContext"]}>
           <ClipIcon />
-        </button>
+        </IconButton>
         {showFilePicker && (
           <div className="file-picker-dropdown">
             <input
