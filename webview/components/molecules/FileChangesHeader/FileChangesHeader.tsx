@@ -34,7 +34,10 @@ function getFileStatus(diff: FileDiff): "added" | "deleted" | "modified" {
 function FileChangeItem({
   diff,
   onOpenDiffEditor,
-}: { diff: FileDiff; onOpenDiffEditor: (filePath: string, before: string, after: string) => void }) {
+}: {
+  diff: FileDiff;
+  onOpenDiffEditor: (filePath: string, before: string, after: string) => void;
+}) {
   const t = useLocale();
   const [expanded, setExpanded] = useState(false);
   const status = getFileStatus(diff);

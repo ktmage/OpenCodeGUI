@@ -10,11 +10,7 @@ type Props = {
   onToggleSessionList: () => void;
 };
 
-export function ChatHeader({
-  activeSession,
-  onNewSession,
-  onToggleSessionList,
-}: Props) {
+export function ChatHeader({ activeSession, onNewSession, onToggleSessionList }: Props) {
   const t = useLocale();
   return (
     <div className={styles.root}>

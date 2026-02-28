@@ -61,9 +61,7 @@ describe("ファイル変更差分表示", () => {
   // Expanding shows file details
   context("FileChangesHeader を展開した場合", () => {
     beforeEach(async () => {
-      await setupWithDiffs([
-        { file: "src/app.ts", before: "old code", after: "new code", additions: 1, deletions: 1 },
-      ]);
+      await setupWithDiffs([{ file: "src/app.ts", before: "old code", after: "new code", additions: 1, deletions: 1 }]);
       const user = userEvent.setup();
       await user.click(screen.getByTitle("File changes"));
     });
@@ -96,9 +94,7 @@ describe("ファイル変更差分表示", () => {
   context("セッションが null に切り替わった場合", () => {
     // hides FileChangesHeader
     it("FileChangesHeader が非表示になること", async () => {
-      await setupWithDiffs([
-        { file: "src/a.ts", before: "a", after: "b", additions: 1, deletions: 1 },
-      ]);
+      await setupWithDiffs([{ file: "src/a.ts", before: "a", after: "b", additions: 1, deletions: 1 }]);
       expect(screen.getByText("File Changes")).toBeInTheDocument();
 
       await sendExtMessage({ type: "activeSession", session: null as any });
@@ -123,9 +119,7 @@ describe("ファイル変更差分表示", () => {
           type: "session.diff",
           properties: {
             sessionID: "s1",
-            diff: [
-              { file: "src/a.ts", before: "x", after: "y", additions: 1, deletions: 1 },
-            ],
+            diff: [{ file: "src/a.ts", before: "x", after: "y", additions: 1, deletions: 1 }],
           },
         } as any,
       });
@@ -159,9 +153,7 @@ describe("ファイル変更差分表示", () => {
   context("差分エディタを開くボタンをクリックした場合", () => {
     // sends openDiffEditor message
     it("openDiffEditor メッセージが送信されること", async () => {
-      await setupWithDiffs([
-        { file: "src/main.ts", before: "before", after: "after", additions: 1, deletions: 1 },
-      ]);
+      await setupWithDiffs([{ file: "src/main.ts", before: "before", after: "after", additions: 1, deletions: 1 }]);
 
       const mockPostMessage = vi.mocked(postMessage);
       mockPostMessage.mockClear();
@@ -174,9 +166,7 @@ describe("ファイル変更差分表示", () => {
       const openButton = document.querySelector(".openButton")!;
       await user.click(openButton);
 
-      const diffCall = mockPostMessage.mock.calls.find(
-        (call) => call[0]?.type === "openDiffEditor",
-      );
+      const diffCall = mockPostMessage.mock.calls.find((call) => call[0]?.type === "openDiffEditor");
       expect(diffCall).toBeTruthy();
     });
   });
