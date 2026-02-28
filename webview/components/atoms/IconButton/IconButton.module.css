@@ -29,10 +29,11 @@
 
 .outlined {
   color: var(--vscode-descriptionForeground);
-  border: 1px solid var(--vscode-input-border);
+  border: 1px solid var(--vscode-editorWidget-border, var(--vscode-panel-border));
 }
 
-.outlined:hover {
+.outlined:hover,
+.outlined.active {
   color: var(--vscode-foreground);
   border-color: var(--vscode-foreground);
 }

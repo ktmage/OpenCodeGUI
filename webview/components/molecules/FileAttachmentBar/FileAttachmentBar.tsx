@@ -38,7 +38,7 @@ export function FileAttachmentBar({
     <div className={styles.left}>
       {/* クリップボタン */}
       <div className={styles.clipContainer} ref={filePickerRef}>
-        <IconButton variant="outlined" size="sm" onClick={onClipClick} title={t["input.addContext"]}>
+        <IconButton variant="outlined" size="sm" active={showFilePicker} onClick={onClipClick} title={t["input.addContext"]}>
           <ClipIcon />
         </IconButton>
         {showFilePicker && (

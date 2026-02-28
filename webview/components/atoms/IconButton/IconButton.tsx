@@ -6,6 +6,8 @@ type Props = {
   variant?: "default" | "muted" | "outlined";
   /** サイズ */
   size?: "sm" | "md";
+  /** アクティブ状態（選択中など） */
+  active?: boolean;
   /** ボタン内容（アイコン等） */
   children: ReactNode;
 } & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type">;
@@ -15,8 +17,14 @@ type Props = {
  * デザインはコンポーネントに内包され、レイアウト調整のみ `className` で行う。
  */
 export const IconButton = forwardRef<HTMLButtonElement, Props>(
-  ({ variant = "default", size = "md", className, children, ...rest }, ref) => {
-    const classes = [styles.root, variant !== "default" && styles[variant], size !== "md" && styles[size], className]
+  ({ variant = "default", size = "md", active, className, children, ...rest }, ref) => {
+    const classes = [
+      styles.root,
+      variant !== "default" && styles[variant],
+      size !== "md" && styles[size],
+      active && styles.active,
+      className,
+    ]
       .filter(Boolean)
       .join(" ");
 
