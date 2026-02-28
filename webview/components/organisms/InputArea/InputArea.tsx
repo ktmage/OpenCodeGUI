@@ -349,10 +349,11 @@ export function InputArea({
     ? attachedFiles.some((f) => f.filePath === activeEditorFile.filePath)
     : false;
 
-  // @ トリガーのエージェント候補
+  // @ トリガーのエージェント候補（サブエージェントのみ表示）
+  const subagents = agents.filter((a) => a.mode === "subagent" || a.mode === "all");
   const filteredAgents = atQuery
-    ? agents.filter((a) => a.name.toLowerCase().includes(atQuery.toLowerCase())).slice(0, 10)
-    : agents.slice(0, 10);
+    ? subagents.filter((a) => a.name.toLowerCase().includes(atQuery.toLowerCase())).slice(0, 10)
+    : subagents.slice(0, 10);
 
   return (
     <div className={styles.root}>

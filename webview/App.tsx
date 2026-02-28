@@ -67,6 +67,12 @@ export function App() {
       if (event.type === "todo.updated" && event.properties.sessionID === session.activeSession?.id) {
         setTodos(event.properties.todos as Todo[]);
       }
+
+      // session.created イベント時にアクティブセッションの子セッションを再取得する
+      // （サブエージェントが起動すると子セッションが作成されるため）
+      if (event.type === "session.created" && session.activeSession) {
+        postMessage({ type: "getChildSessions", sessionId: session.activeSession.id });
+      }
     },
     [
       session.handleSessionEvent,
