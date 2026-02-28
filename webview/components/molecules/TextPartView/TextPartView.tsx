@@ -19,5 +19,5 @@ export function TextPartView({ part }: Props) {
   }, [part.text]);
 
   // biome-ignore lint/security/noDangerouslySetInnerHtml: DOMPurify でサニタイズ済みの HTML を描画する
-  return <span dangerouslySetInnerHTML={{ __html: html }} />;
+  return <span className="markdown" dangerouslySetInnerHTML={{ __html: html }} />;
 }

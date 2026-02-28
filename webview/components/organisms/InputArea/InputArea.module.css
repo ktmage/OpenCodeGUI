@@ -78,3 +78,16 @@
 .expanded {
   transform: rotate(90deg);
 }
+
+.shellIndicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  margin-bottom: 2px;
+  font-size: 11px;
+  color: var(--vscode-terminal-ansiYellow, #e5c07b);
+  background-color: var(--vscode-badge-background);
+  border-radius: 3px;
+  width: fit-content;
+}

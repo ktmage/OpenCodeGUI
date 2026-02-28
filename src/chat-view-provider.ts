@@ -67,6 +67,7 @@ export type WebviewToExtMessage =
       model?: { providerID: string; modelID: string };
       files?: FileAttachment[];
     }
+  | { type: "executeShell"; sessionId: string; command: string; model?: { providerID: string; modelID: string } }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }
@@ -269,6 +270,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         this.postMessage({ type: "messages", sessionId: message.sessionId, messages: msgs });
         // 2. 編集後のテキストを送信
         await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files);
+        break;
+      }
+      case "executeShell": {
+        await this.connection.executeShell(message.sessionId, message.command, message.model);
         break;
       }
       case "openConfigFile": {

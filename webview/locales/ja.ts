@@ -19,6 +19,8 @@ export const ja: typeof en = {
   "input.placeholder": "OpenCode に質問... (# でファイルを添付)",
   "input.addFile": (name: string) => `${name} を追加`,
   "input.openTerminal": "ターミナルで開く",
+  "input.shellMode": "シェルモード",
+  "input.placeholder.shell": "シェルコマンドを入力...",
   "input.settings": "設定",
   "input.stop": "停止",
   "input.send": "送信",
@@ -84,6 +86,9 @@ export const ja: typeof en = {
   "context.contextLimit": "コンテキスト上限",
   "context.compressing": "圧縮中...",
   "context.compress": "会話を圧縮",
+
+  // ShellResultView
+  "shell.title": "シェル",
 
   // ToolConfigPanel
   "config.title": "設定",

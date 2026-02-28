@@ -99,7 +99,7 @@
 
 /* --- Markdown in messages --- */
 
-.content code {
+.content :global(.markdown) code {
   font-family: var(--vscode-editor-font-family);
   font-size: var(--vscode-editor-font-size);
   background-color: var(--vscode-textCodeBlock-background);
@@ -107,7 +107,7 @@
   border-radius: 3px;
 }
 
-.content pre {
+.content :global(.markdown) pre {
   background-color: var(--vscode-textCodeBlock-background);
   padding: 8px 12px;
   border-radius: 4px;
@@ -115,32 +115,32 @@
   margin: 8px 0;
 }
 
-.content pre code {
+.content :global(.markdown) pre code {
   padding: 0;
   background: none;
 }
 
-.content ul,
-.content ol {
+.content :global(.markdown) ul,
+.content :global(.markdown) ol {
   padding-left: 1.5em;
   margin: 2px 0;
 }
 
-.content li {
+.content :global(.markdown) li {
   margin: 0;
   padding: 0;
   line-height: 1.4;
 }
 
-.content li + li {
+.content :global(.markdown) li + li {
   margin-top: 1px;
 }
 
-.content li > p {
+.content :global(.markdown) li > p {
   margin: 0;
 }
 
-.content p {
+.content :global(.markdown) p {
   margin: 4px 0;
 }
 

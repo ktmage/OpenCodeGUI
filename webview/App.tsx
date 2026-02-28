@@ -151,6 +151,22 @@ export function App() {
     [session.activeSession, prov.selectedModel],
   );
 
+  // ! プレフィクスで入力されたシェルコマンドを session.shell API 経由で実行する
+  const handleShellExecute = useCallback(
+    (command: string) => {
+      if (!session.activeSession) return;
+      // 次に到着する assistant メッセージをシェル結果としてタグ付けする準備
+      msg.markPendingShell();
+      postMessage({
+        type: "executeShell",
+        sessionId: session.activeSession.id,
+        command,
+        model: prov.selectedModel ?? undefined,
+      });
+    },
+    [session.activeSession, prov.selectedModel, msg.markPendingShell],
+  );
+
   const handleAbort = useCallback(() => {
     if (!session.activeSession) return;
     postMessage({ type: "abort", sessionId: session.activeSession.id });
@@ -236,6 +252,8 @@ export function App() {
     openEditors,
     workspaceFiles,
     onSend: handleSend,
+    onShellExecute: handleShellExecute,
+    isShellMessage: msg.isShellMessage,
     onAbort: handleAbort,
     onCompress: handleCompress,
     isCompressing: !!session.activeSession?.time?.compacting,
@@ -279,6 +297,7 @@ export function App() {
               {msg.latestTodos.length > 0 && <TodoHeader todos={msg.latestTodos} />}
               <InputArea
                 onSend={handleSend}
+                onShellExecute={handleShellExecute}
                 onAbort={handleAbort}
                 isBusy={session.sessionBusy}
                 providers={prov.providers}

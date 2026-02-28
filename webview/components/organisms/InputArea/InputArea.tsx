@@ -17,6 +17,7 @@ import styles from "./InputArea.module.css";
 
 type Props = {
   onSend: (text: string, files: FileAttachment[]) => void;
+  onShellExecute: (command: string) => void;
   onAbort: () => void;
   isBusy: boolean;
   providers: Provider[];
@@ -40,6 +41,7 @@ type Props = {
 
 export function InputArea({
   onSend,
+  onShellExecute,
   onAbort,
   isBusy,
   providers,
@@ -155,16 +157,27 @@ export function InputArea({
     }
   }, [hashTrigger.active, hashQuery]);
 
+  // ! プレフィクスでシェルコマンドモードかどうかを判定する
+  const isShellMode = text.startsWith("!");
+
   const handleSend = useCallback(() => {
     const trimmed = text.trim();
     if (!trimmed) return;
-    onSend(trimmed, attachedFiles);
+    // ! プレフィクスの場合はシェルコマンドとして実行する
+    if (trimmed.startsWith("!")) {
+      const command = trimmed.slice(1).trim();
+      if (command) {
+        onShellExecute(command);
+      }
+    } else {
+      onSend(trimmed, attachedFiles);
+    }
     setText("");
     setAttachedFiles([]);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [text, attachedFiles, onSend]);
+  }, [text, attachedFiles, onSend, onShellExecute]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -291,10 +304,16 @@ export function InputArea({
 
         {/* テキスト入力エリア（# ポップアップ付き） */}
         <div className={styles.textareaContainer}>
+          {isShellMode && (
+            <div className={styles.shellIndicator}>
+              <TerminalIcon />
+              <span>{t["input.shellMode"]}</span>
+            </div>
+          )}
           <textarea
             ref={textareaRef}
             className={styles.textarea}
-            placeholder={t["input.placeholder"]}
+            placeholder={isShellMode ? t["input.placeholder.shell"] : t["input.placeholder"]}
             value={text}
             onChange={handleTextChange}
             onKeyDown={handleKeyDown}

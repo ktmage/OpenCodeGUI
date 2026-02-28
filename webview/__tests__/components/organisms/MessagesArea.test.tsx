@@ -1,8 +1,20 @@
 import { render } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { MessageWithParts } from "../../../App";
 import { MessagesArea } from "../../../components/organisms/MessagesArea";
+import { AppContextProvider, type AppContextValue } from "../../../contexts/AppContext";
 import { createMessage, createTextPart } from "../../factories";
+
+/** AppContext 必須の値を最小限で提供するラッパー */
+function createContextWrapper() {
+  const contextValue = {
+    isShellMessage: () => false,
+  } as unknown as AppContextValue;
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return <AppContextProvider value={contextValue}>{children}</AppContextProvider>;
+  };
+}
 
 const userMsg: MessageWithParts = {
   info: createMessage({ role: "user" }),
@@ -24,11 +36,13 @@ const defaultProps = {
 };
 
 describe("MessagesArea", () => {
+  const wrapper = createContextWrapper();
+
   // when rendered with messages
   context("メッセージがある場合", () => {
     // renders message items
     it("メッセージアイテムをレンダリングすること", () => {
-      const { container } = render(<MessagesArea {...defaultProps} />);
+      const { container } = render(<MessagesArea {...defaultProps} />, { wrapper });
       expect(container.querySelectorAll(".message").length).toBeGreaterThan(0);
     });
   });
@@ -37,7 +51,7 @@ describe("MessagesArea", () => {
   context("セッションが busy の場合", () => {
     // renders streaming indicator
     it("StreamingIndicator をレンダリングすること", () => {
-      const { container } = render(<MessagesArea {...defaultProps} sessionBusy={true} />);
+      const { container } = render(<MessagesArea {...defaultProps} sessionBusy={true} />, { wrapper });
       expect(container.querySelector("[data-testid='streaming-indicator']")).toBeInTheDocument();
     });
   });
@@ -46,7 +60,7 @@ describe("MessagesArea", () => {
   context("セッションが busy でない場合", () => {
     // does not render streaming indicator
     it("StreamingIndicator をレンダリングしないこと", () => {
-      const { container } = render(<MessagesArea {...defaultProps} sessionBusy={false} />);
+      const { container } = render(<MessagesArea {...defaultProps} sessionBusy={false} />, { wrapper });
       expect(container.querySelector("[data-testid='streaming-indicator']")).not.toBeInTheDocument();
     });
   });
@@ -59,7 +73,7 @@ describe("MessagesArea", () => {
         { info: createMessage({ role: "assistant" }), parts: [createTextPart("Reply")] },
         { info: createMessage({ role: "user" }), parts: [createTextPart("Follow up")] },
       ];
-      const { container } = render(<MessagesArea {...defaultProps} messages={msgs} />);
+      const { container } = render(<MessagesArea {...defaultProps} messages={msgs} />, { wrapper });
       expect(container.querySelector(".checkpointDivider")).toBeInTheDocument();
     });
   });

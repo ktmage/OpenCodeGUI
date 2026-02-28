@@ -17,6 +17,8 @@ export const en = {
   "input.placeholder": "Ask OpenCode... (type # to attach files)",
   "input.addFile": (name: string) => `Add ${name}`,
   "input.openTerminal": "Open in terminal",
+  "input.shellMode": "Shell mode",
+  "input.placeholder.shell": "Enter shell command...",
   "input.settings": "Settings",
   "input.stop": "Stop",
   "input.send": "Send",
@@ -82,6 +84,9 @@ export const en = {
   "context.contextLimit": "Context limit",
   "context.compressing": "Compressing...",
   "context.compress": "Compress Conversation",
+
+  // ShellResultView
+  "shell.title": "Shell",
 
   // ToolConfigPanel
   "config.title": "Settings",

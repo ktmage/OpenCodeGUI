@@ -96,6 +96,7 @@ export type WebviewToExtMessage =
       model?: { providerID: string; modelID: string };
       files?: FileAttachment[];
     }
+  | { type: "executeShell"; sessionId: string; command: string; model?: { providerID: string; modelID: string } }
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }

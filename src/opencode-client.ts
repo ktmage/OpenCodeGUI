@@ -203,6 +203,20 @@ export class OpenCodeConnection {
     });
   }
 
+  // --- Shell API ---
+
+  async executeShell(
+    sessionId: string,
+    command: string,
+    model?: { providerID: string; modelID: string },
+  ): Promise<void> {
+    const client = this.requireClient();
+    await client.session.shell({
+      path: { id: sessionId },
+      body: { agent: "default", command, model },
+    });
+  }
+
   // --- Provider API ---
 
   async getProviders(): Promise<{ providers: Provider[]; default: Record<string, string> }> {
