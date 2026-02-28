@@ -300,6 +300,24 @@ export class OpenCodeConnection {
     return response.data!;
   }
 
+  // --- Session Share API ---
+
+  async shareSession(sessionId: string): Promise<Session> {
+    const client = this.requireClient();
+    const response = await client.session.share({
+      path: { id: sessionId },
+    });
+    return response.data!;
+  }
+
+  async unshareSession(sessionId: string): Promise<Session> {
+    const client = this.requireClient();
+    const response = await client.session.unshare({
+      path: { id: sessionId },
+    });
+    return response.data!;
+  }
+
   // --- Agent API ---
 
   async getAgents(): Promise<Agent[]> {

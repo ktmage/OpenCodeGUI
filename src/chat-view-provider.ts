@@ -84,6 +84,8 @@ export type WebviewToExtMessage =
   | { type: "getSessionTodos"; sessionId: string }
   | { type: "getChildSessions"; sessionId: string }
   | { type: "getAgents" }
+  | { type: "shareSession"; sessionId: string }
+  | { type: "unshareSession"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
@@ -367,6 +369,22 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       case "getAgents": {
         const agents = await this.connection.getAgents();
         this.postMessage({ type: "agents", agents });
+        break;
+      }
+      case "shareSession": {
+        const session = await this.connection.shareSession(message.sessionId);
+        this.activeSession = session;
+        this.postMessage({ type: "activeSession", session });
+        // 共有 URL をクリップボードにコピーする
+        if (session.share?.url) {
+          await vscode.env.clipboard.writeText(session.share.url);
+        }
+        break;
+      }
+      case "unshareSession": {
+        const session = await this.connection.unshareSession(message.sessionId);
+        this.activeSession = session;
+        this.postMessage({ type: "activeSession", session });
         break;
       }
       case "openDiffEditor": {
