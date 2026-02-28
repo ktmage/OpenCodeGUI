@@ -17,6 +17,7 @@ import {
 import { DiffView } from "../molecules/DiffView";
 import { FileCreateView } from "../molecules/FileCreateView";
 import { TodoView } from "../molecules/TodoView";
+import styles from "./ToolPartView.module.css";
 
 type Props = {
   part: ToolPart;
@@ -104,30 +105,46 @@ export function ToolPartView({ part }: Props) {
     return title;
   }, [isTodoTool, todos, title, t["tool.todos"]]);
 
+  const statusClass: Record<string, string> = {
+    running: styles.running,
+    pending: styles.pending,
+    completed: styles.completed,
+    error: styles.error,
+  };
+
+  const actionClass: Record<string, string> = {
+    read: styles.actionRead,
+    edit: styles.actionEdit,
+    write: styles.actionWrite,
+    run: styles.actionRun,
+    search: styles.actionSearch,
+    other: styles.actionOther,
+  };
+
   return (
-    <div className={`tool-part ${state.status}`}>
-      <div className="tool-part-header" onClick={() => setExpanded((s) => !s)} title={t["tool.toggleDetails"]}>
-        <span className="tool-part-icon">
+    <div className={`${styles.root} ${statusClass[state.status] ?? ""}`}>
+      <div className={styles.header} onClick={() => setExpanded((s) => !s)} title={t["tool.toggleDetails"]}>
+        <span className={styles.icon}>
           {isActive ? (
-            <SpinnerIcon className="tool-part-spinner" />
+            <SpinnerIcon className={styles.spinner} />
           ) : isError ? (
             <ErrorCircleIcon />
           ) : (
             <ActionIcon category={category} />
           )}
         </span>
-        <span className={`tool-part-action tool-part-action-${category}`}>{actionLabel}</span>
+        <span className={`${styles.action} ${actionClass[category] ?? ""}`}>{actionLabel}</span>
         {displayTitle && (
-          <span className="tool-part-title" title={displayTitle}>
+          <span className={styles.title} title={displayTitle}>
             {displayTitle}
           </span>
         )}
-        <span className={`tool-part-chevron ${expanded ? "expanded" : ""}`}>
+        <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>
           <ChevronRightIcon />
         </span>
       </div>
       {expanded && (
-        <div className="tool-part-body">
+        <div className={styles.body}>
           {todos ? (
             <TodoView todos={todos} />
           ) : isEdit && input ? (
@@ -136,9 +153,9 @@ export function ToolPartView({ part }: Props) {
             <FileCreateView content={input.content as string} />
           ) : (
             <>
-              {isCompleted && state.output && <pre className="tool-part-output">{state.output}</pre>}
-              {isError && <pre className="tool-part-output tool-part-error">{state.error}</pre>}
-              {isActive && input && <pre className="tool-part-output">{JSON.stringify(input, null, 2)}</pre>}
+              {isCompleted && state.output && <pre className={styles.output}>{state.output}</pre>}
+              {isError && <pre className={`${styles.output} ${styles.outputError}`}>{state.error}</pre>}
+              {isActive && input && <pre className={styles.output}>{JSON.stringify(input, null, 2)}</pre>}
             </>
           )}
         </div>

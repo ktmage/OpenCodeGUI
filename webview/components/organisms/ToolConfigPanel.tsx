@@ -5,6 +5,7 @@ import { useLocale } from "../../locales";
 import { IconButton } from "../atoms/IconButton";
 import { LinkButton } from "../atoms/LinkButton";
 import { CloseIcon, FileIcon } from "../atoms/icons";
+import styles from "./ToolConfigPanel.module.css";
 
 type Props = {
   paths: { home: string; config: string; state: string; directory: string } | null;
@@ -21,31 +22,31 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
   useClickOutside(panelRef, onClose);
 
   return (
-    <div className="tool-config-panel" ref={panelRef}>
-      <div className="tool-config-header">
-        <span className="tool-config-title">{t["config.title"]}</span>
+    <div className={styles.root} ref={panelRef}>
+      <div className={styles.header}>
+        <span className={styles.title}>{t["config.title"]}</span>
         <IconButton variant="muted" size="sm" onClick={onClose} title={t["config.close"]}>
           <CloseIcon />
         </IconButton>
       </div>
 
-      <div className="tool-config-body">
+      <div className={styles.body}>
         {/* Language Setting */}
-        <div className="tool-config-section">
-          <div className="tool-config-section-title">{t["config.language"]}</div>
-          <div className="tool-config-locale-options">
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>{t["config.language"]}</div>
+          <div>
             {(["auto", "en", "ja"] as const).map((opt) => {
               const label =
                 opt === "auto" ? t["config.langAuto"] : opt === "en" ? t["config.langEn"] : t["config.langJa"];
               return (
-                <label key={opt} className="tool-config-toggle tool-config-tool-item">
+                <label key={opt} className={`${styles.toggle} ${styles.toolItem}`}>
                   <input
                     type="radio"
                     name="locale"
                     checked={localeSetting === opt}
                     onChange={() => onLocaleSettingChange(opt)}
                   />
-                  <span className="tool-config-tool-name">{label}</span>
+                  <span className={styles.toolName}>{label}</span>
                 </label>
               );
             })}
@@ -55,7 +56,7 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
 
       {/* 設定ファイルへのリンク */}
       {paths && (
-        <div className="tool-config-footer">
+        <div className={styles.footer}>
           <LinkButton onClick={() => onOpenConfigFile(`${paths.directory}/opencode.json`)}>
             <FileIcon />
             {t["config.projectConfig"]}

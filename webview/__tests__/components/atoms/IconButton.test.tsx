@@ -12,17 +12,17 @@ describe("IconButton", () => {
       expect(btn).toHaveAttribute("type", "button");
     });
 
-    // applies icon-button class
-    it("icon-button クラスを持つこと", () => {
+    // applies root class
+    it("root クラスを持つこと", () => {
       render(<IconButton>X</IconButton>);
-      expect(screen.getByRole("button")).toHaveClass("icon-button");
+      expect(screen.getByRole("button")).toHaveClass("root");
     });
 
     // does not apply variant or size modifier classes
     it("variant / size 修飾クラスを持たないこと", () => {
       render(<IconButton>X</IconButton>);
       const btn = screen.getByRole("button");
-      expect(btn.className).toBe("icon-button");
+      expect(btn.className).toBe("root");
     });
 
     // renders children
@@ -34,28 +34,28 @@ describe("IconButton", () => {
 
   // variant="muted"
   context('variant="muted" の場合', () => {
-    // applies icon-button--muted class
-    it("icon-button--muted クラスを持つこと", () => {
+    // applies muted class
+    it("muted クラスを持つこと", () => {
       render(<IconButton variant="muted">X</IconButton>);
-      expect(screen.getByRole("button")).toHaveClass("icon-button", "icon-button--muted");
+      expect(screen.getByRole("button")).toHaveClass("root", "muted");
     });
   });
 
   // variant="outlined"
   context('variant="outlined" の場合', () => {
-    // applies icon-button--outlined class
-    it("icon-button--outlined クラスを持つこと", () => {
+    // applies outlined class
+    it("outlined クラスを持つこと", () => {
       render(<IconButton variant="outlined">X</IconButton>);
-      expect(screen.getByRole("button")).toHaveClass("icon-button", "icon-button--outlined");
+      expect(screen.getByRole("button")).toHaveClass("root", "outlined");
     });
   });
 
   // size="sm"
   context('size="sm" の場合', () => {
-    // applies icon-button--sm class
-    it("icon-button--sm クラスを持つこと", () => {
+    // applies sm class
+    it("sm クラスを持つこと", () => {
       render(<IconButton size="sm">X</IconButton>);
-      expect(screen.getByRole("button")).toHaveClass("icon-button", "icon-button--sm");
+      expect(screen.getByRole("button")).toHaveClass("root", "sm");
     });
   });
 
@@ -69,7 +69,7 @@ describe("IconButton", () => {
         </IconButton>,
       );
       const btn = screen.getByRole("button");
-      expect(btn).toHaveClass("icon-button", "icon-button--muted", "icon-button--sm", "custom");
+      expect(btn).toHaveClass("root", "muted", "sm", "custom");
     });
   });
 

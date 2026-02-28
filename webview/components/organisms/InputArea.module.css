@@ -1,0 +1,80 @@
+.root {
+  border-top: 1px solid var(--vscode-panel-border);
+  padding: 8px 12px;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.wrapper:focus-within {
+  border-color: var(--vscode-focusBorder);
+}
+
+.contextBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 4px;
+}
+
+.textareaContainer {
+  position: relative;
+}
+
+.textarea {
+  flex: 1;
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--vscode-input-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 13px;
+  line-height: 1.4;
+  resize: none;
+  max-height: 120px;
+  min-height: 20px;
+}
+
+.textarea::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding-top: 4px;
+  position: relative;
+}
+
+.actionsLeft {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.sendButton {
+  flex-shrink: 0;
+}
+
+.chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.expanded {
+  transform: rotate(90deg);
+}

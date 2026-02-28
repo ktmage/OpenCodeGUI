@@ -1,0 +1,220 @@
+.message {
+  margin-bottom: 16px;
+}
+
+.assistant .content {
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.user {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.userBubble {
+  max-width: 85%;
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  cursor: pointer;
+  position: relative;
+}
+
+.userBubble:hover {
+  border-color: var(--vscode-focusBorder);
+}
+
+.userBubble:hover .editIcon {
+  opacity: 1;
+}
+
+.editIcon {
+  position: absolute;
+  top: 6px;
+  right: -24px;
+  opacity: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: opacity 0.15s;
+}
+
+.editContainer {
+  width: 100%;
+  max-width: 85%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-self: flex-end;
+}
+
+.editTextarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-focusBorder);
+  border-radius: 10px;
+  color: var(--vscode-input-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 13px;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.editActions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.userBubble .content {
+  font-size: 13px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.userFiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 4px;
+  justify-content: flex-end;
+}
+
+.userFileChip {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 11px;
+  background: transparent;
+  color: var(--vscode-descriptionForeground);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+}
+
+/* --- Markdown in messages --- */
+
+.content code {
+  font-family: var(--vscode-editor-font-family);
+  font-size: var(--vscode-editor-font-size);
+  background-color: var(--vscode-textCodeBlock-background);
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+.content pre {
+  background-color: var(--vscode-textCodeBlock-background);
+  padding: 8px 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.content pre code {
+  padding: 0;
+  background: none;
+}
+
+.content ul,
+.content ol {
+  padding-left: 1.5em;
+  margin: 2px 0;
+}
+
+.content li {
+  margin: 0;
+  padding: 0;
+  line-height: 1.4;
+}
+
+.content li + li {
+  margin-top: 1px;
+}
+
+.content li > p {
+  margin: 0;
+}
+
+.content p {
+  margin: 4px 0;
+}
+
+/* --- Reasoning part (Thinking) --- */
+
+.reasoningPart {
+  margin: 4px 0;
+  border-radius: 6px;
+}
+
+.reasoningHeader {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.reasoningHeader:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.reasoningIcon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+}
+
+.reasoningActive .reasoningIcon {
+  color: var(--vscode-progressBar-background);
+}
+
+.reasoningLabel {
+  flex: 1;
+  color: var(--vscode-descriptionForeground);
+  font-style: italic;
+}
+
+.reasoningActive .reasoningLabel {
+  color: var(--vscode-foreground);
+}
+
+.reasoningBody {
+  padding: 4px 8px 6px 30px;
+  font-size: 12px;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* --- Shared spinner & chevron (used by ReasoningPartView) --- */
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: transform 0.15s;
+}
+
+.expanded {
+  transform: rotate(90deg);
+}

@@ -21,19 +21,19 @@ describe("MessageItem", () => {
     // renders as user message
     it("ユーザーメッセージとしてレンダリングすること", () => {
       const { container } = render(<MessageItem {...defaultProps} message={userMsg} />);
-      expect(container.querySelector(".message-user")).toBeInTheDocument();
+      expect(container.querySelector(".user")).toBeInTheDocument();
     });
 
     // renders user text
     it("ユーザーテキストを表示すること", () => {
       const { container } = render(<MessageItem {...defaultProps} message={userMsg} />);
-      expect(container.querySelector(".message-content")?.textContent).toBe("Hello");
+      expect(container.querySelector(".content")?.textContent).toBe("Hello");
     });
 
     // shows edit icon
     it("編集アイコンを表示すること", () => {
       const { container } = render(<MessageItem {...defaultProps} message={userMsg} />);
-      expect(container.querySelector(".message-edit-icon")).toBeInTheDocument();
+      expect(container.querySelector(".editIcon")).toBeInTheDocument();
     });
   });
 
@@ -47,8 +47,8 @@ describe("MessageItem", () => {
     // enters edit mode
     it("編集モードに入ること", () => {
       const { container } = render(<MessageItem {...defaultProps} message={userMsg} />);
-      fireEvent.click(container.querySelector(".message-user-bubble")!);
-      expect(container.querySelector(".message-edit-textarea")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".userBubble")!);
+      expect(container.querySelector(".editTextarea")).toBeInTheDocument();
     });
   });
 
@@ -62,13 +62,13 @@ describe("MessageItem", () => {
     // renders as assistant message
     it("アシスタントメッセージとしてレンダリングすること", () => {
       const { container } = render(<MessageItem {...defaultProps} message={assistantMsg} />);
-      expect(container.querySelector(".message-assistant")).toBeInTheDocument();
+      expect(container.querySelector(".assistant")).toBeInTheDocument();
     });
 
     // renders text and tool parts
     it("テキストとツールパートをレンダリングすること", () => {
       const { container } = render(<MessageItem {...defaultProps} message={assistantMsg} />);
-      expect(container.querySelector(".tool-part")).toBeInTheDocument();
+      expect(container.querySelector(".root")).toBeInTheDocument();
     });
   });
 });

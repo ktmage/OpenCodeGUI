@@ -10,21 +10,21 @@ describe("ToolPartView", () => {
     it("ツールパートヘッダーをレンダリングすること", () => {
       const part = createToolPart("file_read");
       const { container } = render(<ToolPartView part={part} />);
-      expect(container.querySelector(".tool-part-header")).toBeInTheDocument();
+      expect(container.querySelector(".header")).toBeInTheDocument();
     });
 
     // renders the action icon
     it("アクションアイコンをレンダリングすること", () => {
       const part = createToolPart("file_read");
       const { container } = render(<ToolPartView part={part} />);
-      expect(container.querySelector(".tool-part-icon")).toBeInTheDocument();
+      expect(container.querySelector(".icon")).toBeInTheDocument();
     });
 
     // renders the action label
     it("アクションラベルをレンダリングすること", () => {
       const part = createToolPart("file_read");
       const { container } = render(<ToolPartView part={part} />);
-      expect(container.querySelector(".tool-part-action")).toBeInTheDocument();
+      expect(container.querySelector(".action")).toBeInTheDocument();
     });
   });
 
@@ -36,8 +36,8 @@ describe("ToolPartView", () => {
         state: { status: "completed", title: "test", input: {}, output: "result" },
       } as any);
       const { container } = render(<ToolPartView part={part} />);
-      fireEvent.click(container.querySelector(".tool-part-header")!);
-      expect(container.querySelector(".tool-part-body")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".header")!);
+      expect(container.querySelector(".body")).toBeInTheDocument();
     });
   });
 
@@ -49,7 +49,7 @@ describe("ToolPartView", () => {
         state: { status: "running", title: "running...", input: {} },
       } as any);
       const { container } = render(<ToolPartView part={part} />);
-      expect(container.querySelector(".tool-part-spinner")).toBeInTheDocument();
+      expect(container.querySelector(".spinner")).toBeInTheDocument();
     });
   });
 
@@ -61,7 +61,7 @@ describe("ToolPartView", () => {
         state: { status: "error", title: "failed", input: {}, error: "something went wrong" },
       } as any);
       const { container } = render(<ToolPartView part={part} />);
-      expect(container.querySelector(".tool-part-icon svg")).toBeInTheDocument();
+      expect(container.querySelector(".icon svg")).toBeInTheDocument();
     });
   });
 
@@ -78,8 +78,8 @@ describe("ToolPartView", () => {
         },
       } as any);
       const { container } = render(<ToolPartView part={part} />);
-      fireEvent.click(container.querySelector(".tool-part-header")!);
-      expect(container.querySelector(".tool-diff")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".header")!);
+      expect(container.querySelector("[data-testid='diff-view']")).toBeInTheDocument();
     });
   });
 
@@ -96,8 +96,8 @@ describe("ToolPartView", () => {
         },
       } as any);
       const { container } = render(<ToolPartView part={part} />);
-      fireEvent.click(container.querySelector(".tool-part-header")!);
-      expect(container.querySelector(".tool-diff")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".header")!);
+      expect(container.querySelector("[data-testid='diff-view']")).toBeInTheDocument();
     });
   });
 });

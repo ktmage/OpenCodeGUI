@@ -8,19 +8,19 @@ describe("StatusItem", () => {
     // renders the indicator
     it("インジケータを表示すること", () => {
       const { container } = render(<StatusItem indicator="○" content="Task A" />);
-      expect(container.querySelector(".status-item-indicator")?.textContent).toBe("○");
+      expect(container.querySelector(".indicator")?.textContent).toBe("○");
     });
 
     // renders the content
     it("コンテンツを表示すること", () => {
       const { container } = render(<StatusItem indicator="○" content="Task A" />);
-      expect(container.querySelector(".status-item-content")?.textContent).toBe("Task A");
+      expect(container.querySelector(".content")?.textContent).toBe("Task A");
     });
 
     // does not have the done class
     it("done クラスを持たないこと", () => {
       const { container } = render(<StatusItem indicator="○" content="Task A" />);
-      expect(container.querySelector(".status-item")?.classList.contains("done")).toBe(false);
+      expect(container.querySelector(".root")?.classList.contains("done")).toBe(false);
     });
   });
 
@@ -29,7 +29,7 @@ describe("StatusItem", () => {
     // has the done class
     it("done クラスを持つこと", () => {
       const { container } = render(<StatusItem indicator="✓" content="Done" isDone />);
-      expect(container.querySelector(".status-item")?.classList.contains("done")).toBe(true);
+      expect(container.querySelector(".root")?.classList.contains("done")).toBe(true);
     });
   });
 
@@ -40,7 +40,7 @@ describe("StatusItem", () => {
       const { container } = render(
         <StatusItem indicator="○" content="Urgent" badge={{ label: "high", variant: "danger" }} />,
       );
-      expect(container.querySelector(".status-item-badge")?.textContent).toBe("high");
+      expect(container.querySelector(".badge")?.textContent).toBe("high");
     });
 
     // has the danger class on the badge
@@ -48,7 +48,7 @@ describe("StatusItem", () => {
       const { container } = render(
         <StatusItem indicator="○" content="Urgent" badge={{ label: "high", variant: "danger" }} />,
       );
-      expect(container.querySelector(".status-item-badge")?.classList.contains("danger")).toBe(true);
+      expect(container.querySelector(".badge")?.classList.contains("danger")).toBe(true);
     });
   });
 
@@ -59,7 +59,7 @@ describe("StatusItem", () => {
       const { container } = render(
         <StatusItem indicator="○" content="Later" badge={{ label: "low", variant: "muted" }} />,
       );
-      expect(container.querySelector(".status-item-badge")?.classList.contains("muted")).toBe(true);
+      expect(container.querySelector(".badge")?.classList.contains("muted")).toBe(true);
     });
   });
 
@@ -68,7 +68,7 @@ describe("StatusItem", () => {
     // does not render badge element
     it("バッジ要素を表示しないこと", () => {
       const { container } = render(<StatusItem indicator="○" content="Task" />);
-      expect(container.querySelector(".status-item-badge")).toBeNull();
+      expect(container.querySelector(".badge")).toBeNull();
     });
   });
 
@@ -77,7 +77,7 @@ describe("StatusItem", () => {
     // applies the custom class
     it("カスタムクラスが付与されること", () => {
       const { container } = render(<StatusItem indicator="○" content="Task" className="custom" />);
-      expect(container.querySelector(".status-item")?.classList.contains("custom")).toBe(true);
+      expect(container.querySelector(".root")?.classList.contains("custom")).toBe(true);
     });
   });
 });

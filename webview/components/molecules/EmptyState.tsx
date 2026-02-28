@@ -1,5 +1,6 @@
 import { useLocale } from "../../locales";
 import { ActionButton } from "../atoms/ActionButton";
+import styles from "./EmptyState.module.css";
 
 type Props = {
   onNewSession: () => void;
@@ -8,9 +9,9 @@ type Props = {
 export function EmptyState({ onNewSession }: Props) {
   const t = useLocale();
   return (
-    <div className="empty-state">
-      <div className="empty-state-title">{t["empty.title"]}</div>
-      <div className="empty-state-description">{t["empty.description"]}</div>
+    <div className={styles.root}>
+      <div className={styles.title}>{t["empty.title"]}</div>
+      <div className={styles.description}>{t["empty.description"]}</div>
       <ActionButton onClick={onNewSession}>
         {t["empty.newChat"]}
       </ActionButton>

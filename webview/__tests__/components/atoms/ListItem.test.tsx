@@ -8,13 +8,13 @@ describe("ListItem", () => {
     // renders the title
     it("タイトルを表示すること", () => {
       const { container } = render(<ListItem title="index.ts" />);
-      expect(container.querySelector(".list-item-title")?.textContent).toBe("index.ts");
+      expect(container.querySelector(".title")?.textContent).toBe("index.ts");
     });
 
     // has the root class
-    it("list-item クラスを持つこと", () => {
+    it("root クラスを持つこと", () => {
       const { container } = render(<ListItem title="index.ts" />);
-      expect(container.querySelector(".list-item")).toBeInTheDocument();
+      expect(container.querySelector(".root")).toBeInTheDocument();
     });
   });
 
@@ -23,7 +23,7 @@ describe("ListItem", () => {
     // renders the description
     it("説明テキストを表示すること", () => {
       const { container } = render(<ListItem title="index.ts" description="/src/index.ts" />);
-      expect(container.querySelector(".list-item-description")?.textContent).toBe("/src/index.ts");
+      expect(container.querySelector(".description")?.textContent).toBe("/src/index.ts");
     });
   });
 
@@ -32,7 +32,7 @@ describe("ListItem", () => {
     // does not render description element
     it("description 要素を表示しないこと", () => {
       const { container } = render(<ListItem title="index.ts" />);
-      expect(container.querySelector(".list-item-description")).toBeNull();
+      expect(container.querySelector(".description")).toBeNull();
     });
   });
 
@@ -42,7 +42,7 @@ describe("ListItem", () => {
     it("onClick が呼ばれること", () => {
       const onClick = vi.fn();
       const { container } = render(<ListItem title="index.ts" onClick={onClick} />);
-      fireEvent.click(container.querySelector(".list-item")!);
+      fireEvent.click(container.querySelector(".root")!);
       expect(onClick).toHaveBeenCalledOnce();
     });
   });
@@ -52,7 +52,7 @@ describe("ListItem", () => {
     // applies the custom class
     it("カスタムクラスが付与されること", () => {
       const { container } = render(<ListItem title="index.ts" className="custom" />);
-      expect(container.querySelector(".list-item")?.classList.contains("custom")).toBe(true);
+      expect(container.querySelector(".root")?.classList.contains("custom")).toBe(true);
     });
   });
 });

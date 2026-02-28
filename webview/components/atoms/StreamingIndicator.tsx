@@ -1,9 +1,11 @@
+import styles from "./StreamingIndicator.module.css";
+
 export function StreamingIndicator() {
   return (
-    <div className="streaming-indicator">
-      <span className="streaming-dot" />
-      <span className="streaming-dot" />
-      <span className="streaming-dot" />
+    <div className={styles.root} data-testid="streaming-indicator">
+      <span className={styles.dot} />
+      <span className={styles.dot} />
+      <span className={styles.dot} />
     </div>
   );
 }

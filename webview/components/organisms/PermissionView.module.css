@@ -1,0 +1,18 @@
+.root {
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid var(--vscode-inputValidation-warningBorder);
+  border-radius: 4px;
+  background-color: var(--vscode-inputValidation-warningBackground);
+}
+
+.title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}

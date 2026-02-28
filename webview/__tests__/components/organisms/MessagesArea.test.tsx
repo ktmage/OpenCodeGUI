@@ -38,7 +38,7 @@ describe("MessagesArea", () => {
     // renders streaming indicator
     it("StreamingIndicator をレンダリングすること", () => {
       const { container } = render(<MessagesArea {...defaultProps} sessionBusy={true} />);
-      expect(container.querySelector(".streaming-indicator")).toBeInTheDocument();
+      expect(container.querySelector("[data-testid='streaming-indicator']")).toBeInTheDocument();
     });
   });
 
@@ -47,7 +47,7 @@ describe("MessagesArea", () => {
     // does not render streaming indicator
     it("StreamingIndicator をレンダリングしないこと", () => {
       const { container } = render(<MessagesArea {...defaultProps} sessionBusy={false} />);
-      expect(container.querySelector(".streaming-indicator")).not.toBeInTheDocument();
+      expect(container.querySelector("[data-testid='streaming-indicator']")).not.toBeInTheDocument();
     });
   });
 
@@ -60,7 +60,7 @@ describe("MessagesArea", () => {
         { info: createMessage({ role: "user" }), parts: [createTextPart("Follow up")] },
       ];
       const { container } = render(<MessagesArea {...defaultProps} messages={msgs} />);
-      expect(container.querySelector(".checkpoint-divider")).toBeInTheDocument();
+      expect(container.querySelector(".checkpointDivider")).toBeInTheDocument();
     });
   });
 });

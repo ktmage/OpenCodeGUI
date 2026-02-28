@@ -15,13 +15,13 @@ describe("PermissionView", () => {
     // renders the permission title
     it("パーミッションタイトルを表示すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      expect(container.querySelector(".permission-title")?.textContent).toBe("Allow file write?");
+      expect(container.querySelector(".title")?.textContent).toBe("Allow file write?");
     });
 
     // renders three action buttons
     it("3 つのアクションボタンをレンダリングすること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      expect(container.querySelectorAll(".permission-actions .action-button")).toHaveLength(3);
+      expect(container.querySelectorAll(".actions button")).toHaveLength(3);
     });
   });
 
@@ -30,7 +30,7 @@ describe("PermissionView", () => {
     // sends always response
     it("always レスポンスを送信すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      const buttons = container.querySelectorAll(".permission-actions .action-button");
+      const buttons = container.querySelectorAll(".actions button");
       fireEvent.click(buttons[0]!);
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ type: "replyPermission", response: "always" }),
@@ -43,7 +43,7 @@ describe("PermissionView", () => {
     // sends once response
     it("once レスポンスを送信すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      const buttons = container.querySelectorAll(".permission-actions .action-button");
+      const buttons = container.querySelectorAll(".actions button");
       fireEvent.click(buttons[1]!);
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ type: "replyPermission", response: "once" }),
@@ -56,7 +56,7 @@ describe("PermissionView", () => {
     // sends reject response
     it("reject レスポンスを送信すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      const buttons = container.querySelectorAll(".permission-actions .action-button");
+      const buttons = container.querySelectorAll(".actions button");
       fireEvent.click(buttons[2]!);
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ type: "replyPermission", response: "reject" }),

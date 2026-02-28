@@ -3,6 +3,7 @@ import type { en } from "../../locales/en";
 import { useLocale } from "../../locales";
 import { IconButton } from "../atoms/IconButton";
 import { DeleteIcon, FileIcon } from "../atoms/icons";
+import styles from "./SessionList.module.css";
 
 type Props = {
   sessions: Session[];
@@ -31,7 +32,7 @@ export function SessionList({ sessions, activeSessionId, onSelect, onDelete, onC
     <>
       {/* Backdrop to close session list on outside click */}
       <div style={{ position: "fixed", inset: 0, zIndex: 9 }} onClick={onClose} />
-      <div className="session-list">
+      <div className={styles.root}>
         {sessions.length === 0 ? (
           <div style={{ padding: "12px", fontSize: 12, color: "var(--vscode-descriptionForeground)" }}>
             {t["session.noSessions"]}
@@ -43,28 +44,28 @@ export function SessionList({ sessions, activeSessionId, onSelect, onDelete, onC
             return (
               <div
                 key={session.id}
-                className={`session-item ${session.id === activeSessionId ? "active" : ""}`}
+                className={`${styles.item} ${session.id === activeSessionId ? styles.active : ""}`}
                 onClick={() => onSelect(session.id)}
                 title={session.title || t["session.select"]}
               >
-                <div className="session-item-content">
-                  <span className="session-item-title">{session.title || t["session.untitled"]}</span>
-                  <span className="session-item-meta">
-                    <span className="session-item-time">{formatRelativeTime(session.time.updated, t)}</span>
+                <div className={styles.itemContent}>
+                  <span className={styles.itemTitle}>{session.title || t["session.untitled"]}</span>
+                  <span className={styles.itemMeta}>
+                    <span className={styles.itemTime}>{formatRelativeTime(session.time.updated, t)}</span>
                     {hasSummary && (
-                      <span className="session-item-stats">
-                        <span className="session-item-files">
+                      <span className={styles.itemStats}>
+                        <span className={styles.itemFiles}>
                           <FileIcon width={10} height={10} />
                           {summary.files}
                         </span>
-                        <span className="session-item-additions">+{summary.additions}</span>
-                        <span className="session-item-deletions">-{summary.deletions}</span>
+                        <span className={styles.itemAdditions}>+{summary.additions}</span>
+                        <span className={styles.itemDeletions}>-{summary.deletions}</span>
                       </span>
                     )}
                   </span>
                 </div>
                 <IconButton
-                  className="session-item-delete"
+                  className={styles.itemDelete}
                   onClick={(e) => {
                     e.stopPropagation();
                     onDelete(session.id);

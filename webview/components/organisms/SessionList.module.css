@@ -1,0 +1,104 @@
+.root {
+  position: absolute;
+  top: 36px;
+  left: 0;
+  right: 0;
+  background-color: var(--vscode-quickInput-background);
+  border: 1px solid var(--vscode-panel-border);
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 10;
+  padding: 2px 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.item:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.active {
+  background-color: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.itemContent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.itemTitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.itemMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.active .itemMeta {
+  color: var(--vscode-list-activeSelectionForeground);
+  opacity: 0.7;
+}
+
+.itemTime {
+  white-space: nowrap;
+}
+
+.itemStats {
+  display: flex;
+  gap: 3px;
+  white-space: nowrap;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 10px;
+}
+
+.itemFiles {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--vscode-descriptionForeground);
+}
+
+.itemAdditions {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #4caf50);
+}
+
+.itemDeletions {
+  color: var(--vscode-gitDecoration-deletedResourceForeground, #f44336);
+}
+
+.active .itemFiles,
+.active .itemAdditions,
+.active .itemDeletions {
+  color: inherit;
+}
+
+.itemDelete {
+  opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.item:hover .itemDelete {
+  opacity: 1;
+}

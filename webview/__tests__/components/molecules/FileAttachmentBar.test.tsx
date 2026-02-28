@@ -30,7 +30,7 @@ describe("FileAttachmentBar", () => {
     // renders clip button
     it("クリップボタンをレンダリングすること", () => {
       const { container } = render(<FileAttachmentBar {...defaultProps} />);
-      expect(container.querySelector(".icon-button--outlined")).toBeInTheDocument();
+      expect(container.querySelector(".outlined")).toBeInTheDocument();
     });
   });
 
@@ -40,7 +40,7 @@ describe("FileAttachmentBar", () => {
     it("onClipClick が呼ばれること", () => {
       const onClipClick = vi.fn();
       const { container } = render(<FileAttachmentBar {...defaultProps} onClipClick={onClipClick} />);
-      fireEvent.click(container.querySelector(".icon-button--outlined")!);
+      fireEvent.click(container.querySelector(".outlined")!);
       expect(onClipClick).toHaveBeenCalledOnce();
     });
   });
@@ -50,7 +50,7 @@ describe("FileAttachmentBar", () => {
     // renders attached file chips
     it("添付ファイルチップをレンダリングすること", () => {
       const { container } = render(<FileAttachmentBar {...defaultProps} attachedFiles={[file1, file2]} />);
-      expect(container.querySelectorAll(".attached-file-chip")).toHaveLength(2);
+      expect(container.querySelectorAll(".chip")).toHaveLength(2);
     });
 
     // calls onRemoveFile when remove button is clicked
@@ -59,7 +59,7 @@ describe("FileAttachmentBar", () => {
       const { container } = render(
         <FileAttachmentBar {...defaultProps} attachedFiles={[file1]} onRemoveFile={onRemoveFile} />,
       );
-      fireEvent.click(container.querySelector(".attached-file-remove")!);
+      fireEvent.click(container.querySelector(".chipRemove")!);
       expect(onRemoveFile).toHaveBeenCalledWith(file1.filePath);
     });
   });
@@ -71,7 +71,7 @@ describe("FileAttachmentBar", () => {
       const { container } = render(
         <FileAttachmentBar {...defaultProps} activeEditorFile={file1} isActiveAttached={false} />,
       );
-      expect(container.querySelector(".context-file-button")).toBeInTheDocument();
+      expect(container.querySelector(".fileButton")).toBeInTheDocument();
     });
   });
 
@@ -82,7 +82,7 @@ describe("FileAttachmentBar", () => {
       const { container } = render(
         <FileAttachmentBar {...defaultProps} activeEditorFile={file1} isActiveAttached={true} />,
       );
-      expect(container.querySelector(".context-file-button")).not.toBeInTheDocument();
+      expect(container.querySelector(".fileButton")).not.toBeInTheDocument();
     });
   });
 
@@ -93,7 +93,7 @@ describe("FileAttachmentBar", () => {
       const { container } = render(
         <FileAttachmentBar {...defaultProps} showFilePicker={true} pickerFiles={[file1]} />,
       );
-      expect(container.querySelector(".file-picker-dropdown")).toBeInTheDocument();
+      expect(container.querySelector(".pickerDropdown")).toBeInTheDocument();
     });
   });
 });

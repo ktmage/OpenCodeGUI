@@ -9,14 +9,14 @@ describe("FileCreateView", () => {
     it("すべての行を追加行として表示すること", () => {
       const content = "line1\nline2\nline3";
       const { container } = render(<FileCreateView content={content} />);
-      expect(container.querySelectorAll(".tool-diff-line-add")).toHaveLength(3);
+      expect(container.querySelectorAll(".lineAdd")).toHaveLength(3);
     });
 
     // shows add lines count in stats
     it("追加行数を stats に表示すること", () => {
       const content = "line1\nline2";
       const { container } = render(<FileCreateView content={content} />);
-      expect(container.querySelector(".tool-diff-stat-add")).toBeInTheDocument();
+      expect(container.querySelector(".statAdd")).toBeInTheDocument();
     });
   });
 
@@ -27,7 +27,7 @@ describe("FileCreateView", () => {
       const lines = Array.from({ length: 50 }, (_, i) => `line${i + 1}`);
       const content = lines.join("\n");
       const { container } = render(<FileCreateView content={content} />);
-      expect(container.querySelectorAll(".tool-diff-line-add")).toHaveLength(31);
+      expect(container.querySelectorAll(".lineAdd")).toHaveLength(31);
     });
   });
 });

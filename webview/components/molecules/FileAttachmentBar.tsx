@@ -3,6 +3,7 @@ import type { FileAttachment } from "../../vscode-api";
 import { IconButton } from "../atoms/IconButton";
 import { ListItem } from "../atoms/ListItem";
 import { ClipIcon, CloseIcon, PlusIcon } from "../atoms/icons";
+import styles from "./FileAttachmentBar.module.css";
 
 type Props = {
   attachedFiles: FileAttachment[];
@@ -34,21 +35,21 @@ export function FileAttachmentBar({
   const t = useLocale();
 
   return (
-    <div className="context-bar-left">
+    <div className={styles.left}>
       {/* クリップボタン */}
-      <div className="context-clip-container" ref={filePickerRef}>
+      <div className={styles.clipContainer} ref={filePickerRef}>
         <IconButton variant="outlined" size="sm" onClick={onClipClick} title={t["input.addContext"]}>
           <ClipIcon />
         </IconButton>
         {showFilePicker && (
-          <div className="file-picker-dropdown">
+          <div className={styles.pickerDropdown}>
             <input
-              className="file-picker-search"
+              className={styles.pickerSearch}
               placeholder={t["input.searchFiles"]}
               value={filePickerQuery}
               onChange={(e) => onFilePickerSearch(e.target.value)}
             />
-            <div className="file-picker-list">
+            <div className={styles.pickerList}>
               {pickerFiles.length > 0 ? (
                 pickerFiles.slice(0, 15).map((file) => (
                   <ListItem
@@ -59,7 +60,7 @@ export function FileAttachmentBar({
                   />
                 ))
               ) : (
-                <div className="file-picker-empty">{t["input.noFiles"]}</div>
+                <div className={styles.pickerEmpty}>{t["input.noFiles"]}</div>
               )}
             </div>
           </div>
@@ -67,11 +68,11 @@ export function FileAttachmentBar({
       </div>
       {/* 添付されたファイルチップ (インライン) */}
       {attachedFiles.map((file) => (
-        <div key={file.filePath} className="attached-file-chip">
-          <span className="attached-file-name">{file.fileName}</span>
+        <div key={file.filePath} className={styles.chip}>
+          <span className={styles.chipName}>{file.fileName}</span>
           <button
             type="button"
-            className="attached-file-remove"
+            className={styles.chipRemove}
             onClick={() => onRemoveFile(file.filePath)}
             title={t["input.remove"]}
           >
@@ -83,7 +84,7 @@ export function FileAttachmentBar({
       {activeEditorFile && !isActiveAttached && (
         <button
           type="button"
-          className="context-file-button"
+          className={styles.fileButton}
           onClick={() => onAddFile(activeEditorFile)}
           title={t["input.addFile"](activeEditorFile.filePath)}
         >

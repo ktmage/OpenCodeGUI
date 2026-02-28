@@ -1,6 +1,7 @@
 import { useLocale } from "../../locales";
 import type { FileAttachment } from "../../vscode-api";
 import { ListItem } from "../atoms/ListItem";
+import styles from "./HashFilePopup.module.css";
 
 type Props = {
   hashFiles: FileAttachment[];
@@ -12,7 +13,7 @@ export function HashFilePopup({ hashFiles, onAddFile, hashPopupRef }: Props) {
   const t = useLocale();
 
   return (
-    <div className="hash-popup" ref={hashPopupRef}>
+    <div className={styles.root} ref={hashPopupRef} data-testid="hash-popup">
       {hashFiles.length > 0 ? (
         hashFiles.map((file) => (
           <ListItem
@@ -23,7 +24,7 @@ export function HashFilePopup({ hashFiles, onAddFile, hashPopupRef }: Props) {
           />
         ))
       ) : (
-        <div className="hash-popup-empty">{t["input.noFiles"]}</div>
+        <div className={styles.empty}>{t["input.noFiles"]}</div>
       )}
     </div>
   );

@@ -5,16 +5,16 @@ import { StreamingIndicator } from "../../../components/atoms/StreamingIndicator
 describe("StreamingIndicator", () => {
   // when rendered
   context("レンダリングした場合", () => {
-    // renders the streaming-indicator container
-    it("streaming-indicator コンテナをレンダリングすること", () => {
+    // renders the root container
+    it("root コンテナをレンダリングすること", () => {
       const { container } = render(<StreamingIndicator />);
-      expect(container.querySelector(".streaming-indicator")).toBeInTheDocument();
+      expect(container.querySelector("[data-testid='streaming-indicator']")).toBeInTheDocument();
     });
 
     // renders exactly 3 dots
     it("ドットを 3 つレンダリングすること", () => {
       const { container } = render(<StreamingIndicator />);
-      expect(container.querySelectorAll(".streaming-dot")).toHaveLength(3);
+      expect(container.querySelectorAll(".dot")).toHaveLength(3);
     });
   });
 });

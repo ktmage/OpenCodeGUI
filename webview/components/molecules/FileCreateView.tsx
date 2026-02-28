@@ -1,4 +1,5 @@
 import { useLocale } from "../../locales";
+import styles from "./DiffView.module.css";
 
 type Props = {
   content: string;
@@ -9,15 +10,15 @@ export function FileCreateView({ content }: Props) {
   const lines = content.split("\n");
   const displayLines = lines.length > 30 ? [...lines.slice(0, 30), t["tool.moreLines"](lines.length - 30)] : lines;
   return (
-    <div className="tool-diff">
-      <div className="tool-diff-stats">
-        <span className="tool-diff-stat-add">{t["tool.addLines"](lines.length)}</span>
+    <div className={styles.root} data-testid="diff-view">
+      <div className={styles.stats}>
+        <span className={styles.statAdd}>{t["tool.addLines"](lines.length)}</span>
       </div>
-      <div className="tool-diff-lines">
+      <div className={styles.lines}>
         {displayLines.map((line, i) => (
-          <div key={i} className="tool-diff-line tool-diff-line-add">
-            <span className="tool-diff-line-marker">+</span>
-            <span className="tool-diff-line-text">{line || "\u00A0"}</span>
+          <div key={i} className={`${styles.line} ${styles.lineAdd}`}>
+            <span className={styles.lineMarker}>+</span>
+            <span className={styles.lineText}>{line || "\u00A0"}</span>
           </div>
         ))}
       </div>

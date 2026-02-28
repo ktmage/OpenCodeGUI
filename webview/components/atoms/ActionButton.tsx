@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import styles from "./ActionButton.module.css";
 
 type Props = {
   /** 色のバリエーション */
@@ -15,9 +16,9 @@ type Props = {
  */
 export function ActionButton({ variant = "primary", size = "md", className, children, ...rest }: Props) {
   const classes = [
-    "action-button",
-    variant !== "primary" && `action-button--${variant}`,
-    size !== "md" && `action-button--${size}`,
+    styles.root,
+    variant !== "primary" && styles[variant],
+    size !== "md" && styles[size],
     className,
   ]
     .filter(Boolean)

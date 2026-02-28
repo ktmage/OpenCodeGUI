@@ -1,0 +1,18 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--vscode-textLink-foreground);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  user-select: none;
+}
+
+.root:hover {
+  color: var(--vscode-textLink-activeForeground);
+  background-color: var(--vscode-toolbar-hoverBackground);
+}

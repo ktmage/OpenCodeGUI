@@ -5,6 +5,7 @@ import { useLocale } from "../../locales";
 import type { AllProvidersData, ModelInfo, ProviderInfo } from "../../vscode-api";
 import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "../atoms/icons";
 import { LinkButton } from "../atoms/LinkButton";
+import styles from "./ModelSelector.module.css";
 
 type Props = {
   providers: Provider[];
@@ -22,6 +23,12 @@ function statusBadge(status?: string): string | null {
   if (!status || status === "active") return null;
   return status;
 }
+
+const badgeClass: Record<string, string> = {
+  beta: styles.beta,
+  alpha: styles.alpha,
+  deprecated: styles.deprecated,
+};
 
 export function ModelSelector({ providers, allProvidersData, selectedModel, onSelect }: Props) {
   const t = useLocale();
@@ -91,36 +98,36 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
   };
 
   return (
-    <div className="model-selector" ref={containerRef}>
+    <div className={styles.root} ref={containerRef}>
       <button
         type="button"
-        className="model-selector-button"
+        className={styles.button}
         onClick={() => setOpen((s) => !s)}
         title={t["model.selectModel"]}
       >
-        <span className="model-selector-label">{selectedModelName}</span>
-        <span className={`chevron-icon ${open ? "expanded" : ""}`}>
+        <span className={styles.label}>{selectedModelName}</span>
+        <span className={`${styles.chevron} ${open ? styles.expanded : ""}`}>
           <ChevronRightIcon />
         </span>
       </button>
       {open && (
-        <div className="model-panel">
-          <div className="model-panel-body">
+        <div className={styles.panel}>
+          <div className={styles.panelBody}>
             {displayProviders.map((provider) => {
               if (provider.models.length === 0) return null;
               const isCollapsed = collapsedProviders.has(provider.id);
               return (
-                <div key={provider.id} className="model-panel-section">
+                <div key={provider.id} className={styles.section}>
                   <div
-                    className={`model-panel-section-title ${!provider.connected ? "disconnected" : ""}`}
+                    className={`${styles.sectionTitle} ${!provider.connected ? styles.disconnected : ""}`}
                     onClick={() => toggleProvider(provider.id)}
                   >
-                    <span className={`chevron-icon ${isCollapsed ? "" : "expanded"}`}>
+                    <span className={`${styles.chevron} ${isCollapsed ? "" : styles.expanded}`}>
                       <ChevronRightIcon />
                     </span>
-                    <span className="model-panel-section-name">{provider.name}</span>
+                    <span className={styles.sectionName}>{provider.name}</span>
                     {!provider.connected && (
-                      <span className="model-panel-section-badge">{t["model.notConnected"]}</span>
+                      <span className={styles.sectionBadge}>{t["model.notConnected"]}</span>
                     )}
                   </div>
                   {!isCollapsed &&
@@ -132,21 +139,21 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                       return (
                         <div
                           key={model.id}
-                          className={`model-panel-item${isSelected ? " active" : ""}${disabled ? " disabled" : ""}`}
+                          className={[styles.item, isSelected && styles.active, disabled && styles.disabled].filter(Boolean).join(" ")}
                           onClick={() => {
                             if (disabled) return;
                             onSelect({ providerID: provider.id, modelID: model.id });
                             setOpen(false);
                           }}
                         >
-                          <span className="model-panel-item-check">{isSelected ? "✓" : ""}</span>
-                          <span className="model-panel-item-name">
+                          <span className={styles.itemCheck}>{isSelected ? "✓" : ""}</span>
+                          <span className={styles.itemName}>
                             {model.name || model.id}
-                            {badge && <span className={`model-panel-item-badge ${badge}`}>{badge}</span>}
+                            {badge && <span className={`${styles.itemBadge} ${badgeClass[badge] ?? ""}`}>{badge}</span>}
                           </span>
                           {model.limit && (
-                            <span className="model-panel-item-meta">
-                              <span className="model-panel-item-context">{formatContextK(model.limit.context)}</span>
+                            <span className={styles.itemMeta}>
+                              <span className={styles.itemContext}>{formatContextK(model.limit.context)}</span>
                             </span>
                           )}
                         </div>
@@ -157,7 +164,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
             })}
           </div>
           {hasDisconnected && (
-            <div className="model-panel-footer">
+            <div className={styles.footer}>
               <LinkButton
                 onClick={() => setShowAll((s) => !s)}
                 title={showAll ? t["model.hideDisconnected"] : t["model.showAll"]}

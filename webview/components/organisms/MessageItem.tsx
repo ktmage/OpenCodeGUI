@@ -7,6 +7,7 @@ import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../atom
 import { PermissionView } from "./PermissionView";
 import { TextPartView } from "../molecules/TextPartView";
 import { ToolPartView } from "./ToolPartView";
+import styles from "./MessageItem.module.css";
 
 type Props = {
   message: MessageWithParts;
@@ -84,14 +85,14 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
   );
 
   return (
-    <div className={`message ${isUser ? "message-user" : "message-assistant"}`}>
+    <div className={`${styles.message} ${isUser ? styles.user : styles.assistant}`}>
       {isUser ? (
         <>
           {editing ? (
-            <div className="message-edit-container">
+            <div className={styles.editContainer}>
               <textarea
                 ref={editRef}
-                className="message-edit-textarea"
+                className={styles.editTextarea}
                 value={editText}
                 onChange={(e) => {
                   setEditText(e.target.value);
@@ -101,7 +102,7 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
                 onKeyDown={handleEditKeyDown}
                 rows={1}
               />
-              <div className="message-edit-actions">
+              <div className={styles.editActions}>
                 <ActionButton variant="ghost" size="sm" onClick={() => setEditing(false)}>
                   {t["message.cancel"]}
                 </ActionButton>
@@ -115,17 +116,17 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
               </div>
             </div>
           ) : (
-            <div className="message-user-bubble" onClick={handleStartEdit} title={t["message.clickToEdit"]}>
-              <div className="message-content">{userText}</div>
-              <div className="message-edit-icon">
+            <div className={styles.userBubble} onClick={handleStartEdit} title={t["message.clickToEdit"]}>
+              <div className={styles.content}>{userText}</div>
+              <div className={styles.editIcon}>
                 <EditIcon width={12} height={12} />
               </div>
             </div>
           )}
           {userFiles.length > 0 && (
-            <div className="message-user-files">
+            <div className={styles.userFiles}>
               {userFiles.map((name, i) => (
-                <span key={i} className="message-user-file-chip">
+                <span key={i} className={styles.userFileChip}>
                   {name}
                 </span>
               ))}
@@ -133,7 +134,7 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
           )}
         </>
       ) : (
-        <div className="message-content">
+        <div className={styles.content}>
           {parts.map((part) => {
             switch (part.type) {
               case "text":
@@ -162,21 +163,21 @@ function ReasoningPartView({ part }: { part: ReasoningPartType }) {
   const isComplete = !!part.time?.end;
 
   return (
-    <div className={`reasoning-part ${isComplete ? "complete" : "active"}`}>
-      <div className="reasoning-part-header" onClick={() => setExpanded((s) => !s)} title={t["message.toggleThought"]}>
-        <span className="reasoning-part-icon">
+    <div className={`${styles.reasoningPart} ${isComplete ? "" : styles.reasoningActive}`}>
+      <div className={styles.reasoningHeader} onClick={() => setExpanded((s) => !s)} title={t["message.toggleThought"]}>
+        <span className={styles.reasoningIcon}>
           {isComplete ? (
             <InfoCircleIcon />
           ) : (
-            <SpinnerIcon className="tool-part-spinner" width={14} height={14} />
+            <SpinnerIcon className={styles.spinner} width={14} height={14} />
           )}
         </span>
-        <span className="reasoning-part-label">{isComplete ? t["message.thought"] : t["message.thinking"]}</span>
-        <span className={`tool-part-chevron ${expanded ? "expanded" : ""}`}>
+        <span className={styles.reasoningLabel}>{isComplete ? t["message.thought"] : t["message.thinking"]}</span>
+        <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>
           <ChevronRightIcon />
         </span>
       </div>
-      {expanded && <div className="reasoning-part-body">{part.text}</div>}
+      {expanded && <div className={styles.reasoningBody}>{part.text}</div>}
     </div>
   );
 }

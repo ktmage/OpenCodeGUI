@@ -150,8 +150,8 @@ describe("コンテキストとコンプレッション", () => {
     await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
 
     // トークン 0 → ContextIndicator ボタンが存在しない
-    const button = document.querySelector(".context-indicator-button");
-    expect(button).toBeFalsy();
+    const indicator = document.querySelector(".container > .button");
+    expect(indicator).toBeFalsy();
   });
 
   // Warning color is applied at 80%+ usage

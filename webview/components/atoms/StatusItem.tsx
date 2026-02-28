@@ -1,3 +1,5 @@
+import styles from "./StatusItem.module.css";
+
 export type BadgeVariant = "danger" | "muted";
 
 type Props = {
@@ -16,14 +18,14 @@ type Props = {
  * ステータスインジケータ + コンテンツ + オプショナルバッジの読み取り専用行。
  */
 export function StatusItem({ indicator, content, badge, isDone, className }: Props) {
-  const classes = ["status-item", isDone && "done", className].filter(Boolean).join(" ");
+  const classes = [styles.root, isDone && styles.done, className].filter(Boolean).join(" ");
 
   return (
     <li className={classes}>
-      <span className="status-item-indicator">{indicator}</span>
-      <span className="status-item-content">{content}</span>
+      <span className={styles.indicator}>{indicator}</span>
+      <span className={styles.content}>{content}</span>
       {badge && (
-        <span className={`status-item-badge ${badge.variant ?? ""}`}>{badge.label}</span>
+        <span className={[styles.badge, badge.variant && styles[badge.variant]].filter(Boolean).join(" ")}>{badge.label}</span>
       )}
     </li>
   );

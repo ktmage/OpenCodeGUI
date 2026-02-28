@@ -20,13 +20,13 @@ describe("ModelSelector", () => {
     // renders the selector button
     it("セレクターボタンをレンダリングすること", () => {
       const { container } = render(<ModelSelector {...defaultProps} />);
-      expect(container.querySelector(".model-selector-button")).toBeInTheDocument();
+      expect(container.querySelector(".button")).toBeInTheDocument();
     });
 
     // shows selected model name
     it("選択中のモデル名を表示すること", () => {
       const { container } = render(<ModelSelector {...defaultProps} />);
-      expect(container.querySelector(".model-selector-label")?.textContent).toBe("GPT-4");
+      expect(container.querySelector(".label")?.textContent).toBe("GPT-4");
     });
   });
 
@@ -35,8 +35,8 @@ describe("ModelSelector", () => {
     // opens the model panel
     it("モデルパネルを開くこと", () => {
       const { container } = render(<ModelSelector {...defaultProps} />);
-      fireEvent.click(container.querySelector(".model-selector-button")!);
-      expect(container.querySelector(".model-panel")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".button")!);
+      expect(container.querySelector(".panel")).toBeInTheDocument();
     });
   });
 
@@ -46,8 +46,8 @@ describe("ModelSelector", () => {
     it("onSelect が呼ばれること", () => {
       const onSelect = vi.fn();
       const { container } = render(<ModelSelector {...defaultProps} onSelect={onSelect} />);
-      fireEvent.click(container.querySelector(".model-selector-button")!);
-      fireEvent.click(container.querySelector(".model-panel-item")!);
+      fireEvent.click(container.querySelector(".button")!);
+      fireEvent.click(container.querySelector(".item")!);
       expect(onSelect).toHaveBeenCalledWith({ providerID: "openai", modelID: "gpt-4" });
     });
   });
@@ -57,7 +57,7 @@ describe("ModelSelector", () => {
     // shows placeholder text
     it("プレースホルダーテキストを表示すること", () => {
       const { container } = render(<ModelSelector {...defaultProps} selectedModel={null} />);
-      expect(container.querySelector(".model-selector-label")?.textContent).toBeTruthy();
+      expect(container.querySelector(".label")?.textContent).toBeTruthy();
     });
   });
 });

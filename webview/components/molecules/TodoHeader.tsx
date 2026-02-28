@@ -4,6 +4,7 @@ import type { TodoItem } from "../../utils/todo";
 import { StatusItem } from "../atoms/StatusItem";
 import type { BadgeVariant } from "../atoms/StatusItem";
 import { CheckboxIcon, ChevronRightIcon } from "../atoms/icons";
+import styles from "./TodoHeader.module.css";
 
 type Props = {
   todos: TodoItem[];
@@ -17,25 +18,25 @@ export function TodoHeader({ todos }: Props) {
   const total = todos.length;
 
   return (
-    <div className="todo-header">
-      <div className="todo-header-bar" onClick={() => setExpanded((s) => !s)} title={t["todo.toggleList"]}>
-        <CheckboxIcon className="todo-header-icon" />
-        <span className="todo-header-label">{t["todo.label"]}</span>
-        <span className="todo-header-count">
+    <div className={styles.root}>
+      <div className={styles.bar} onClick={() => setExpanded((s) => !s)} title={t["todo.toggleList"]}>
+        <CheckboxIcon className={styles.icon} />
+        <span className={styles.label}>{t["todo.label"]}</span>
+        <span className={styles.count}>
           {completed}/{total}
         </span>
-        <span className="todo-header-progress">
+        <span className={styles.progress}>
           <span
-            className="todo-header-progress-fill"
+            className={styles.progressFill}
             style={{ width: `${total > 0 ? (completed / total) * 100 : 0}%` }}
           />
         </span>
-        <span className={`todo-header-chevron ${expanded ? "expanded" : ""}`}>
+        <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>
           <ChevronRightIcon />
         </span>
       </div>
       {expanded && (
-        <ul className="todo-header-list">
+        <ul className={styles.list}>
           {todos.map((todo, i) => {
             const isDone = todo.status === "completed" || todo.status === "done";
             const badge = todo.priority

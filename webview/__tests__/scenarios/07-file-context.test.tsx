@@ -52,14 +52,14 @@ describe("ファイルコンテキスト", () => {
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Add context"));
       const items = screen.getAllByText("main.ts");
-      const clickTarget = items.find((el) => el.closest(".list-item"))?.closest(".list-item");
+      const clickTarget = items.find((el) => el.closest(".pickerList > div"))?.closest(".pickerList > div");
       if (!clickTarget) throw new Error("list-item not found");
       await user.click(clickTarget);
     });
 
     // Chip is shown
     it("チップが表示されること", () => {
-      const chips = document.querySelectorAll(".attached-file-chip");
+      const chips = document.querySelectorAll(".chip");
       expect(chips.length).toBe(1);
     });
 
@@ -77,18 +77,18 @@ describe("ファイルコンテキスト", () => {
     // ファイルを添付
     await user.click(screen.getByTitle("Add context"));
     const items = screen.getAllByText("main.ts");
-    const clickTarget = items.find((el) => el.closest(".list-item"))?.closest(".list-item");
+    const clickTarget = items.find((el) => el.closest(".pickerList > div"))?.closest(".pickerList > div");
     if (!clickTarget) throw new Error("list-item not found");
     await user.click(clickTarget);
 
     // チップが表示される
-    expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
+    expect(document.querySelectorAll(".chip").length).toBe(1);
 
     // 削除ボタンをクリック
     await user.click(screen.getByTitle("Remove"));
 
     // チップが消える
-    expect(document.querySelectorAll(".attached-file-chip").length).toBe(0);
+    expect(document.querySelectorAll(".chip").length).toBe(0);
   });
 
   // # trigger shows file candidate popup
@@ -100,7 +100,7 @@ describe("ファイルコンテキスト", () => {
     await user.type(textarea, "#");
 
     // ハッシュポップアップが表示される
-    const popup = document.querySelector(".hash-popup");
+    const popup = document.querySelector("[data-testid='hash-popup']");
     expect(popup).toBeTruthy();
   });
 
@@ -127,8 +127,8 @@ describe("ファイルコンテキスト", () => {
       const user = userEvent.setup();
       textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "Look at #");
-      const popup = document.querySelector(".hash-popup");
-      const popupItem = popup?.querySelector(".list-item");
+      const popup = document.querySelector("[data-testid='hash-popup']");
+      const popupItem = popup?.querySelector(":scope > div");
       await user.click(popupItem!);
     });
 
@@ -139,7 +139,7 @@ describe("ファイルコンテキスト", () => {
 
     // File chip is shown
     it("ファイルチップが表示されること", () => {
-      expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
+      expect(document.querySelectorAll(".chip").length).toBe(1);
     });
   });
 
@@ -151,7 +151,7 @@ describe("ファイルコンテキスト", () => {
     // ファイルを添付
     await user.click(screen.getByTitle("Add context"));
     const items = screen.getAllByText("main.ts");
-    const clickTarget = items.find((el) => el.closest(".list-item"))?.closest(".list-item");
+    const clickTarget = items.find((el) => el.closest(".pickerList > div"))?.closest(".pickerList > div");
     if (!clickTarget) throw new Error("list-item not found");
     await user.click(clickTarget);
 
@@ -181,7 +181,7 @@ describe("ファイルコンテキスト", () => {
     await user.click(quickAdd);
 
     // チップが表示される
-    const chips = document.querySelectorAll(".attached-file-chip");
+    const chips = document.querySelectorAll(".chip");
     expect(chips.length).toBe(1);
   });
 
@@ -192,13 +192,13 @@ describe("ファイルコンテキスト", () => {
 
     // quick-add で main.ts を添付
     await user.click(screen.getByTitle("Add src/main.ts"));
-    expect(document.querySelectorAll(".attached-file-chip").length).toBe(1);
+    expect(document.querySelectorAll(".chip").length).toBe(1);
 
     // ファイルピッカーからもう一度 main.ts を選択しようとする
     await user.click(screen.getByTitle("Add context"));
 
     // main.ts は既に添付済みなのでピッカーのリストに表示されない（フィルタされている）
-    const pickerItems = document.querySelectorAll(".list-item");
+    const pickerItems = document.querySelectorAll(".pickerList > div");
     const mainInPicker = Array.from(pickerItems).find((el) => el.textContent?.includes("main.ts"));
     expect(mainInPicker).toBeFalsy();
   });
@@ -212,11 +212,11 @@ describe("ファイルコンテキスト", () => {
     await user.type(textarea, "#");
 
     // ポップアップが開いている
-    expect(document.querySelector(".hash-popup")).toBeTruthy();
+    expect(document.querySelector("[data-testid='hash-popup']")).toBeTruthy();
 
     // Escape で閉じる
     await user.keyboard("{Escape}");
-    expect(document.querySelector(".hash-popup")).toBeFalsy();
+    expect(document.querySelector("[data-testid='hash-popup']")).toBeFalsy();
   });
 
   // Space input during # trigger terminates the trigger
@@ -228,6 +228,6 @@ describe("ファイルコンテキスト", () => {
     await user.type(textarea, "#test ");
 
     // スペースを入力したのでポップアップが閉じる
-    expect(document.querySelector(".hash-popup")).toBeFalsy();
+    expect(document.querySelector("[data-testid='hash-popup']")).toBeFalsy();
   });
 });

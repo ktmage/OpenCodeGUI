@@ -12,16 +12,16 @@ describe("ActionButton", () => {
       expect(btn).toHaveAttribute("type", "button");
     });
 
-    // applies action-button class
-    it("action-button クラスを持つこと", () => {
+    // applies root class
+    it("root クラスを持つこと", () => {
       render(<ActionButton>OK</ActionButton>);
-      expect(screen.getByRole("button")).toHaveClass("action-button");
+      expect(screen.getByRole("button")).toHaveClass("root");
     });
 
     // does not apply variant or size modifier classes
     it("variant / size 修飾クラスを持たないこと", () => {
       render(<ActionButton>OK</ActionButton>);
-      expect(screen.getByRole("button").className).toBe("action-button");
+      expect(screen.getByRole("button").className).toBe("root");
     });
 
     // renders children
@@ -33,28 +33,28 @@ describe("ActionButton", () => {
 
   // variant="secondary"
   context('variant="secondary" の場合', () => {
-    // applies action-button--secondary class
-    it("action-button--secondary クラスを持つこと", () => {
+    // applies secondary class
+    it("secondary クラスを持つこと", () => {
       render(<ActionButton variant="secondary">X</ActionButton>);
-      expect(screen.getByRole("button")).toHaveClass("action-button", "action-button--secondary");
+      expect(screen.getByRole("button")).toHaveClass("root", "secondary");
     });
   });
 
   // variant="ghost"
   context('variant="ghost" の場合', () => {
-    // applies action-button--ghost class
-    it("action-button--ghost クラスを持つこと", () => {
+    // applies ghost class
+    it("ghost クラスを持つこと", () => {
       render(<ActionButton variant="ghost">X</ActionButton>);
-      expect(screen.getByRole("button")).toHaveClass("action-button", "action-button--ghost");
+      expect(screen.getByRole("button")).toHaveClass("root", "ghost");
     });
   });
 
   // size="sm"
   context('size="sm" の場合', () => {
-    // applies action-button--sm class
-    it("action-button--sm クラスを持つこと", () => {
+    // applies sm class
+    it("sm クラスを持つこと", () => {
       render(<ActionButton size="sm">X</ActionButton>);
-      expect(screen.getByRole("button")).toHaveClass("action-button", "action-button--sm");
+      expect(screen.getByRole("button")).toHaveClass("root", "sm");
     });
   });
 
@@ -68,7 +68,7 @@ describe("ActionButton", () => {
         </ActionButton>,
       );
       const btn = screen.getByRole("button");
-      expect(btn).toHaveClass("action-button", "action-button--ghost", "action-button--sm", "custom");
+      expect(btn).toHaveClass("root", "ghost", "sm", "custom");
     });
   });
 

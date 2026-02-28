@@ -24,13 +24,13 @@ describe("SessionList", () => {
     // renders all session items
     it("全セッションアイテムをレンダリングすること", () => {
       const { container } = render(<SessionList {...defaultProps} />);
-      expect(container.querySelectorAll(".session-item")).toHaveLength(2);
+      expect(container.querySelectorAll(".item")).toHaveLength(2);
     });
 
     // highlights the active session
     it("アクティブセッションをハイライトすること", () => {
       const { container } = render(<SessionList {...defaultProps} />);
-      expect(container.querySelector(".session-item.active")).toBeInTheDocument();
+      expect(container.querySelector(".item.active")).toBeInTheDocument();
     });
   });
 
@@ -40,7 +40,7 @@ describe("SessionList", () => {
     it("onSelect が呼ばれること", () => {
       const onSelect = vi.fn();
       const { container } = render(<SessionList {...defaultProps} onSelect={onSelect} />);
-      fireEvent.click(container.querySelectorAll(".session-item")[1]!);
+      fireEvent.click(container.querySelectorAll(".item")[1]!);
       expect(onSelect).toHaveBeenCalledWith("s2");
     });
   });
@@ -51,7 +51,7 @@ describe("SessionList", () => {
     it("onDelete が呼ばれること", () => {
       const onDelete = vi.fn();
       const { container } = render(<SessionList {...defaultProps} onDelete={onDelete} />);
-      fireEvent.click(container.querySelector(".session-item-delete")!);
+      fireEvent.click(container.querySelector(".itemDelete")!);
       expect(onDelete).toHaveBeenCalledWith("s1");
     });
   });
@@ -61,7 +61,7 @@ describe("SessionList", () => {
     // renders empty message
     it("空メッセージを表示すること", () => {
       const { container } = render(<SessionList {...defaultProps} sessions={[]} />);
-      expect(container.querySelector(".session-item")).not.toBeInTheDocument();
+      expect(container.querySelector(".item")).not.toBeInTheDocument();
     });
   });
 });

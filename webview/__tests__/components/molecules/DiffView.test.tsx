@@ -8,19 +8,19 @@ describe("DiffView", () => {
     // renders add count
     it("追加行数を表示すること", () => {
       const { container } = render(<DiffView oldStr="hello" newStr="world" />);
-      expect(container.querySelector(".tool-diff-stat-add")).toBeInTheDocument();
+      expect(container.querySelector(".statAdd")).toBeInTheDocument();
     });
 
     // renders remove count
     it("削除行数を表示すること", () => {
       const { container } = render(<DiffView oldStr="hello" newStr="world" />);
-      expect(container.querySelector(".tool-diff-stat-remove")).toBeInTheDocument();
+      expect(container.querySelector(".statRemove")).toBeInTheDocument();
     });
 
     // renders diff lines
     it("差分行をレンダリングすること", () => {
       const { container } = render(<DiffView oldStr="hello" newStr="world" />);
-      expect(container.querySelectorAll(".tool-diff-line").length).toBeGreaterThan(0);
+      expect(container.querySelectorAll(".line").length).toBeGreaterThan(0);
     });
   });
 
@@ -29,13 +29,13 @@ describe("DiffView", () => {
     // does not show add stat
     it("追加行数を表示しないこと", () => {
       const { container } = render(<DiffView oldStr="same" newStr="same" />);
-      expect(container.querySelector(".tool-diff-stat-add")).not.toBeInTheDocument();
+      expect(container.querySelector(".statAdd")).not.toBeInTheDocument();
     });
 
     // does not show remove stat
     it("削除行数を表示しないこと", () => {
       const { container } = render(<DiffView oldStr="same" newStr="same" />);
-      expect(container.querySelector(".tool-diff-stat-remove")).not.toBeInTheDocument();
+      expect(container.querySelector(".statRemove")).not.toBeInTheDocument();
     });
   });
 
@@ -44,7 +44,7 @@ describe("DiffView", () => {
     // renders add stat
     it("追加行数のみを表示すること", () => {
       const { container } = render(<DiffView oldStr="" newStr="new line" />);
-      expect(container.querySelector(".tool-diff-stat-add")).toBeInTheDocument();
+      expect(container.querySelector(".statAdd")).toBeInTheDocument();
     });
   });
 });

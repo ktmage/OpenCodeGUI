@@ -9,5 +9,10 @@ export default defineConfig({
     setupFiles: ["./__tests__/setup.ts"],
     include: ["./__tests__/**/*.test.{ts,tsx}"],
     globals: true,
+    css: {
+      modules: {
+        classNameStrategy: "non-scoped",
+      },
+    },
   },
 });

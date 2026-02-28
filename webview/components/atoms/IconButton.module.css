@@ -1,0 +1,42 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--vscode-icon-foreground);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.root:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.root:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.muted {
+  color: var(--vscode-descriptionForeground);
+}
+
+.muted:hover {
+  color: var(--vscode-foreground);
+}
+
+.outlined {
+  color: var(--vscode-descriptionForeground);
+  border: 1px solid var(--vscode-input-border);
+}
+
+.outlined:hover {
+  color: var(--vscode-foreground);
+  border-color: var(--vscode-foreground);
+}
+
+.sm {
+  padding: 2px;
+}

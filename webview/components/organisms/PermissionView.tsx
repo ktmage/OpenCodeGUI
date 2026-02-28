@@ -2,6 +2,7 @@ import type { Permission } from "@opencode-ai/sdk";
 import { useLocale } from "../../locales";
 import { postMessage } from "../../vscode-api";
 import { ActionButton } from "../atoms/ActionButton";
+import styles from "./PermissionView.module.css";
 
 type Props = {
   permission: Permission;
@@ -20,9 +21,9 @@ export function PermissionView({ permission, activeSessionId }: Props) {
   };
 
   return (
-    <div className="permission-request">
-      <div className="permission-title">{permission.title}</div>
-      <div className="permission-actions">
+    <div className={styles.root}>
+      <div className={styles.title}>{permission.title}</div>
+      <div className={styles.actions}>
         <ActionButton onClick={() => reply("always")}>
           {t["permission.allow"]}
         </ActionButton>

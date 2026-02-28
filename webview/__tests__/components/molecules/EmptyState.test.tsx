@@ -8,19 +8,19 @@ describe("EmptyState", () => {
     // renders the title
     it("タイトルを表示すること", () => {
       const { container } = render(<EmptyState onNewSession={vi.fn()} />);
-      expect(container.querySelector(".empty-state-title")).toBeInTheDocument();
+      expect(container.querySelector(".title")).toBeInTheDocument();
     });
 
     // renders the description
     it("説明文を表示すること", () => {
       const { container } = render(<EmptyState onNewSession={vi.fn()} />);
-      expect(container.querySelector(".empty-state-description")).toBeInTheDocument();
+      expect(container.querySelector(".description")).toBeInTheDocument();
     });
 
     // renders the new chat button
     it("新規チャットボタンを表示すること", () => {
       const { container } = render(<EmptyState onNewSession={vi.fn()} />);
-      expect(container.querySelector(".action-button")).toBeInTheDocument();
+      expect(container.querySelector("button")).toBeInTheDocument();
     });
   });
 
@@ -30,7 +30,7 @@ describe("EmptyState", () => {
     it("onNewSession が呼ばれること", () => {
       const onNewSession = vi.fn();
       const { container } = render(<EmptyState onNewSession={onNewSession} />);
-      fireEvent.click(container.querySelector(".action-button")!);
+      fireEvent.click(container.querySelector("button")!);
       expect(onNewSession).toHaveBeenCalledOnce();
     });
   });

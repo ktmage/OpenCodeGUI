@@ -79,7 +79,7 @@ describe("ツール表示", () => {
     it("展開すると差分行が表示されること", async () => {
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Toggle details"));
-      const diffLines = document.querySelectorAll(".tool-diff-line");
+      const diffLines = document.querySelectorAll(".line");
       expect(diffLines.length).toBeGreaterThan(0);
     });
   });
@@ -114,7 +114,7 @@ describe("ツール表示", () => {
     it("展開すると全行が add の差分が表示されること", async () => {
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Toggle details"));
-      const addLines = document.querySelectorAll(".tool-diff-line-add");
+      const addLines = document.querySelectorAll(".lineAdd");
       expect(addLines.length).toBeGreaterThan(0);
     });
   });
@@ -256,7 +256,7 @@ describe("ツール表示", () => {
     });
 
     // スピナー SVG が存在する
-    const spinner = document.querySelector(".tool-part-spinner");
+    const spinner = document.querySelector(".spinner");
     expect(spinner).toBeTruthy();
   });
 
@@ -312,7 +312,7 @@ describe("ツール表示", () => {
       },
     });
 
-    const spinner = document.querySelector(".tool-part-spinner");
+    const spinner = document.querySelector(".spinner");
     expect(spinner).toBeTruthy();
   });
 

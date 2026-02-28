@@ -18,6 +18,7 @@ import { FileAttachmentBar } from "../molecules/FileAttachmentBar";
 import { HashFilePopup } from "../molecules/HashFilePopup";
 import { ModelSelector } from "../molecules/ModelSelector";
 import { ToolConfigPanel } from "../organisms/ToolConfigPanel";
+import styles from "./InputArea.module.css";
 
 type Props = {
   onSend: (text: string, files: FileAttachment[]) => void;
@@ -266,10 +267,10 @@ export function InputArea({
     : false;
 
   return (
-    <div className="input-area">
-      <div className="input-wrapper">
+    <div className={styles.root}>
+      <div className={styles.wrapper}>
         {/* コンテキストバー: クリップボタン + 添付ファイルチップ + quick-add を1行に */}
-        <div className="context-bar">
+        <div className={styles.contextBar}>
           <FileAttachmentBar
             attachedFiles={attachedFiles}
             activeEditorFile={activeEditorFile}
@@ -295,10 +296,10 @@ export function InputArea({
         </div>
 
         {/* テキスト入力エリア（# ポップアップ付き） */}
-        <div className="textarea-container">
+        <div className={styles.textareaContainer}>
           <textarea
             ref={textareaRef}
-            className="input-textarea"
+            className={styles.textarea}
             placeholder={t["input.placeholder"]}
             value={text}
             onChange={handleTextChange}
@@ -318,8 +319,8 @@ export function InputArea({
           )}
         </div>
 
-        <div className="input-actions">
-          <div className="input-actions-left">
+        <div className={styles.actions}>
+          <div className={styles.actionsLeft}>
             <ModelSelector
               providers={providers}
               allProvidersData={allProvidersData}
@@ -331,7 +332,7 @@ export function InputArea({
             </IconButton>
             <IconButton variant="muted" onClick={() => setShowToolConfig((s) => !s)} title={t["input.settings"]}>
               <GearIcon />
-              <span className={`chevron-icon ${showToolConfig ? "expanded" : ""}`}>
+              <span className={`${styles.chevron} ${showToolConfig ? styles.expanded : ""}`}>
                 <ChevronRightIcon />
               </span>
             </IconButton>
@@ -346,12 +347,12 @@ export function InputArea({
             )}
           </div>
           {isBusy ? (
-            <IconButton className="send-button" onClick={onAbort} title={t["input.stop"]}>
+            <IconButton className={styles.sendButton} onClick={onAbort} title={t["input.stop"]}>
               <StopIcon />
             </IconButton>
           ) : (
             <IconButton
-              className="send-button"
+              className={styles.sendButton}
               onClick={handleSend}
               disabled={!text.trim()}
               title={t["input.send"]}

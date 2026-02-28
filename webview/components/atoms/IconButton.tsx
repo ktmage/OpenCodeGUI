@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import styles from "./IconButton.module.css";
 
 type Props = {
   /** 色のバリエーション */
@@ -15,9 +16,9 @@ type Props = {
  */
 export function IconButton({ variant = "default", size = "md", className, children, ...rest }: Props) {
   const classes = [
-    "icon-button",
-    variant !== "default" && `icon-button--${variant}`,
-    size !== "md" && `icon-button--${size}`,
+    styles.root,
+    variant !== "default" && styles[variant],
+    size !== "md" && styles[size],
     className,
   ]
     .filter(Boolean)

@@ -65,7 +65,7 @@ describe("ContextIndicator", () => {
     // renders the indicator button
     it("インジケーターボタンをレンダリングすること", () => {
       const { container } = render(<ContextIndicator {...defaultProps} />);
-      expect(container.querySelector(".context-indicator-button")).toBeInTheDocument();
+      expect(container.querySelector(".button")).toBeInTheDocument();
     });
   });
 
@@ -74,8 +74,8 @@ describe("ContextIndicator", () => {
     // shows the popup
     it("ポップアップを表示すること", () => {
       const { container } = render(<ContextIndicator {...defaultProps} />);
-      fireEvent.click(container.querySelector(".context-indicator-button")!);
-      expect(container.querySelector(".context-indicator-popup")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".button")!);
+      expect(container.querySelector(".popup")).toBeInTheDocument();
     });
   });
 
@@ -85,8 +85,8 @@ describe("ContextIndicator", () => {
     it("onCompress が呼ばれること", () => {
       const onCompress = vi.fn();
       const { container } = render(<ContextIndicator {...defaultProps} onCompress={onCompress} />);
-      fireEvent.click(container.querySelector(".context-indicator-button")!);
-      fireEvent.click(container.querySelector(".context-indicator-compress-button")!);
+      fireEvent.click(container.querySelector(".button")!);
+      fireEvent.click(container.querySelector(".compressButton")!);
       expect(onCompress).toHaveBeenCalledOnce();
     });
   });
@@ -96,8 +96,8 @@ describe("ContextIndicator", () => {
     // disables the compress button
     it("圧縮ボタンが無効化されること", () => {
       const { container } = render(<ContextIndicator {...defaultProps} isCompressing={true} />);
-      fireEvent.click(container.querySelector(".context-indicator-button")!);
-      expect(container.querySelector(".context-indicator-compress-button")).toBeDisabled();
+      fireEvent.click(container.querySelector(".button")!);
+      expect(container.querySelector(".compressButton")).toBeDisabled();
     });
   });
 });

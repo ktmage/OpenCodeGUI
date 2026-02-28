@@ -15,19 +15,19 @@ describe("TodoHeader", () => {
     // renders the header bar
     it("ヘッダーバーをレンダリングすること", () => {
       const { container } = render(<TodoHeader todos={sampleTodos} />);
-      expect(container.querySelector(".todo-header-bar")).toBeInTheDocument();
+      expect(container.querySelector(".bar")).toBeInTheDocument();
     });
 
     // shows completion count
     it("完了数を表示すること", () => {
       const { container } = render(<TodoHeader todos={sampleTodos} />);
-      expect(container.querySelector(".todo-header-count")?.textContent).toBe("1/3");
+      expect(container.querySelector(".count")?.textContent).toBe("1/3");
     });
 
     // renders progress bar
     it("プログレスバーをレンダリングすること", () => {
       const { container } = render(<TodoHeader todos={sampleTodos} />);
-      expect(container.querySelector(".todo-header-progress")).toBeInTheDocument();
+      expect(container.querySelector(".progress")).toBeInTheDocument();
     });
   });
 
@@ -36,15 +36,15 @@ describe("TodoHeader", () => {
     // expands the todo list
     it("todo リストを展開すること", () => {
       const { container } = render(<TodoHeader todos={sampleTodos} />);
-      fireEvent.click(container.querySelector(".todo-header-bar")!);
-      expect(container.querySelector(".todo-header-list")).toBeInTheDocument();
+      fireEvent.click(container.querySelector(".bar")!);
+      expect(container.querySelector(".list")).toBeInTheDocument();
     });
 
     // shows all todo items
     it("全ての todo アイテムを表示すること", () => {
       const { container } = render(<TodoHeader todos={sampleTodos} />);
-      fireEvent.click(container.querySelector(".todo-header-bar")!);
-      expect(container.querySelectorAll(".status-item")).toHaveLength(3);
+      fireEvent.click(container.querySelector(".bar")!);
+      expect(container.querySelectorAll("li")).toHaveLength(3);
     });
   });
 
@@ -57,7 +57,7 @@ describe("TodoHeader", () => {
         { content: "Done 2", status: "done", priority: undefined },
       ];
       const { container } = render(<TodoHeader todos={allDone} />);
-      expect(container.querySelector(".todo-header-count")?.textContent).toBe("2/2");
+      expect(container.querySelector(".count")?.textContent).toBe("2/2");
     });
   });
 });

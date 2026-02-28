@@ -12,10 +12,10 @@ describe("LinkButton", () => {
       expect(btn).toHaveAttribute("type", "button");
     });
 
-    // applies link-button class
-    it("link-button クラスを持つこと", () => {
+    // applies root class
+    it("root クラスを持つこと", () => {
       render(<LinkButton>Link</LinkButton>);
-      expect(screen.getByRole("button")).toHaveClass("link-button");
+      expect(screen.getByRole("button")).toHaveClass("root");
     });
 
     // renders children
@@ -31,7 +31,7 @@ describe("LinkButton", () => {
     it("カスタムクラスが結合されること", () => {
       render(<LinkButton className="custom">Link</LinkButton>);
       const btn = screen.getByRole("button");
-      expect(btn).toHaveClass("link-button", "custom");
+      expect(btn).toHaveClass("root", "custom");
     });
   });
 

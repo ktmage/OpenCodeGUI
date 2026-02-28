@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useLocale } from "../../locales";
 import { ActionButton } from "./ActionButton";
+import styles from "./ContextIndicator.module.css";
 import { IconButton } from "./IconButton";
 
 type Props = {
@@ -47,11 +48,11 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
   const color = percent >= 80 ? "var(--vscode-editorWarning-foreground)" : "var(--vscode-textLink-foreground)";
 
   return (
-    <div className="context-indicator-container" ref={containerRef}>
+    <div className={styles.container} ref={containerRef}>
       <IconButton
         variant="muted"
         size="sm"
-        className="context-indicator-button"
+        className={styles.button}
         onClick={handleClick}
         title={t["context.title"](percent)}
       >
@@ -83,23 +84,23 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
       </IconButton>
 
       {showPopup && (
-        <div className="context-indicator-popup">
-          <div className="context-indicator-popup-title">{t["context.windowUsage"]}</div>
-          <div className="context-indicator-popup-row">
+        <div className={styles.popup}>
+          <div className={styles.popupTitle}>{t["context.windowUsage"]}</div>
+          <div className={styles.popupRow}>
             <span>{t["context.inputTokens"]}</span>
             <span>{formatTokenCount(inputTokens)}</span>
           </div>
-          <div className="context-indicator-popup-row">
+          <div className={styles.popupRow}>
             <span>{t["context.contextLimit"]}</span>
             <span>{formatTokenCount(contextLimit)}</span>
           </div>
-          <div className="context-indicator-popup-bar">
-            <div className="context-indicator-popup-bar-fill" style={{ width: `${percent}%` }} />
+          <div className={styles.bar}>
+            <div className={styles.barFill} style={{ width: `${percent}%` }} />
           </div>
           <ActionButton
             variant="secondary"
             size="sm"
-            className="context-indicator-compress-button"
+            className={styles.compressButton}
             onClick={() => {
               onCompress();
               setShowPopup(false);

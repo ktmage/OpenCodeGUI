@@ -15,26 +15,26 @@ describe("TodoView", () => {
     // renders all todo items
     it("全ての todo アイテムをレンダリングすること", () => {
       const { container } = render(<TodoView todos={sampleTodos} />);
-      expect(container.querySelectorAll(".status-item")).toHaveLength(3);
+      expect(container.querySelectorAll("li")).toHaveLength(3);
     });
 
     // shows completion summary
     it("完了数サマリーを表示すること", () => {
       const { container } = render(<TodoView todos={sampleTodos} />);
-      expect(container.querySelector(".tool-todo-summary")).toBeInTheDocument();
+      expect(container.querySelector(".summary")).toBeInTheDocument();
     });
 
     // marks completed items with check mark
     it("完了アイテムにチェックマークを表示すること", () => {
       const { container } = render(<TodoView todos={sampleTodos} />);
-      const checks = container.querySelectorAll(".status-item-indicator");
+      const checks = container.querySelectorAll(".indicator");
       expect(checks[0]?.textContent).toBe("✓");
     });
 
     // marks incomplete items with circle
     it("未完了アイテムに丸を表示すること", () => {
       const { container } = render(<TodoView todos={sampleTodos} />);
-      const checks = container.querySelectorAll(".status-item-indicator");
+      const checks = container.querySelectorAll(".indicator");
       expect(checks[1]?.textContent).toBe("○");
     });
   });
@@ -44,7 +44,7 @@ describe("TodoView", () => {
     // renders priority badge
     it("priority バッジを表示すること", () => {
       const { container } = render(<TodoView todos={sampleTodos} />);
-      expect(container.querySelectorAll(".status-item-badge").length).toBeGreaterThan(0);
+      expect(container.querySelectorAll(".badge").length).toBeGreaterThan(0);
     });
   });
 
@@ -53,7 +53,7 @@ describe("TodoView", () => {
     // renders no items
     it("アイテムをレンダリングしないこと", () => {
       const { container } = render(<TodoView todos={[]} />);
-      expect(container.querySelectorAll(".status-item")).toHaveLength(0);
+      expect(container.querySelectorAll("li")).toHaveLength(0);
     });
   });
 });

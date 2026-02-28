@@ -5,6 +5,7 @@ import { useLocale } from "../../locales";
 import { RevertIcon } from "../atoms/icons";
 import { MessageItem } from "./MessageItem";
 import { StreamingIndicator } from "../atoms/StreamingIndicator";
+import styles from "./MessagesArea.module.css";
 
 type Props = {
   messages: MessageWithParts[];
@@ -31,7 +32,7 @@ export function MessagesArea({
   }, []);
 
   return (
-    <div className="messages-area">
+    <div className={styles.root}>
       {messages.map((msg, index) => {
         // アシスタントメッセージの直後にチェックポイント区切り線を表示する
         // ただし最後のメッセージの後、busy 中、次がユーザーメッセージの場合のみ
@@ -49,7 +50,7 @@ export function MessagesArea({
             />
             {showCheckpoint && (
               <div
-                className="checkpoint-divider"
+                className={styles.checkpointDivider}
                 onClick={() => {
                   // 次のユーザーメッセージのテキストを取得して入力欄に戻す
                   const userMsg = nextMsg;
@@ -63,12 +64,12 @@ export function MessagesArea({
                 }}
                 title={t["checkpoint.revertTitle"]}
               >
-                <div className="checkpoint-line" />
-                <button type="button" className="checkpoint-button">
+                <div className={styles.checkpointLine} />
+                <button type="button" className={styles.checkpointButton}>
                   <RevertIcon />
                   <span>{t["checkpoint.retryFromHere"]}</span>
                 </button>
-                <div className="checkpoint-line" />
+                <div className={styles.checkpointLine} />
               </div>
             )}
           </div>
