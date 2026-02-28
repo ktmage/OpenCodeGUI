@@ -5,35 +5,53 @@ import { postMessage } from "../../vscode-api";
 import { createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
 
+/** テスト用エージェントデータ（subagent + primary を含む） */
+const testAgents = [
+  {
+    name: "general",
+    description: "General purpose subagent",
+    mode: "subagent",
+    builtIn: true,
+    permission: { edit: "ask", bash: {} },
+    tools: {},
+    options: {},
+  },
+  {
+    name: "explore",
+    description: "Read-only exploration subagent",
+    mode: "subagent",
+    builtIn: true,
+    permission: { edit: "deny", bash: {} },
+    tools: {},
+    options: {},
+  },
+  {
+    name: "build",
+    description: "Primary build agent",
+    mode: "primary",
+    builtIn: true,
+    permission: { edit: "ask", bash: {} },
+    tools: {},
+    options: {},
+  },
+  {
+    name: "plan",
+    description: "Primary plan agent",
+    mode: "primary",
+    builtIn: true,
+    permission: { edit: "deny", bash: {} },
+    tools: {},
+    options: {},
+  },
+] as any;
+
 /** エージェントメンションテスト用のセットアップ */
 async function setupWithAgents() {
   renderApp();
   await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
 
-  // エージェント一覧を設定
-  await sendExtMessage({
-    type: "agents",
-    agents: [
-      {
-        name: "coder",
-        description: "Coding agent",
-        mode: "subagent",
-        builtIn: true,
-        permission: { edit: "ask", bash: {} },
-        tools: {},
-        options: {},
-      },
-      {
-        name: "researcher",
-        description: "Research agent",
-        mode: "subagent",
-        builtIn: true,
-        permission: { edit: "ask", bash: {} },
-        tools: {},
-        options: {},
-      },
-    ] as any,
-  });
+  // エージェント一覧を設定（subagent + primary を含む）
+  await sendExtMessage({ type: "agents", agents: testAgents });
 
   vi.mocked(postMessage).mockClear();
 }
@@ -54,22 +72,26 @@ describe("エージェントメンション", () => {
       expect(screen.getByTestId("agent-popup")).toBeInTheDocument();
     });
 
-    // shows agent names in popup
-    it("エージェント名がポップアップに表示されること", async () => {
+    // shows only subagent names in popup (not primary agents)
+    it("サブエージェントのみポップアップに表示されること", async () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "@");
-      expect(screen.getByText("coder")).toBeInTheDocument();
-      expect(screen.getByText("researcher")).toBeInTheDocument();
+      // subagent の general と explore が表示される
+      expect(screen.getByText("general")).toBeInTheDocument();
+      expect(screen.getByText("explore")).toBeInTheDocument();
+      // primary の build と plan は表示されない
+      expect(screen.queryByText("build")).not.toBeInTheDocument();
+      expect(screen.queryByText("plan")).not.toBeInTheDocument();
     });
 
     // filters agents by query
     it("クエリでエージェントをフィルタすること", async () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
-      await user.type(textarea, "@cod");
-      expect(screen.getByText("coder")).toBeInTheDocument();
-      expect(screen.queryByText("researcher")).not.toBeInTheDocument();
+      await user.type(textarea, "@gen");
+      expect(screen.getByText("general")).toBeInTheDocument();
+      expect(screen.queryByText("explore")).not.toBeInTheDocument();
     });
   });
 
@@ -84,8 +106,8 @@ describe("エージェントメンション", () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "@");
-      await user.click(screen.getByText("coder"));
-      expect(screen.getByText("@coder")).toBeInTheDocument();
+      await user.click(screen.getByText("general"));
+      expect(screen.getByText("@general")).toBeInTheDocument();
     });
 
     // closes the popup
@@ -93,7 +115,7 @@ describe("エージェントメンション", () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "@");
-      await user.click(screen.getByText("coder"));
+      await user.click(screen.getByText("general"));
       expect(screen.queryByTestId("agent-popup")).not.toBeInTheDocument();
     });
 
@@ -102,7 +124,7 @@ describe("エージェントメンション", () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)") as HTMLTextAreaElement;
       await user.type(textarea, "@");
-      await user.click(screen.getByText("coder"));
+      await user.click(screen.getByText("general"));
       expect(textarea.value).toBe("");
     });
   });
@@ -118,14 +140,14 @@ describe("エージェントメンション", () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "@");
-      await user.click(screen.getByText("coder"));
+      await user.click(screen.getByText("general"));
       await user.type(textarea, "Fix the bug");
       await user.keyboard("{Enter}");
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           type: "sendMessage",
           text: "Fix the bug",
-          agent: "coder",
+          agent: "general",
         }),
       );
     });
