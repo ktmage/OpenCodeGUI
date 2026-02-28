@@ -18,12 +18,6 @@ describe("useMessages", () => {
       expect(result.current.inputTokens).toBe(0);
     });
 
-    // latestTodos is empty
-    it("latestTodos が空配列であること", () => {
-      const { result } = renderHook(() => useMessages());
-      expect(result.current.latestTodos).toEqual([]);
-    });
-
     // prefillText is empty
     it("prefillText が空文字であること", () => {
       const { result } = renderHook(() => useMessages());
@@ -236,34 +230,6 @@ describe("useMessages", () => {
       } as unknown as Event;
       act(() => result.current.handleMessageEvent(event));
       expect(result.current.isShellMessage("m1")).toBe(false);
-    });
-  });
-
-  // latestTodos derivation
-  context("messages に todowrite ツールの完了出力がある場合", () => {
-    // parses todos from completed tool output
-    it("latestTodos にパース結果を返すこと", () => {
-      const { result } = renderHook(() => useMessages());
-      const msgs: MessageWithParts[] = [
-        {
-          info: { id: "m1" } as any,
-          parts: [
-            {
-              id: "p1",
-              messageID: "m1",
-              type: "tool",
-              tool: "todowrite",
-              state: {
-                status: "completed",
-                output: JSON.stringify([{ content: "task1", status: "done" }]),
-                input: {},
-              },
-            } as any,
-          ],
-        },
-      ];
-      act(() => result.current.setMessages(msgs));
-      expect(result.current.latestTodos).toEqual([{ content: "task1", status: "done" }]);
     });
   });
 });

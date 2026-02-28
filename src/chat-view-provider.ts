@@ -11,6 +11,7 @@ import type {
   Provider,
   ProviderListResult,
   Session,
+  Todo,
 } from "./opencode-client";
 
 // --- File attachment ---
@@ -38,7 +39,8 @@ export type ExtToWebviewMessage =
   | { type: "toolConfig"; paths: OpenCodePath }
   | { type: "locale"; vscodeLanguage: string }
   | { type: "modelUpdated"; model: string; default: Record<string, string> }
-  | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] };
+  | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] }
+  | { type: "sessionTodos"; sessionId: string; todos: Todo[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -74,6 +76,7 @@ export type WebviewToExtMessage =
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }
   | { type: "getSessionDiff"; sessionId: string }
+  | { type: "getSessionTodos"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
@@ -333,6 +336,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       case "getSessionDiff": {
         const diffs = await this.connection.getSessionDiff(message.sessionId);
         this.postMessage({ type: "sessionDiff", sessionId: message.sessionId, diffs });
+        break;
+      }
+      case "getSessionTodos": {
+        const todos = await this.connection.getSessionTodos(message.sessionId);
+        this.postMessage({ type: "sessionTodos", sessionId: message.sessionId, todos });
         break;
       }
       case "openDiffEditor": {

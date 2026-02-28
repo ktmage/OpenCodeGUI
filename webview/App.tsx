@@ -1,4 +1,4 @@
-import type { Event } from "@opencode-ai/sdk";
+import type { Event, Todo } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
 import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
@@ -32,6 +32,7 @@ export function App() {
   // Extension Host → Webview メッセージでのみ更新される単純なステート
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
+  const [todos, setTodos] = useState<Todo[]>([]);
   const [openCodePaths, setOpenCodePaths] = useState<{
     home: string;
     config: string;
@@ -58,6 +59,11 @@ export function App() {
       // file.edited イベント時にセッション差分を再取得する
       if (event.type === "file.edited" && session.activeSession) {
         postMessage({ type: "getSessionDiff", sessionId: session.activeSession.id });
+      }
+
+      // todo.updated イベント時にアクティブセッションの Todo を更新する
+      if (event.type === "todo.updated" && event.properties.sessionID === session.activeSession?.id) {
+        setTodos(event.properties.todos as Todo[]);
       }
     },
     [
@@ -87,9 +93,11 @@ export function App() {
           if (data.session) {
             postMessage({ type: "getMessages", sessionId: data.session.id });
             postMessage({ type: "getSessionDiff", sessionId: data.session.id });
+            postMessage({ type: "getSessionTodos", sessionId: data.session.id });
           } else {
             msg.setMessages([]);
             fileChanges.clearDiffs();
+            setTodos([]);
           }
           break;
         case "event":
@@ -137,6 +145,12 @@ export function App() {
         case "sessionDiff": {
           if (data.sessionId === session.activeSession?.id) {
             fileChanges.setDiffs(data.diffs);
+          }
+          break;
+        }
+        case "sessionTodos": {
+          if (data.sessionId === session.activeSession?.id) {
+            setTodos(data.todos);
           }
           break;
         }
@@ -269,7 +283,7 @@ export function App() {
     onToggleSessionList: session.toggleSessionList,
     messages: msg.messages,
     inputTokens: msg.inputTokens,
-    latestTodos: msg.latestTodos,
+    latestTodos: todos,
     prefillText: msg.prefillText,
     onPrefillConsumed: msg.consumePrefill,
     providers: prov.providers,
@@ -325,7 +339,7 @@ export function App() {
                 onEditAndResend={handleEditAndResend}
                 onRevertToCheckpoint={handleRevertToCheckpoint}
               />
-              {msg.latestTodos.length > 0 && <TodoHeader todos={msg.latestTodos} />}
+              {todos.length > 0 && <TodoHeader todos={todos} />}
               {fileChanges.diffs.length > 0 && (
                 <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} />
               )}

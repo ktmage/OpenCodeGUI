@@ -1,7 +1,5 @@
 import type { Event, Message, Part } from "@opencode-ai/sdk";
 import { useCallback, useMemo, useRef, useState } from "react";
-import type { TodoItem } from "../utils/todo";
-import { parseTodos } from "../utils/todo";
 
 export type MessageWithParts = { info: Message; parts: Part[] };
 
@@ -75,31 +73,6 @@ export function useMessages() {
     return total;
   }, [messages]);
 
-  // メッセージから最新の ToDo リストを導出（todowrite/todoread ツールの最新の出力）
-  const latestTodos = useMemo<TodoItem[]>(() => {
-    for (let mi = messages.length - 1; mi >= 0; mi--) {
-      const parts = messages[mi].parts;
-      for (let pi = parts.length - 1; pi >= 0; pi--) {
-        const p = parts[pi];
-        if (p.type !== "tool") continue;
-        if (p.tool !== "todowrite" && p.tool !== "todoread") continue;
-        const st = p.state;
-        if (st.status === "completed" && st.output) {
-          const parsed = parseTodos(st.output);
-          if (parsed) return parsed;
-        }
-        if (st.status !== "pending") {
-          const input = st.input as Record<string, unknown> | undefined;
-          if (input) {
-            const parsed = parseTodos(input.todos ?? input);
-            if (parsed) return parsed;
-          }
-        }
-      }
-    }
-    return [];
-  }, [messages]);
-
   const consumePrefill = useCallback(() => {
     setPrefillText("");
   }, []);
@@ -138,7 +111,6 @@ export function useMessages() {
     prefillText,
     setPrefillText,
     inputTokens,
-    latestTodos,
     consumePrefill,
     handleMessageEvent,
     markPendingShell,

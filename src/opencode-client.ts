@@ -12,11 +12,12 @@ import {
   type Part,
   type Provider,
   type Session,
+  type Todo,
   type ToolListItem,
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
-export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath, FileDiff };
+export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath, FileDiff, Todo };
 
 // provider.list() が返す生データ型
 export type ProviderListResult = {
@@ -244,6 +245,16 @@ export class OpenCodeConnection {
       path: { id: sessionId, permissionID: permissionId },
       body: { response },
     });
+  }
+
+  // --- Session Todo API ---
+
+  async getSessionTodos(sessionId: string): Promise<Todo[]> {
+    const client = this.requireClient();
+    const response = await client.session.todo({
+      path: { id: sessionId },
+    });
+    return response.data!;
   }
 
   // --- Session Diff API ---
