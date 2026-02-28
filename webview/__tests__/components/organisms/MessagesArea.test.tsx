@@ -115,9 +115,7 @@ describe("MessagesArea", () => {
   context("チェックポイントが存在しない場合", () => {
     // does not render fork button
     it("Fork ボタンをレンダリングしないこと", () => {
-      const msgs: MessageWithParts[] = [
-        { info: createMessage({ role: "user" }), parts: [createTextPart("Hello")] },
-      ];
+      const msgs: MessageWithParts[] = [{ info: createMessage({ role: "user" }), parts: [createTextPart("Hello")] }];
       render(<MessagesArea {...defaultProps} messages={msgs} />, { wrapper });
       expect(screen.queryByText("Fork from here")).not.toBeInTheDocument();
     });

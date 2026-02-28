@@ -51,10 +51,7 @@ export function MessagesArea({
               onEditAndResend={onEditAndResend}
             />
             {showCheckpoint && (
-              <div
-                className={styles.checkpointDivider}
-                title={t["checkpoint.revertTitle"]}
-              >
+              <div className={styles.checkpointDivider} title={t["checkpoint.revertTitle"]}>
                 <div className={styles.checkpointLine} />
                 <button
                   type="button"
