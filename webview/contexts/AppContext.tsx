@@ -49,6 +49,7 @@ export type AppContextValue = {
   isCompressing: boolean;
   onEditAndResend: (messageId: string, text: string) => void;
   onRevertToCheckpoint: (assistantMessageId: string, userText: string | null) => void;
+  onForkFromCheckpoint: (messageId: string) => void;
 
   // Settings
   openCodePaths: { home: string; config: string; state: string; directory: string } | null;

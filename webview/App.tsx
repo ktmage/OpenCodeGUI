@@ -272,6 +272,19 @@ export function App() {
     postMessage({ type: "openDiffEditor", filePath, before, after });
   }, []);
 
+  // チェックポイントからセッションを Fork する
+  const handleForkFromCheckpoint = useCallback(
+    (messageId: string) => {
+      if (!session.activeSession) return;
+      postMessage({
+        type: "forkSession",
+        sessionId: session.activeSession.id,
+        messageId,
+      });
+    },
+    [session.activeSession],
+  );
+
   const contextValue: AppContextValue = {
     sessions: session.sessions,
     activeSession: session.activeSession,
@@ -304,6 +317,7 @@ export function App() {
     isCompressing: !!session.activeSession?.time?.compacting,
     onEditAndResend: handleEditAndResend,
     onRevertToCheckpoint: handleRevertToCheckpoint,
+    onForkFromCheckpoint: handleForkFromCheckpoint,
     openCodePaths,
     onOpenConfigFile: handleOpenConfigFile,
     onOpenTerminal: handleOpenTerminal,
@@ -338,6 +352,7 @@ export function App() {
                 permissions={perm.permissions}
                 onEditAndResend={handleEditAndResend}
                 onRevertToCheckpoint={handleRevertToCheckpoint}
+                onForkFromCheckpoint={handleForkFromCheckpoint}
               />
               {todos.length > 0 && <TodoHeader todos={todos} />}
               {fileChanges.diffs.length > 0 && (

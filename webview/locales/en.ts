@@ -35,6 +35,7 @@ export const en = {
   // MessagesArea
   "checkpoint.revertTitle": "Revert to this point",
   "checkpoint.retryFromHere": "Retry from here",
+  "checkpoint.forkFromHere": "Fork from here",
 
   // PermissionView
   "permission.allow": "Allow",

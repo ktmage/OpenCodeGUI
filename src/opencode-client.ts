@@ -152,6 +152,15 @@ export class OpenCodeConnection {
     });
   }
 
+  async forkSession(sessionId: string, messageId?: string): Promise<Session> {
+    const client = this.requireClient();
+    const response = await client.session.fork({
+      path: { id: sessionId },
+      body: { messageID: messageId },
+    });
+    return response.data!;
+  }
+
   // --- Message API ---
 
   async getMessages(sessionId: string): Promise<Array<{ info: Message; parts: Part[] }>> {

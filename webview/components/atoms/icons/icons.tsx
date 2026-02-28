@@ -118,6 +118,15 @@ export function RevertIcon({ width = 12, height = 12, ...props }: IconProps) {
   );
 }
 
+/** Codicon: repo-forked — セッション Fork 用の分岐アイコン */
+export function ForkIcon({ width = 12, height = 12, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M14 4a2 2 0 1 0-2.47 1.94V7a1 1 0 0 1-1 1H5.53a1 1 0 0 1-1-1V5.94a2 2 0 1 0-1 0V7a2 2 0 0 0 2 2h1.473v1.06a2 2 0 1 0 1 0V9H9.53a2 2 0 0 0 2-2V5.94A2 2 0 0 0 14 4zM5.03 4a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3.5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0zm3.5-8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
+    </svg>
+  );
+}
+
 // ─── Input Area Actions ───────────────────────────────────────────────
 
 /** Codicon: terminal */

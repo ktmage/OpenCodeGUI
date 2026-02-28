@@ -1,4 +1,5 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { MessageWithParts } from "../../../App";
@@ -33,6 +34,7 @@ const defaultProps = {
   permissions: new Map(),
   onEditAndResend: vi.fn(),
   onRevertToCheckpoint: vi.fn(),
+  onForkFromCheckpoint: vi.fn(),
 };
 
 describe("MessagesArea", () => {
@@ -67,14 +69,55 @@ describe("MessagesArea", () => {
 
   // when messages have checkpoint dividers
   context("アシスタント→ユーザーの連続メッセージの場合", () => {
+    const msgs: MessageWithParts[] = [
+      { info: createMessage({ role: "assistant", id: "ast-1" }), parts: [createTextPart("Reply")] },
+      { info: createMessage({ role: "user", id: "usr-1" }), parts: [createTextPart("Follow up")] },
+    ];
+
     // renders checkpoint divider
     it("チェックポイント区切り線をレンダリングすること", () => {
-      const msgs: MessageWithParts[] = [
-        { info: createMessage({ role: "assistant" }), parts: [createTextPart("Reply")] },
-        { info: createMessage({ role: "user" }), parts: [createTextPart("Follow up")] },
-      ];
       const { container } = render(<MessagesArea {...defaultProps} messages={msgs} />, { wrapper });
       expect(container.querySelector(".checkpointDivider")).toBeInTheDocument();
+    });
+
+    // renders fork button in checkpoint divider
+    it("Fork ボタンをレンダリングすること", () => {
+      render(<MessagesArea {...defaultProps} messages={msgs} />, { wrapper });
+      expect(screen.getByText("Fork from here")).toBeInTheDocument();
+    });
+
+    // renders retry button in checkpoint divider
+    it("Retry ボタンをレンダリングすること", () => {
+      render(<MessagesArea {...defaultProps} messages={msgs} />, { wrapper });
+      expect(screen.getByText("Retry from here")).toBeInTheDocument();
+    });
+
+    // calls onForkFromCheckpoint with next user message ID when fork button is clicked
+    it("Fork ボタンクリック時に onForkFromCheckpoint を次のユーザーメッセージ ID で呼び出すこと", async () => {
+      const onFork = vi.fn();
+      render(<MessagesArea {...defaultProps} messages={msgs} onForkFromCheckpoint={onFork} />, { wrapper });
+      const forkButton = screen.getByText("Fork from here").closest("button")!;
+      await userEvent.click(forkButton);
+      expect(onFork).toHaveBeenCalledWith("usr-1");
+    });
+
+    // calls onRevertToCheckpoint when retry button is clicked
+    it("Retry ボタンクリック時に onRevertToCheckpoint を呼び出すこと", async () => {
+      const onRevert = vi.fn();
+      render(<MessagesArea {...defaultProps} messages={msgs} onRevertToCheckpoint={onRevert} />, { wrapper });
+      const retryButton = screen.getByText("Retry from here").closest("button")!;
+      await userEvent.click(retryButton);
+      expect(onRevert).toHaveBeenCalledWith("usr-1", "Follow up");
+    });
+  });
+
+  // when there are no checkpoint dividers (user only, assistant only)
+  context("チェックポイントが存在しない場合", () => {
+    // does not render fork button
+    it("Fork ボタンをレンダリングしないこと", () => {
+      const msgs: MessageWithParts[] = [{ info: createMessage({ role: "user" }), parts: [createTextPart("Hello")] }];
+      render(<MessagesArea {...defaultProps} messages={msgs} />, { wrapper });
+      expect(screen.queryByText("Fork from here")).not.toBeInTheDocument();
     });
   });
 });
