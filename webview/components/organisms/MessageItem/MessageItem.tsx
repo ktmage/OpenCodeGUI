@@ -8,7 +8,7 @@ import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../../a
 import { ShellResultView } from "../../molecules/ShellResultView";
 import { TextPartView } from "../../molecules/TextPartView";
 import { PermissionView } from "../PermissionView";
-import { type SubtaskPart, SubtaskPartView, isTaskToolPart } from "../SubtaskPartView";
+import { isTaskToolPart, type SubtaskPart, SubtaskPartView } from "../SubtaskPartView";
 import { ToolPartView } from "../ToolPartView";
 import styles from "./MessageItem.module.css";
 
