@@ -1,0 +1,1 @@
+export { TextPartView } from "./TextPartView";
