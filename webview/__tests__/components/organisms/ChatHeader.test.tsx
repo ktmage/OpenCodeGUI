@@ -8,6 +8,8 @@ describe("ChatHeader", () => {
     activeSession: createSession({ title: "Test Session" }),
     onNewSession: vi.fn(),
     onToggleSessionList: vi.fn(),
+    onShareSession: vi.fn(),
+    onUnshareSession: vi.fn(),
   };
 
   // when rendered with an active session
@@ -22,6 +24,12 @@ describe("ChatHeader", () => {
     it("セッションリストボタンをレンダリングすること", () => {
       const { container } = render(<ChatHeader {...defaultProps} />);
       expect(container.querySelectorAll("button").length).toBeGreaterThan(0);
+    });
+
+    // renders the share button
+    it("共有ボタンを表示すること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} />);
+      expect(getByTitle("Share session")).toBeInTheDocument();
     });
   });
 
@@ -56,6 +64,65 @@ describe("ChatHeader", () => {
     it("フォールバックタイトルを表示すること", () => {
       const { container } = render(<ChatHeader {...defaultProps} activeSession={null} />);
       expect(container.querySelector(".title")?.textContent).toBeTruthy();
+    });
+
+    // does not render share button
+    it("共有ボタンを表示しないこと", () => {
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} activeSession={null} />);
+      expect(queryByTitle("Share session")).not.toBeInTheDocument();
+    });
+  });
+
+  // when share button is clicked (not shared)
+  context("未共有セッションで共有ボタンをクリックした場合", () => {
+    // calls onShareSession
+    it("onShareSession が呼ばれること", () => {
+      const onShareSession = vi.fn();
+      const { getByTitle } = render(<ChatHeader {...defaultProps} onShareSession={onShareSession} />);
+      fireEvent.click(getByTitle("Share session"));
+      expect(onShareSession).toHaveBeenCalledOnce();
+    });
+  });
+
+  // when session is shared
+  context("共有中のセッションの場合", () => {
+    const sharedSession = createSession({
+      title: "Shared Session",
+      share: { url: "https://share.example.com/abc" },
+    });
+
+    // renders unshare button
+    it("共有解除ボタンを表示すること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} activeSession={sharedSession} />);
+      expect(getByTitle("Unshare session")).toBeInTheDocument();
+    });
+
+    // calls onUnshareSession when clicked
+    it("クリック時に onUnshareSession が呼ばれること", () => {
+      const onUnshareSession = vi.fn();
+      const { getByTitle } = render(
+        <ChatHeader {...defaultProps} activeSession={sharedSession} onUnshareSession={onUnshareSession} />,
+      );
+      fireEvent.click(getByTitle("Unshare session"));
+      expect(onUnshareSession).toHaveBeenCalledOnce();
+    });
+  });
+
+  // when navigating child session
+  context("子セッション閲覧中の場合", () => {
+    // does not render share button
+    it("共有ボタンを表示しないこと", () => {
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} onNavigateToParent={() => {}} />);
+      expect(queryByTitle("Share session")).not.toBeInTheDocument();
+    });
+  });
+
+  // when onShareSession is not provided (empty session)
+  context("onShareSession が未指定の場合（空セッション）", () => {
+    // does not render share button
+    it("共有ボタンを表示しないこと", () => {
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} onShareSession={undefined} />);
+      expect(queryByTitle("Share session")).not.toBeInTheDocument();
     });
   });
 });

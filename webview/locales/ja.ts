@@ -110,6 +110,11 @@ export const ja: typeof en = {
   "fileChanges.openDiff": "差分エディタで開く",
   "fileChanges.toggle": "ファイル変更",
 
+  // Share
+  "share.share": "セッションを共有",
+  "share.unshare": "共有を解除",
+  "share.copied": "共有 URL をクリップボードにコピーしました",
+
   // ChildSession
   "childSession.agent": "エージェント",
   "childSession.backToParent": "親セッションに戻る",
