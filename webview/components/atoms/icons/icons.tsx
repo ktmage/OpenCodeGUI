@@ -289,3 +289,23 @@ export function EyeOffIcon({ width = 14, height = 14, ...props }: IconProps) {
     </svg>
   );
 }
+
+// ─── Child Session Navigation ─────────────────────────────────────────
+
+/** Codicon: arrow-left — back navigation */
+export function BackIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M7 3.09l-5 5V8.9l5 5 .71-.71L3.41 8.9H15v-1H3.41l4.3-4.3L7 3.09z" />
+    </svg>
+  );
+}
+
+/** Codicon: person — agent/subagent icon */
+export function AgentIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M8 1a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM6 4a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm-3.5 9c0-2.5 2-4.5 4.5-4.5h2c2.5 0 4.5 2 4.5 4.5v1h-1v-1c0-1.9-1.6-3.5-3.5-3.5H7c-1.9 0-3.5 1.6-3.5 3.5v1h-1v-1z" />
+    </svg>
+  );
+}

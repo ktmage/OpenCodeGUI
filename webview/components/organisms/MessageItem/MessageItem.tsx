@@ -8,6 +8,7 @@ import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../../a
 import { ShellResultView } from "../../molecules/ShellResultView";
 import { TextPartView } from "../../molecules/TextPartView";
 import { PermissionView } from "../PermissionView";
+import { type SubtaskPart, SubtaskPartView } from "../SubtaskPartView";
 import { ToolPartView } from "../ToolPartView";
 import styles from "./MessageItem.module.css";
 
@@ -20,7 +21,7 @@ type Props = {
 
 export function MessageItem({ message, activeSessionId, permissions, onEditAndResend }: Props) {
   const t = useLocale();
-  const { isShellMessage } = useAppContext();
+  const { isShellMessage, childSessions, onNavigateToChild } = useAppContext();
   const { info, parts } = message;
   const isUser = info.role === "user";
   const isShellUser = isUser && isShellMessage(info.id);
@@ -151,6 +152,15 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
                   return <TextPartView key={part.id} part={part} />;
                 case "tool":
                   return <ToolPartView key={part.id} part={part} />;
+                case "subtask":
+                  return (
+                    <SubtaskPartView
+                      key={part.id}
+                      part={part as SubtaskPart}
+                      childSessions={childSessions}
+                      onNavigateToChild={onNavigateToChild}
+                    />
+                  );
                 case "reasoning":
                   return <ReasoningPartView key={part.id} part={part as ReasoningPartType} />;
                 default:
