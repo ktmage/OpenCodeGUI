@@ -245,6 +245,24 @@ export function ToolIcon({ width = 14, height = 14, ...props }: IconProps) {
 
 // ─── Visibility ───────────────────────────────────────────────────────
 
+/** Codicon: diff — git compare icon for file changes */
+export function DiffIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h2.257a1.5 1.5 0 0 1 1.06.44l1.244 1.243A.5.5 0 0 0 8.414 4H12.5A1.5 1.5 0 0 1 14 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-9zM3.5 3a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5H8.414a1.5 1.5 0 0 1-1.06-.44L6.11 3.317A.5.5 0 0 0 5.757 3H3.5z" />
+    </svg>
+  );
+}
+
+/** External link — open file in editor */
+export function ExternalLinkIcon({ width = 12, height = 12, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M1.5 1H6v1H2v12h12v-4h1v4.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5zM9 1h6v6l-2-2-4 4-1-1 4-4L9 1z" />
+    </svg>
+  );
+}
+
 /** Eye icon — visible / show */
 export function EyeIcon({ width = 14, height = 14, ...props }: IconProps) {
   return (
