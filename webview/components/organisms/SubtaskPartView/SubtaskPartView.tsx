@@ -43,6 +43,48 @@ function extractSubtaskInfo(part: SubtaskPart | ToolPart): {
   return { agent, description, prompt, isActive, isError, errorMessage };
 }
 
+/**
+ * task ToolPart に対応する子セッションを探す。
+ *
+ * 優先順位:
+ * 1. ToolPart の state.metadata.sessionId で直接マッチ（最も信頼性が高い）
+ * 2. 子セッションの title が description を含むかどうか（サーバー側は
+ *    `description + " (@agent subagent)"` 形式で title を設定する）
+ * 3. 子セッションの title が prompt を含むかどうか
+ */
+function findMatchingChild(
+  part: SubtaskPart | ToolPart,
+  childSessions: Session[],
+  description: string,
+  prompt: string,
+): Session | undefined {
+  if (childSessions.length === 0) return undefined;
+
+  // Strategy 1: metadata.sessionId で直接マッチ（task ToolPart のみ）
+  if (part.type === "tool" && part.state.status !== "pending") {
+    const metadata = (part.state as { metadata?: Record<string, unknown> }).metadata;
+    const sessionId = metadata?.sessionId;
+    if (typeof sessionId === "string") {
+      const found = childSessions.find((s) => s.id === sessionId);
+      if (found) return found;
+    }
+  }
+
+  // Strategy 2: title が description を含む（部分一致で比較）
+  if (description) {
+    const found = childSessions.find((s) => s.title.includes(description));
+    if (found) return found;
+  }
+
+  // Strategy 3: title が prompt を含む（部分一致で比較）
+  if (prompt) {
+    const found = childSessions.find((s) => s.title.includes(prompt));
+    if (found) return found;
+  }
+
+  return undefined;
+}
+
 type Props = {
   part: SubtaskPart | ToolPart;
   childSessions: Session[];
@@ -61,9 +103,7 @@ export function SubtaskPartView({ part, childSessions, onNavigateToChild }: Prop
   const displayText = description || prompt;
 
   // subtask パートに対応する子セッションを探す。
-  // 子セッションの title がサブタスクの description と一致するケースが多い。
-  // 見つからない場合はナビゲーション不可（バー表示のみ）。
-  const matchedChild = childSessions.find((s) => s.title === description || s.title === prompt);
+  const matchedChild = findMatchingChild(part, childSessions, description, prompt);
 
   const handleClick = () => {
     if (matchedChild) {
@@ -74,18 +114,11 @@ export function SubtaskPartView({ part, childSessions, onNavigateToChild }: Prop
   return (
     <div className={styles.root}>
       <div className={styles.header} onClick={handleClick} style={matchedChild ? undefined : { cursor: "default" }}>
-        <span className={styles.icon}>
-          {isActive ? (
-            <SpinnerIcon className={styles.spinner} />
-          ) : (
-            <AgentIcon />
-          )}
-        </span>
-        <span className={`${styles.action} ${isError ? styles.actionError : ""}`}>
-          {t["childSession.agent"]}
-        </span>
+        <span className={styles.icon}>{isActive ? <SpinnerIcon className={styles.spinner} /> : <AgentIcon />}</span>
+        <span className={`${styles.action} ${isError ? styles.actionError : ""}`}>{t["childSession.agent"]}</span>
         <span className={styles.title} title={displayText}>
-          {agent ? `${agent}: ` : ""}{displayText}
+          {agent ? `${agent}: ` : ""}
+          {displayText}
         </span>
         {matchedChild && (
           <span className={styles.navigate}>
@@ -107,4 +140,5 @@ export function isTaskToolPart(part: { type: string; tool?: string }): boolean {
   return part.type === "tool" && part.tool === "task";
 }
 
+export { findMatchingChild };
 export type { SubtaskPart };
