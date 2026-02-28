@@ -307,6 +307,18 @@ export function App() {
     [session.activeSession],
   );
 
+  // セッションを共有する
+  const handleShareSession = useCallback(() => {
+    if (!session.activeSession) return;
+    postMessage({ type: "shareSession", sessionId: session.activeSession.id });
+  }, [session.activeSession]);
+
+  // セッションの共有を解除する
+  const handleUnshareSession = useCallback(() => {
+    if (!session.activeSession) return;
+    postMessage({ type: "unshareSession", sessionId: session.activeSession.id });
+  }, [session.activeSession]);
+
   // 子セッションにナビゲートする
   const handleNavigateToChild = useCallback(
     (sessionId: string) => {
@@ -375,6 +387,8 @@ export function App() {
             activeSession={session.activeSession}
             onNewSession={session.handleNewSession}
             onToggleSessionList={session.toggleSessionList}
+            onShareSession={msg.messages.length > 0 ? handleShareSession : undefined}
+            onUnshareSession={handleUnshareSession}
             onNavigateToParent={isChildSession ? handleNavigateToParent : undefined}
           />
           {session.showSessionList && (

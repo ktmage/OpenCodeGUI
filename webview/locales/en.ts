@@ -108,6 +108,11 @@ export const en = {
   "fileChanges.openDiff": "Open in diff editor",
   "fileChanges.toggle": "File changes",
 
+  // Share
+  "share.share": "Share session",
+  "share.unshare": "Unshare session",
+  "share.copied": "Share URL copied to clipboard",
+
   // ChildSession
   "childSession.agent": "Agent",
   "childSession.backToParent": "Back to parent session",

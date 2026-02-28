@@ -301,6 +301,26 @@ export function BackIcon({ width = 16, height = 16, ...props }: IconProps) {
   );
 }
 
+// ─── Share ────────────────────────────────────────────────────────────
+
+/** Codicon: link — share session */
+export function ShareIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M4.4 3l1.086 1.086-3.232 3.232 3.232 3.232L4.4 11.636.082 7.318 4.4 3zm7.2 0l-1.086 1.086 3.232 3.232-3.232 3.232L11.6 11.636l4.318-4.318L11.6 3zM7.053 12.697L8.271 3.07l.982.136-1.218 9.627-.982-.136z" />
+    </svg>
+  );
+}
+
+/** Codicon: link-external — unshare / shared state */
+export function UnshareIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M1.5 1H6v1H2v12h12v-4h1v4.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 .5-.5zM9 1h6v6l-2-2-4 4-1-1 4-4L9 1z" />
+    </svg>
+  );
+}
+
 /** Codicon: person — agent/subagent icon */
 export function AgentIcon({ width = 16, height = 16, ...props }: IconProps) {
   return (
