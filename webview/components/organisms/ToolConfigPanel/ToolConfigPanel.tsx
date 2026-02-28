@@ -1,5 +1,5 @@
-import { useLocale } from "../../../locales";
 import type { LocaleSetting } from "../../../locales";
+import { useLocale } from "../../../locales";
 import { IconButton } from "../../atoms/IconButton";
 import { CloseIcon, FileIcon } from "../../atoms/icons";
 import { LinkButton } from "../../atoms/LinkButton";
