@@ -45,6 +45,12 @@ export const en = {
   "session.delete": "Delete",
   "session.select": "Select session",
 
+  // Time (relative)
+  "time.now": "now",
+  "time.minutes": (n: number) => `${n}m`,
+  "time.hours": (n: number) => `${n}h`,
+  "time.days": (n: number) => `${n}d`,
+
   // ToolPartView - category labels
   "tool.read": "Read",
   "tool.edit": "Edit",

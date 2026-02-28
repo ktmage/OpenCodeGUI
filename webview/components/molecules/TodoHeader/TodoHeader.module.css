@@ -1,0 +1,70 @@
+.root {
+  border-top: 1px solid var(--vscode-panel-border);
+  background-color: var(--vscode-sideBar-background);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+}
+
+.bar:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--vscode-textLink-foreground);
+}
+
+.label {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--vscode-foreground);
+}
+
+.count {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-editor-font-family, monospace);
+}
+
+.progress {
+  flex: 1;
+  height: 3px;
+  background-color: var(--vscode-input-border);
+  border-radius: 2px;
+  overflow: hidden;
+  max-width: 80px;
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  background-color: var(--vscode-testing-iconPassed, #73c991);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: transform 0.15s;
+}
+
+.chevron.expanded {
+  transform: rotate(90deg);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0 12px 8px 12px;
+}

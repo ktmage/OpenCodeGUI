@@ -1,0 +1,140 @@
+.root {
+  margin: 2px 0;
+  border-radius: 6px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.header:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.completed .icon {
+  color: var(--vscode-descriptionForeground);
+}
+
+.running .icon,
+.pending .icon {
+  color: var(--vscode-progressBar-background);
+}
+
+.error .icon {
+  color: var(--vscode-errorForeground);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* アクション種別ラベル */
+
+.action {
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  padding: 0 5px;
+  border-radius: 3px;
+}
+
+.actionRead {
+  color: var(--vscode-textLink-foreground);
+  background-color: color-mix(in srgb, var(--vscode-textLink-foreground) 12%, transparent);
+}
+
+.actionEdit {
+  color: var(--vscode-editorWarning-foreground, #ff9800);
+  background-color: color-mix(in srgb, var(--vscode-editorWarning-foreground, #ff9800) 12%, transparent);
+}
+
+.actionWrite {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #2ea043);
+  background-color: color-mix(in srgb, var(--vscode-gitDecoration-addedResourceForeground, #2ea043) 12%, transparent);
+}
+
+.actionRun {
+  color: var(--vscode-terminal-ansiMagenta, #bc3fbc);
+  background-color: color-mix(in srgb, var(--vscode-terminal-ansiMagenta, #bc3fbc) 12%, transparent);
+}
+
+.actionSearch {
+  color: var(--vscode-terminal-ansiCyan, #11a8cd);
+  background-color: color-mix(in srgb, var(--vscode-terminal-ansiCyan, #11a8cd) 12%, transparent);
+}
+
+.actionOther {
+  color: var(--vscode-descriptionForeground);
+  background-color: color-mix(in srgb, var(--vscode-descriptionForeground) 12%, transparent);
+}
+
+.title {
+  flex: 1;
+  color: var(--vscode-descriptionForeground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 11px;
+}
+
+.error .title {
+  color: var(--vscode-errorForeground);
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: transform 0.15s;
+}
+
+.expanded {
+  transform: rotate(90deg);
+}
+
+.body {
+  padding: 0 8px 6px 30px;
+}
+
+.output {
+  margin: 0;
+  padding: 6px 8px;
+  font-size: 11px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  background-color: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: 200px;
+  overflow-y: auto;
+  color: var(--vscode-descriptionForeground);
+}
+
+.outputError {
+  color: var(--vscode-errorForeground);
+}

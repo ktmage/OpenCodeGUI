@@ -1,0 +1,83 @@
+.root {
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 11px;
+  font-family: var(--vscode-editor-font-family, monospace);
+}
+
+.stats {
+  display: flex;
+  gap: 8px;
+  padding: 3px 8px;
+  font-size: 11px;
+  background-color: var(--vscode-editor-background);
+  border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.statAdd {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #2ea043);
+}
+
+.statRemove {
+  color: var(--vscode-gitDecoration-deletedResourceForeground, #f85149);
+}
+
+.lines {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--vscode-editor-background);
+}
+
+.line {
+  display: flex;
+  line-height: 1.45;
+  min-height: 18px;
+}
+
+.lineMarker {
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+  user-select: none;
+  color: var(--vscode-descriptionForeground);
+}
+
+.lineText {
+  flex: 1;
+  white-space: pre-wrap;
+  word-break: break-all;
+  padding-right: 8px;
+}
+
+.lineRemove {
+  background-color: color-mix(in srgb, var(--vscode-gitDecoration-deletedResourceForeground, #f85149) 15%, transparent);
+}
+
+.lineRemove .lineMarker {
+  color: var(--vscode-gitDecoration-deletedResourceForeground, #f85149);
+}
+
+.lineRemove .lineText {
+  color: var(--vscode-gitDecoration-deletedResourceForeground, #f85149);
+}
+
+.lineAdd {
+  background-color: color-mix(in srgb, var(--vscode-gitDecoration-addedResourceForeground, #2ea043) 15%, transparent);
+}
+
+.lineAdd .lineMarker {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #2ea043);
+}
+
+.lineAdd .lineText {
+  color: var(--vscode-gitDecoration-addedResourceForeground, #2ea043);
+}
+
+.lineContext {
+  background-color: transparent;
+}
+
+.lineContext .lineText {
+  color: var(--vscode-descriptionForeground);
+}

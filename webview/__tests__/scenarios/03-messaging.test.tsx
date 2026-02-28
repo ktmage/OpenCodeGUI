@@ -118,7 +118,7 @@ describe("メッセージング", () => {
 
     // StreamingIndicator shows 3 dots
     it("StreamingIndicator のドットが3つ表示されること", () => {
-      const dots = document.querySelectorAll(".streaming-dot");
+      const dots = document.querySelectorAll(".dot");
       expect(dots.length).toBe(3);
     });
 

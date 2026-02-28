@@ -91,6 +91,8 @@
     "vitest": "^4.0.18"
   },
   "dependencies": {
-    "@opencode-ai/sdk": "^1.2.10"
+    "@opencode-ai/sdk": "^1.2.10",
+    "@types/dompurify": "^3.0.5",
+    "dompurify": "^3.3.1"
   }
 }

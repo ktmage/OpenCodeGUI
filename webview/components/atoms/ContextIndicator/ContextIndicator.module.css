@@ -1,0 +1,62 @@
+.container {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.button {
+  gap: 4px;
+  line-height: 1;
+}
+
+.button:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.popup {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  margin-bottom: 6px;
+  min-width: 220px;
+  padding: 10px 12px;
+  background-color: var(--vscode-quickInput-background);
+  border: 1px solid var(--vscode-dropdown-border);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+}
+
+.popupTitle {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  margin-bottom: 8px;
+}
+
+.popupRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  margin-bottom: 4px;
+}
+
+.bar {
+  height: 4px;
+  background-color: var(--vscode-input-border);
+  border-radius: 2px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  background-color: var(--vscode-progressBar-background);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.compressButton {
+  width: 100%;
+  margin-top: 4px;
+}

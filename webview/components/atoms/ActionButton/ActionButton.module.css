@@ -1,0 +1,48 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-family: var(--vscode-font-family);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--vscode-button-foreground);
+  background-color: var(--vscode-button-background);
+}
+
+.root:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+.root:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.secondary {
+  color: var(--vscode-button-secondaryForeground);
+  background-color: var(--vscode-button-secondaryBackground);
+}
+
+.secondary:hover {
+  background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.ghost {
+  background: none;
+  border: 1px solid var(--vscode-input-border);
+  color: var(--vscode-descriptionForeground);
+}
+
+.ghost:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-foreground);
+}
+
+.sm {
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: 4px;
+}

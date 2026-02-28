@@ -7,7 +7,12 @@ export default defineConfig({
     environment: "jsdom",
     root: "webview",
     setupFiles: ["./__tests__/setup.ts"],
-    include: ["./__tests__/**/*.test.tsx"],
+    include: ["./__tests__/**/*.test.{ts,tsx}"],
     globals: true,
+    css: {
+      modules: {
+        classNameStrategy: "non-scoped",
+      },
+    },
   },
 });

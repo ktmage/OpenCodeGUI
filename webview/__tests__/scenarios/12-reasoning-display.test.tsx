@@ -34,7 +34,7 @@ describe("思考表示（ReasoningPartView）", () => {
 
     beforeEach(async () => {
       await setupWithReasoningPart({ time: { created: Date.now() } });
-      part = screen.getByText("Thinking\u2026").closest(".reasoning-part");
+      part = screen.getByText("Thinking\u2026").closest(".reasoningPart");
     });
 
     // Shows Thinking label
@@ -43,13 +43,13 @@ describe("思考表示（ReasoningPartView）", () => {
     });
 
     // Has active class
-    it("active クラスが付与されること", () => {
-      expect(part).toHaveClass("active");
+    it("reasoningActive クラスが付与されること", () => {
+      expect(part).toHaveClass("reasoningActive");
     });
 
     // Shows spinner
     it("スピナーが表示されること", () => {
-      expect(part?.querySelector(".tool-part-spinner")).toBeInTheDocument();
+      expect(part?.querySelector(".spinner")).toBeInTheDocument();
     });
   });
 
@@ -59,7 +59,7 @@ describe("思考表示（ReasoningPartView）", () => {
 
     beforeEach(async () => {
       await setupWithReasoningPart({ time: { created: Date.now(), end: Date.now() } });
-      part = screen.getByText("Thought").closest(".reasoning-part");
+      part = screen.getByText("Thought").closest(".reasoningPart");
     });
 
     // Shows Thought label
@@ -67,14 +67,14 @@ describe("思考表示（ReasoningPartView）", () => {
       expect(screen.getByText("Thought")).toBeInTheDocument();
     });
 
-    // Has complete class
-    it("complete クラスが付与されること", () => {
-      expect(part).toHaveClass("complete");
+    // Has no active class (complete state)
+    it("reasoningActive クラスが付与されないこと", () => {
+      expect(part).not.toHaveClass("reasoningActive");
     });
 
     // No spinner
     it("スピナーが表示されないこと", () => {
-      expect(part?.querySelector(".tool-part-spinner")).not.toBeInTheDocument();
+      expect(part?.querySelector(".spinner")).not.toBeInTheDocument();
     });
   });
 

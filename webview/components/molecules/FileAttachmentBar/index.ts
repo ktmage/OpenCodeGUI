@@ -1,0 +1,1 @@
+export { FileAttachmentBar } from "./FileAttachmentBar";
