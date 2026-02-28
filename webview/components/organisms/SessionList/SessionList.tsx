@@ -1,6 +1,6 @@
 import type { Session } from "@opencode-ai/sdk";
-import type { en } from "../../../locales/en";
 import { useLocale } from "../../../locales";
+import type { en } from "../../../locales/en";
 import { IconButton } from "../../atoms/IconButton";
 import { DeleteIcon, FileIcon } from "../../atoms/icons";
 import styles from "./SessionList.module.css";

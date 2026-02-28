@@ -25,7 +25,9 @@ export function StatusItem({ indicator, content, badge, isDone, className }: Pro
       <span className={styles.indicator}>{indicator}</span>
       <span className={styles.content}>{content}</span>
       {badge && (
-        <span className={[styles.badge, badge.variant && styles[badge.variant]].filter(Boolean).join(" ")}>{badge.label}</span>
+        <span className={[styles.badge, badge.variant && styles[badge.variant]].filter(Boolean).join(" ")}>
+          {badge.label}
+        </span>
       )}
     </li>
   );

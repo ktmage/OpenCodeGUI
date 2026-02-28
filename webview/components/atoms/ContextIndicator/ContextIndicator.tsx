@@ -2,8 +2,8 @@ import { useCallback, useRef, useState } from "react";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import { useLocale } from "../../../locales";
 import { ActionButton } from "../ActionButton";
-import styles from "./ContextIndicator.module.css";
 import { IconButton } from "../IconButton";
+import styles from "./ContextIndicator.module.css";
 
 type Props = {
   inputTokens: number;

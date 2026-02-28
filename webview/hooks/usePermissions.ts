@@ -27,16 +27,19 @@ export function usePermissions() {
     });
   }, []);
 
-  const handlePermissionEvent = useCallback((event: Event) => {
-    switch (event.type) {
-      case "permission.updated":
-        addPermission(event.properties);
-        break;
-      case "permission.replied":
-        removePermission(event.properties.permissionID);
-        break;
-    }
-  }, [addPermission, removePermission]);
+  const handlePermissionEvent = useCallback(
+    (event: Event) => {
+      switch (event.type) {
+        case "permission.updated":
+          addPermission(event.properties);
+          break;
+        case "permission.replied":
+          removePermission(event.properties.permissionID);
+          break;
+      }
+    },
+    [addPermission, removePermission],
+  );
 
   return {
     permissions,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type TodoItem, parseTodos } from "../../utils/todo";
+import { parseTodos, type TodoItem } from "../../utils/todo";
 
 describe("parseTodos", () => {
   // when given a valid JSON string

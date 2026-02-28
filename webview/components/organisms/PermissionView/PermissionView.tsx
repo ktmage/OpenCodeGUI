@@ -24,9 +24,7 @@ export function PermissionView({ permission, activeSessionId }: Props) {
     <div className={styles.root}>
       <div className={styles.title}>{permission.title}</div>
       <div className={styles.actions}>
-        <ActionButton onClick={() => reply("always")}>
-          {t["permission.allow"]}
-        </ActionButton>
+        <ActionButton onClick={() => reply("always")}>{t["permission.allow"]}</ActionButton>
         <ActionButton variant="secondary" onClick={() => reply("once")}>
           {t["permission.once"]}
         </ActionButton>

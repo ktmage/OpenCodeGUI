@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { type DiffLine, computeLineDiff } from "../../utils/diff";
+import { computeLineDiff, type DiffLine } from "../../utils/diff";
 
 describe("computeLineDiff", () => {
   // when both strings are identical

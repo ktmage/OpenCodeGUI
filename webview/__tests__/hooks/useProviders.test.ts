@@ -1,4 +1,4 @@
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { useProviders } from "../../hooks/useProviders";
 import { postMessage } from "../../vscode-api";

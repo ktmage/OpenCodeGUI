@@ -1,8 +1,8 @@
 import { useLocale } from "../../../locales";
 import type { FileAttachment } from "../../../vscode-api";
 import { IconButton } from "../../atoms/IconButton";
-import { ListItem } from "../../atoms/ListItem";
 import { ClipIcon, CloseIcon, PlusIcon } from "../../atoms/icons";
+import { ListItem } from "../../atoms/ListItem";
 import styles from "./FileAttachmentBar.module.css";
 
 type Props = {
@@ -51,14 +51,16 @@ export function FileAttachmentBar({
             />
             <div className={styles.pickerList}>
               {pickerFiles.length > 0 ? (
-                pickerFiles.slice(0, 15).map((file) => (
-                  <ListItem
-                    key={file.filePath}
-                    title={file.fileName}
-                    description={file.filePath}
-                    onClick={() => onAddFile(file)}
-                  />
-                ))
+                pickerFiles
+                  .slice(0, 15)
+                  .map((file) => (
+                    <ListItem
+                      key={file.filePath}
+                      title={file.fileName}
+                      description={file.filePath}
+                      onClick={() => onAddFile(file)}
+                    />
+                  ))
               ) : (
                 <div className={styles.pickerEmpty}>{t["input.noFiles"]}</div>
               )}

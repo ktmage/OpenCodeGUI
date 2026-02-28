@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useLocale } from "../../../locales";
 import type { TodoItem } from "../../../utils/todo";
-import { StatusItem } from "../../atoms/StatusItem";
-import type { BadgeVariant } from "../../atoms/StatusItem";
 import { CheckboxIcon, ChevronRightIcon } from "../../atoms/icons";
+import type { BadgeVariant } from "../../atoms/StatusItem";
+import { StatusItem } from "../../atoms/StatusItem";
 import styles from "./TodoHeader.module.css";
 
 type Props = {
@@ -26,10 +26,7 @@ export function TodoHeader({ todos }: Props) {
           {completed}/{total}
         </span>
         <span className={styles.progress}>
-          <span
-            className={styles.progressFill}
-            style={{ width: `${total > 0 ? (completed / total) * 100 : 0}%` }}
-          />
+          <span className={styles.progressFill} style={{ width: `${total > 0 ? (completed / total) * 100 : 0}%` }} />
         </span>
         <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>
           <ChevronRightIcon />

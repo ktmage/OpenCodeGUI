@@ -90,9 +90,7 @@ describe("FileAttachmentBar", () => {
   context("ファイルピッカーが開いている場合", () => {
     // renders the dropdown
     it("ドロップダウンをレンダリングすること", () => {
-      const { container } = render(
-        <FileAttachmentBar {...defaultProps} showFilePicker={true} pickerFiles={[file1]} />,
-      );
+      const { container } = render(<FileAttachmentBar {...defaultProps} showFilePicker={true} pickerFiles={[file1]} />);
       expect(container.querySelector(".pickerDropdown")).toBeInTheDocument();
     });
   });

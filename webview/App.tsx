@@ -1,11 +1,11 @@
 import type { Event } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useState } from "react";
-import { ChatHeader } from "./components/organisms/ChatHeader";
 import { EmptyState } from "./components/molecules/EmptyState";
+import { TodoHeader } from "./components/molecules/TodoHeader";
+import { ChatHeader } from "./components/organisms/ChatHeader";
 import { InputArea } from "./components/organisms/InputArea";
 import { MessagesArea } from "./components/organisms/MessagesArea";
 import { SessionList } from "./components/organisms/SessionList";
-import { TodoHeader } from "./components/molecules/TodoHeader";
 import { AppContextProvider, type AppContextValue } from "./contexts/AppContext";
 import { useLocale } from "./hooks/useLocale";
 import { useMessages } from "./hooks/useMessages";
@@ -123,7 +123,17 @@ export function App() {
     postMessage({ type: "ready" });
     postMessage({ type: "getOpenEditors" });
     return () => window.removeEventListener("message", handler);
-  }, [session.activeSession?.id, handleEvent]);
+  }, [
+    session.activeSession?.id,
+    handleEvent,
+    locale.setVscodeLanguage,
+    msg.setMessages,
+    prov.setAllProvidersData,
+    prov.setProviders,
+    prov.setSelectedModel,
+    session.setActiveSession,
+    session.setSessions,
+  ]);
 
   // Cross-cutting action handlers (span multiple hooks)
 
@@ -134,10 +144,10 @@ export function App() {
         type: "sendMessage",
         sessionId: session.activeSession.id,
         text,
-model: prov.selectedModel ?? undefined,
-      files: files.length > 0 ? files : undefined,
-    });
-  },
+        model: prov.selectedModel ?? undefined,
+        files: files.length > 0 ? files : undefined,
+      });
+    },
     [session.activeSession, prov.selectedModel],
   );
 

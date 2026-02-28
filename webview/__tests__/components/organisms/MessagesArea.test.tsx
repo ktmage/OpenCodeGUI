@@ -1,8 +1,8 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import type { MessageWithParts } from "../../../App";
 import { MessagesArea } from "../../../components/organisms/MessagesArea";
 import { createMessage, createTextPart } from "../../factories";
-import type { MessageWithParts } from "../../../App";
 
 const userMsg: MessageWithParts = {
   info: createMessage({ role: "user" }),

@@ -15,12 +15,7 @@ type Props = {
  * テキスト表示用。Primary（青）/ Secondary（グレー）/ Ghost（枠線のみ）の3バリエーション。
  */
 export function ActionButton({ variant = "primary", size = "md", className, children, ...rest }: Props) {
-  const classes = [
-    styles.root,
-    variant !== "primary" && styles[variant],
-    size !== "md" && styles[size],
-    className,
-  ]
+  const classes = [styles.root, variant !== "primary" && styles[variant], size !== "md" && styles[size], className]
     .filter(Boolean)
     .join(" ");
 

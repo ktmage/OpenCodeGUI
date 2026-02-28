@@ -1,8 +1,8 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { PermissionView } from "../../../components/organisms/PermissionView";
-import { createPermission } from "../../factories";
 import { postMessage } from "../../../vscode-api";
+import { createPermission } from "../../factories";
 
 describe("PermissionView", () => {
   const defaultProps = {
@@ -45,9 +45,7 @@ describe("PermissionView", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
       const buttons = container.querySelectorAll(".actions button");
       fireEvent.click(buttons[1]!);
-      expect(postMessage).toHaveBeenCalledWith(
-        expect.objectContaining({ type: "replyPermission", response: "once" }),
-      );
+      expect(postMessage).toHaveBeenCalledWith(expect.objectContaining({ type: "replyPermission", response: "once" }));
     });
   });
 

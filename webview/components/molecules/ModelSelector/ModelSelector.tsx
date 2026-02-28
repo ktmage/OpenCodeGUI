@@ -99,12 +99,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
 
   return (
     <div className={styles.root} ref={containerRef}>
-      <button
-        type="button"
-        className={styles.button}
-        onClick={() => setOpen((s) => !s)}
-        title={t["model.selectModel"]}
-      >
+      <button type="button" className={styles.button} onClick={() => setOpen((s) => !s)} title={t["model.selectModel"]}>
         <span className={styles.label}>{selectedModelName}</span>
         <span className={`${styles.chevron} ${open ? styles.expanded : ""}`}>
           <ChevronRightIcon />
@@ -126,9 +121,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                       <ChevronRightIcon />
                     </span>
                     <span className={styles.sectionName}>{provider.name}</span>
-                    {!provider.connected && (
-                      <span className={styles.sectionBadge}>{t["model.notConnected"]}</span>
-                    )}
+                    {!provider.connected && <span className={styles.sectionBadge}>{t["model.notConnected"]}</span>}
                   </div>
                   {!isCollapsed &&
                     provider.models.map((model) => {
@@ -139,7 +132,9 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
                       return (
                         <div
                           key={model.id}
-                          className={[styles.item, isSelected && styles.active, disabled && styles.disabled].filter(Boolean).join(" ")}
+                          className={[styles.item, isSelected && styles.active, disabled && styles.disabled]
+                            .filter(Boolean)
+                            .join(" ")}
                           onClick={() => {
                             if (disabled) return;
                             onSelect({ providerID: provider.id, modelID: model.id });

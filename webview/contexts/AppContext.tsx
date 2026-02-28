@@ -2,8 +2,8 @@ import type { Permission, Provider, Session } from "@opencode-ai/sdk";
 import { createContext, useContext } from "react";
 import type { MessageWithParts } from "../hooks/useMessages";
 import type { LocaleSetting } from "../locales";
-import type { AllProvidersData, FileAttachment } from "../vscode-api";
 import type { TodoItem } from "../utils/todo";
+import type { AllProvidersData, FileAttachment } from "../vscode-api";
 
 export type AppContextValue = {
   // Session

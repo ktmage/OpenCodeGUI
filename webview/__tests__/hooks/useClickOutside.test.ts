@@ -1,5 +1,5 @@
 import { act, renderHook } from "@testing-library/react";
-import { type RefObject, createRef } from "react";
+import { createRef, type RefObject } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { useClickOutside } from "../../hooks/useClickOutside";
 

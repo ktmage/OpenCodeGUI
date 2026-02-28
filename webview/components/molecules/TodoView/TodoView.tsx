@@ -1,7 +1,7 @@
 import { useLocale } from "../../../locales";
 import type { TodoItem } from "../../../utils/todo";
-import { StatusItem } from "../../atoms/StatusItem";
 import type { BadgeVariant } from "../../atoms/StatusItem";
+import { StatusItem } from "../../atoms/StatusItem";
 import styles from "./TodoView.module.css";
 
 type Props = {

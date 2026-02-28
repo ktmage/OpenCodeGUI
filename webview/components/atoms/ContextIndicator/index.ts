@@ -1,1 +1,1 @@
-export { formatTokenCount, ContextIndicator } from "./ContextIndicator";
+export { ContextIndicator, formatTokenCount } from "./ContextIndicator";

@@ -36,9 +36,7 @@ describe("HashFilePopup", () => {
   context("ファイル候補がない場合", () => {
     // renders empty message
     it("空メッセージを表示すること", () => {
-      const { container } = render(
-        <HashFilePopup hashFiles={[]} onAddFile={vi.fn()} hashPopupRef={createRef()} />,
-      );
+      const { container } = render(<HashFilePopup hashFiles={[]} onAddFile={vi.fn()} hashPopupRef={createRef()} />);
       expect(container.querySelector(".empty")).toBeInTheDocument();
     });
   });

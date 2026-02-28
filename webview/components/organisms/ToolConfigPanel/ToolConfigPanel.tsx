@@ -3,8 +3,8 @@ import { useClickOutside } from "../../../hooks/useClickOutside";
 import type { LocaleSetting } from "../../../locales";
 import { useLocale } from "../../../locales";
 import { IconButton } from "../../atoms/IconButton";
-import { LinkButton } from "../../atoms/LinkButton";
 import { CloseIcon, FileIcon } from "../../atoms/icons";
+import { LinkButton } from "../../atoms/LinkButton";
 import styles from "./ToolConfigPanel.module.css";
 
 type Props = {

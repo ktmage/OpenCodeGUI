@@ -4,8 +4,8 @@ import type { MessageWithParts } from "../../../App";
 import { useLocale } from "../../../locales";
 import { ActionButton } from "../../atoms/ActionButton";
 import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../../atoms/icons";
-import { PermissionView } from "../PermissionView";
 import { TextPartView } from "../../molecules/TextPartView";
+import { PermissionView } from "../PermissionView";
 import { ToolPartView } from "../ToolPartView";
 import styles from "./MessageItem.module.css";
 
@@ -106,11 +106,7 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
                 <ActionButton variant="ghost" size="sm" onClick={() => setEditing(false)}>
                   {t["message.cancel"]}
                 </ActionButton>
-                <ActionButton
-                  size="sm"
-                  onClick={handleEditSubmit}
-                  disabled={!editText.trim()}
-                >
+                <ActionButton size="sm" onClick={handleEditSubmit} disabled={!editText.trim()}>
                   {t["message.send"]}
                 </ActionButton>
               </div>
@@ -166,11 +162,7 @@ function ReasoningPartView({ part }: { part: ReasoningPartType }) {
     <div className={`${styles.reasoningPart} ${isComplete ? "" : styles.reasoningActive}`}>
       <div className={styles.reasoningHeader} onClick={() => setExpanded((s) => !s)} title={t["message.toggleThought"]}>
         <span className={styles.reasoningIcon}>
-          {isComplete ? (
-            <InfoCircleIcon />
-          ) : (
-            <SpinnerIcon className={styles.spinner} width={14} height={14} />
-          )}
+          {isComplete ? <InfoCircleIcon /> : <SpinnerIcon className={styles.spinner} width={14} height={14} />}
         </span>
         <span className={styles.reasoningLabel}>{isComplete ? t["message.thought"] : t["message.thinking"]}</span>
         <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>

@@ -15,12 +15,7 @@ type Props = {
  * デザインはコンポーネントに内包され、レイアウト調整のみ `className` で行う。
  */
 export function IconButton({ variant = "default", size = "md", className, children, ...rest }: Props) {
-  const classes = [
-    styles.root,
-    variant !== "default" && styles[variant],
-    size !== "md" && styles[size],
-    className,
-  ]
+  const classes = [styles.root, variant !== "default" && styles[variant], size !== "md" && styles[size], className]
     .filter(Boolean)
     .join(" ");
 

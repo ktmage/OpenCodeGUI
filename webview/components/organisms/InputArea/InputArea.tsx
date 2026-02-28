@@ -5,15 +5,9 @@ import type { LocaleSetting } from "../../../locales";
 import { useLocale } from "../../../locales";
 import type { AllProvidersData, FileAttachment } from "../../../vscode-api";
 import { postMessage } from "../../../vscode-api";
-import { IconButton } from "../../atoms/IconButton";
-import {
-  ChevronRightIcon,
-  GearIcon,
-  SendIcon,
-  StopIcon,
-  TerminalIcon,
-} from "../../atoms/icons";
 import { ContextIndicator } from "../../atoms/ContextIndicator";
+import { IconButton } from "../../atoms/IconButton";
+import { ChevronRightIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
 import { FileAttachmentBar } from "../../molecules/FileAttachmentBar";
 import { HashFilePopup } from "../../molecules/HashFilePopup";
 import { ModelSelector } from "../../molecules/ModelSelector";

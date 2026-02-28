@@ -1,1 +1,1 @@
-export { SessionList, formatRelativeTime } from "./SessionList";
+export { formatRelativeTime, SessionList } from "./SessionList";

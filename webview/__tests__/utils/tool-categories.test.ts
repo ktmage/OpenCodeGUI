@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { CATEGORY_LABEL_KEYS, TOOL_CATEGORIES, type ToolCategory, getCategory } from "../../utils/tool-categories";
+import { CATEGORY_LABEL_KEYS, getCategory, TOOL_CATEGORIES, type ToolCategory } from "../../utils/tool-categories";
 
 describe("TOOL_CATEGORIES", () => {
   it("全エントリが有効な ToolCategory 値を持つこと", () => {

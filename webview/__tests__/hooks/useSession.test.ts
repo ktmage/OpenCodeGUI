@@ -1,5 +1,5 @@
 import type { Event } from "@opencode-ai/sdk";
-import { renderHook, act } from "@testing-library/react";
+import { act, renderHook } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { useSession } from "../../hooks/useSession";
 import { postMessage } from "../../vscode-api";

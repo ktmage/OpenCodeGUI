@@ -28,9 +28,7 @@ export function DiffView({ oldStr, newStr }: Props) {
       <div className={styles.lines}>
         {lines.map((line, i) => (
           <div key={i} className={`${styles.line} ${lineTypeClass[line.type as LineType] ?? styles.lineContext}`}>
-            <span className={styles.lineMarker}>
-              {line.type === "add" ? "+" : line.type === "remove" ? "−" : " "}
-            </span>
+            <span className={styles.lineMarker}>{line.type === "add" ? "+" : line.type === "remove" ? "−" : " "}</span>
             <span className={styles.lineText}>{line.text || "\u00A0"}</span>
           </div>
         ))}

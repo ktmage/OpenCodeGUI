@@ -2,7 +2,7 @@ import type { ToolPart } from "@opencode-ai/sdk";
 import { useMemo, useState } from "react";
 import { useLocale } from "../../../locales";
 import { parseTodos } from "../../../utils/todo";
-import { CATEGORY_LABEL_KEYS, type ToolCategory, getCategory } from "../../../utils/tool-categories";
+import { CATEGORY_LABEL_KEYS, getCategory, type ToolCategory } from "../../../utils/tool-categories";
 import {
   ChevronRightIcon,
   EditActionIcon,

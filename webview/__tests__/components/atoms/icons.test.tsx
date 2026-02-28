@@ -1,5 +1,5 @@
-import type { FC } from "react";
 import { render } from "@testing-library/react";
+import type { FC } from "react";
 import { describe, expect, it } from "vitest";
 import type { IconProps } from "../../../components/atoms/icons";
 import {

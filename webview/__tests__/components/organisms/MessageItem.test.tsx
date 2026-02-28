@@ -1,8 +1,8 @@
 import { fireEvent, render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
+import type { MessageWithParts } from "../../../App";
 import { MessageItem } from "../../../components/organisms/MessageItem";
 import { createMessage, createTextPart, createToolPart } from "../../factories";
-import type { MessageWithParts } from "../../../App";
 
 describe("MessageItem", () => {
   const defaultProps = {
