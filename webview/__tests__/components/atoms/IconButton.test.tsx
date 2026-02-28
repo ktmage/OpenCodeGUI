@@ -1,3 +1,4 @@
+import { createRef } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { IconButton } from "../../../components/atoms/IconButton";
@@ -111,6 +112,35 @@ describe("IconButton", () => {
     it("title 属性が設定されること", () => {
       render(<IconButton title="my-title">X</IconButton>);
       expect(screen.getByRole("button")).toHaveAttribute("title", "my-title");
+    });
+  });
+
+  // active state
+  context("active の場合", () => {
+    // applies active class
+    it("active クラスを持つこと", () => {
+      render(<IconButton active>X</IconButton>);
+      expect(screen.getByRole("button")).toHaveClass("root", "active");
+    });
+  });
+
+  // active=false
+  context("active={false} の場合", () => {
+    // does not apply active class
+    it("active クラスを持たないこと", () => {
+      render(<IconButton active={false}>X</IconButton>);
+      expect(screen.getByRole("button")).not.toHaveClass("active");
+    });
+  });
+
+  // ref forwarding
+  context("ref を指定した場合", () => {
+    // forwards ref to button element
+    it("ref が button 要素を参照すること", () => {
+      const ref = createRef<HTMLButtonElement>();
+      render(<IconButton ref={ref}>X</IconButton>);
+      expect(ref.current).toBeInstanceOf(HTMLButtonElement);
+      expect(ref.current).toBe(screen.getByRole("button"));
     });
   });
 });
