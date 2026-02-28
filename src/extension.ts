@@ -41,6 +41,18 @@ export async function activate(context: vscode.ExtensionContext) {
   const chatViewProvider = new ChatViewProvider(context.extensionUri, connection);
   context.subscriptions.push(vscode.window.registerWebviewViewProvider(ChatViewProvider.viewType, chatViewProvider));
 
+  // diff エディタ用の仮想ドキュメントプロバイダー。
+  // URI のクエリ部分にエンコードされたコンテンツを返す。
+  const diffContentProvider: vscode.TextDocumentContentProvider = {
+    provideTextDocumentContent(uri: vscode.Uri): string {
+      return decodeURIComponent(uri.query);
+    },
+  };
+  context.subscriptions.push(
+    vscode.workspace.registerTextDocumentContentProvider("opencode-diff-before", diffContentProvider),
+    vscode.workspace.registerTextDocumentContentProvider("opencode-diff-after", diffContentProvider),
+  );
+
   context.subscriptions.push(new vscode.Disposable(() => connection.disconnect()));
 }
 

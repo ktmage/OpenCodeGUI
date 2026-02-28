@@ -1,12 +1,14 @@
 import type { Event } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
+import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
 import { TodoHeader } from "./components/molecules/TodoHeader";
 import { ChatHeader } from "./components/organisms/ChatHeader";
 import { InputArea } from "./components/organisms/InputArea";
 import { MessagesArea } from "./components/organisms/MessagesArea";
 import { SessionList } from "./components/organisms/SessionList";
 import { AppContextProvider, type AppContextValue } from "./contexts/AppContext";
+import { useFileChanges } from "./hooks/useFileChanges";
 import { useLocale } from "./hooks/useLocale";
 import { useMessages } from "./hooks/useMessages";
 import { usePermissions } from "./hooks/usePermissions";
@@ -25,6 +27,7 @@ export function App() {
   const prov = useProviders();
   const perm = usePermissions();
   const locale = useLocale();
+  const fileChanges = useFileChanges();
 
   // Extension Host → Webview メッセージでのみ更新される単純なステート
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
@@ -50,8 +53,20 @@ export function App() {
       session.handleSessionEvent(event);
       msg.handleMessageEvent(event);
       perm.handlePermissionEvent(event);
+      fileChanges.handleFileChangeEvent(event);
+
+      // file.edited イベント時にセッション差分を再取得する
+      if (event.type === "file.edited" && session.activeSession) {
+        postMessage({ type: "getSessionDiff", sessionId: session.activeSession.id });
+      }
     },
-    [session.handleSessionEvent, msg.handleMessageEvent, perm.handlePermissionEvent],
+    [
+      session.handleSessionEvent,
+      session.activeSession,
+      msg.handleMessageEvent,
+      perm.handlePermissionEvent,
+      fileChanges.handleFileChangeEvent,
+    ],
   );
 
   // Extension Host → Webview message listener
@@ -71,8 +86,10 @@ export function App() {
           session.setActiveSession(data.session);
           if (data.session) {
             postMessage({ type: "getMessages", sessionId: data.session.id });
+            postMessage({ type: "getSessionDiff", sessionId: data.session.id });
           } else {
             msg.setMessages([]);
+            fileChanges.clearDiffs();
           }
           break;
         case "event":
@@ -117,6 +134,12 @@ export function App() {
           }
           break;
         }
+        case "sessionDiff": {
+          if (data.sessionId === session.activeSession?.id) {
+            fileChanges.setDiffs(data.diffs);
+          }
+          break;
+        }
       }
     };
     window.addEventListener("message", handler);
@@ -128,6 +151,8 @@ export function App() {
     handleEvent,
     locale.setVscodeLanguage,
     msg.setMessages,
+    fileChanges.setDiffs,
+    fileChanges.clearDiffs,
     prov.setAllProvidersData,
     prov.setProviders,
     prov.setSelectedModel,
@@ -229,6 +254,10 @@ export function App() {
     [session.activeSession, msg],
   );
 
+  const handleOpenDiffEditor = useCallback((filePath: string, before: string, after: string) => {
+    postMessage({ type: "openDiffEditor", filePath, before, after });
+  }, []);
+
   const contextValue: AppContextValue = {
     sessions: session.sessions,
     activeSession: session.activeSession,
@@ -251,6 +280,8 @@ export function App() {
     permissions: perm.permissions,
     openEditors,
     workspaceFiles,
+    fileDiffs: fileChanges.diffs,
+    onOpenDiffEditor: handleOpenDiffEditor,
     onSend: handleSend,
     onShellExecute: handleShellExecute,
     isShellMessage: msg.isShellMessage,
@@ -295,6 +326,9 @@ export function App() {
                 onRevertToCheckpoint={handleRevertToCheckpoint}
               />
               {msg.latestTodos.length > 0 && <TodoHeader todos={msg.latestTodos} />}
+              {fileChanges.diffs.length > 0 && (
+                <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} />
+              )}
               <InputArea
                 onSend={handleSend}
                 onShellExecute={handleShellExecute}

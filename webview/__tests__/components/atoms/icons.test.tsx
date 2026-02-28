@@ -9,9 +9,11 @@ import {
   ClipIcon,
   CloseIcon,
   DeleteIcon,
+  DiffIcon,
   EditActionIcon,
   EditIcon,
   ErrorCircleIcon,
+  ExternalLinkIcon,
   EyeIcon,
   EyeOffIcon,
   FileIcon,
@@ -209,4 +211,12 @@ describe("EyeIcon", () => {
 
 describe("EyeOffIcon", () => {
   describeIconComponent(EyeOffIcon, 14, 14);
+});
+
+describe("DiffIcon", () => {
+  describeIconComponent(DiffIcon, 16, 16);
+});
+
+describe("ExternalLinkIcon", () => {
+  describeIconComponent(ExternalLinkIcon, 12, 12);
 });

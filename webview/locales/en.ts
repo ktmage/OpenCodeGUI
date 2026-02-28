@@ -100,6 +100,12 @@ export const en = {
   "config.langAuto": "Auto (VS Code)",
   "config.langEn": "English",
   "config.langJa": "日本語",
+
+  // FileChangesHeader
+  "fileChanges.title": "File Changes",
+  "fileChanges.noChanges": "No file changes",
+  "fileChanges.openDiff": "Open in diff editor",
+  "fileChanges.toggle": "File changes",
 } as const;
 
 export type LocaleKeys = keyof typeof en;

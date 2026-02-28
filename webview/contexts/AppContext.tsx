@@ -1,4 +1,4 @@
-import type { Permission, Provider, Session } from "@opencode-ai/sdk";
+import type { FileDiff, Permission, Provider, Session } from "@opencode-ai/sdk";
 import { createContext, useContext } from "react";
 import type { MessageWithParts } from "../hooks/useMessages";
 import type { LocaleSetting } from "../locales";
@@ -36,6 +36,10 @@ export type AppContextValue = {
   // Files
   openEditors: FileAttachment[];
   workspaceFiles: FileAttachment[];
+
+  // File Changes
+  fileDiffs: FileDiff[];
+  onOpenDiffEditor: (filePath: string, before: string, after: string) => void;
 
   // Actions
   onSend: (text: string, files: FileAttachment[]) => void;

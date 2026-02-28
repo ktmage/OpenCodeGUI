@@ -4,6 +4,7 @@ import {
   createOpencodeClient,
   createOpencodeServer,
   type Event,
+  type FileDiff,
   type McpStatus,
   type Message,
   type Path as OpenCodePath,
@@ -15,7 +16,7 @@ import {
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
-export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath };
+export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath, FileDiff };
 
 // provider.list() が返す生データ型
 export type ProviderListResult = {
@@ -243,6 +244,16 @@ export class OpenCodeConnection {
       path: { id: sessionId, permissionID: permissionId },
       body: { response },
     });
+  }
+
+  // --- Session Diff API ---
+
+  async getSessionDiff(sessionId: string): Promise<FileDiff[]> {
+    const client = this.requireClient();
+    const response = await client.session.diff({
+      path: { id: sessionId },
+    });
+    return response.data!;
   }
 
   // --- Revert API ---

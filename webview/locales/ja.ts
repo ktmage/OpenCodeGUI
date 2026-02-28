@@ -102,4 +102,10 @@ export const ja: typeof en = {
   "config.langAuto": "自動 (VS Code)",
   "config.langEn": "English",
   "config.langJa": "日本語",
+
+  // FileChangesHeader
+  "fileChanges.title": "ファイル変更",
+  "fileChanges.noChanges": "ファイル変更なし",
+  "fileChanges.openDiff": "差分エディタで開く",
+  "fileChanges.toggle": "ファイル変更",
 };
