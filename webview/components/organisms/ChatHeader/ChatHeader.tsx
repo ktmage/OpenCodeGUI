@@ -13,7 +13,14 @@ type Props = {
   onNavigateToParent?: () => void;
 };
 
-export function ChatHeader({ activeSession, onNewSession, onToggleSessionList, onShareSession, onUnshareSession, onNavigateToParent }: Props) {
+export function ChatHeader({
+  activeSession,
+  onNewSession,
+  onToggleSessionList,
+  onShareSession,
+  onUnshareSession,
+  onNavigateToParent,
+}: Props) {
   const t = useLocale();
   // 共有中かどうかは session.share?.url の有無で判定する
   const isShared = !!activeSession?.share?.url;
@@ -33,8 +40,9 @@ export function ChatHeader({ activeSession, onNewSession, onToggleSessionList, o
         {/* 共有ボタン: セッションがあり、子セッション閲覧中でない場合に表示。
             未共有時は onShareSession が渡されている場合のみ表示する
             （メッセージのない空セッションでは SDK がエラーを返すため）。 */}
-        {activeSession && !onNavigateToParent && (
-          isShared ? (
+        {activeSession &&
+          !onNavigateToParent &&
+          (isShared ? (
             <IconButton onClick={onUnshareSession} title={t["share.unshare"]}>
               <UnshareIcon />
             </IconButton>
@@ -42,8 +50,7 @@ export function ChatHeader({ activeSession, onNewSession, onToggleSessionList, o
             <IconButton onClick={onShareSession} title={t["share.share"]}>
               <ShareIcon />
             </IconButton>
-          ) : null
-        )}
+          ) : null)}
         {!onNavigateToParent && (
           <IconButton onClick={onNewSession} title={t["header.newChat"]}>
             <AddIcon />

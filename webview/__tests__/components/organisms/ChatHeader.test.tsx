@@ -112,9 +112,7 @@ describe("ChatHeader", () => {
   context("子セッション閲覧中の場合", () => {
     // does not render share button
     it("共有ボタンを表示しないこと", () => {
-      const { queryByTitle } = render(
-        <ChatHeader {...defaultProps} onNavigateToParent={() => {}} />,
-      );
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} onNavigateToParent={() => {}} />);
       expect(queryByTitle("Share session")).not.toBeInTheDocument();
     });
   });
@@ -123,9 +121,7 @@ describe("ChatHeader", () => {
   context("onShareSession が未指定の場合（空セッション）", () => {
     // does not render share button
     it("共有ボタンを表示しないこと", () => {
-      const { queryByTitle } = render(
-        <ChatHeader {...defaultProps} onShareSession={undefined} />,
-      );
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} onShareSession={undefined} />);
       expect(queryByTitle("Share session")).not.toBeInTheDocument();
     });
   });
