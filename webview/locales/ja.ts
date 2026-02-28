@@ -37,6 +37,7 @@ export const ja: typeof en = {
   // MessagesArea
   "checkpoint.revertTitle": "ここまで巻き戻す",
   "checkpoint.retryFromHere": "ここからやり直す",
+  "checkpoint.forkFromHere": "ここから分岐",
 
   // PermissionView
   "permission.allow": "許可",
