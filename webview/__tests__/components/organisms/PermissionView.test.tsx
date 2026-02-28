@@ -21,7 +21,7 @@ describe("PermissionView", () => {
     // renders three action buttons
     it("3 つのアクションボタンをレンダリングすること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      expect(container.querySelectorAll(".permission-actions .btn")).toHaveLength(3);
+      expect(container.querySelectorAll(".permission-actions .action-button")).toHaveLength(3);
     });
   });
 
@@ -30,7 +30,7 @@ describe("PermissionView", () => {
     // sends always response
     it("always レスポンスを送信すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      const buttons = container.querySelectorAll(".permission-actions .btn");
+      const buttons = container.querySelectorAll(".permission-actions .action-button");
       fireEvent.click(buttons[0]!);
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ type: "replyPermission", response: "always" }),
@@ -43,7 +43,7 @@ describe("PermissionView", () => {
     // sends once response
     it("once レスポンスを送信すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      const buttons = container.querySelectorAll(".permission-actions .btn");
+      const buttons = container.querySelectorAll(".permission-actions .action-button");
       fireEvent.click(buttons[1]!);
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ type: "replyPermission", response: "once" }),
@@ -56,7 +56,7 @@ describe("PermissionView", () => {
     // sends reject response
     it("reject レスポンスを送信すること", () => {
       const { container } = render(<PermissionView {...defaultProps} />);
-      const buttons = container.querySelectorAll(".permission-actions .btn");
+      const buttons = container.querySelectorAll(".permission-actions .action-button");
       fireEvent.click(buttons[2]!);
       expect(postMessage).toHaveBeenCalledWith(
         expect.objectContaining({ type: "replyPermission", response: "reject" }),

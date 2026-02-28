@@ -20,7 +20,7 @@ describe("EmptyState", () => {
     // renders the new chat button
     it("新規チャットボタンを表示すること", () => {
       const { container } = render(<EmptyState onNewSession={vi.fn()} />);
-      expect(container.querySelector(".btn")).toBeInTheDocument();
+      expect(container.querySelector(".action-button")).toBeInTheDocument();
     });
   });
 
@@ -30,7 +30,7 @@ describe("EmptyState", () => {
     it("onNewSession が呼ばれること", () => {
       const onNewSession = vi.fn();
       const { container } = render(<EmptyState onNewSession={onNewSession} />);
-      fireEvent.click(container.querySelector(".btn")!);
+      fireEvent.click(container.querySelector(".action-button")!);
       expect(onNewSession).toHaveBeenCalledOnce();
     });
   });

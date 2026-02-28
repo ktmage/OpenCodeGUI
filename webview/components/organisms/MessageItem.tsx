@@ -2,6 +2,7 @@ import type { Permission, ReasoningPart as ReasoningPartType, TextPart } from "@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MessageWithParts } from "../../App";
 import { useLocale } from "../../locales";
+import { ActionButton } from "../atoms/ActionButton";
 import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../atoms/icons";
 import { PermissionView } from "./PermissionView";
 import { TextPartView } from "../molecules/TextPartView";
@@ -101,17 +102,16 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
                 rows={1}
               />
               <div className="message-edit-actions">
-                <button type="button" className="message-edit-cancel" onClick={() => setEditing(false)}>
+                <ActionButton variant="ghost" size="sm" onClick={() => setEditing(false)}>
                   {t["message.cancel"]}
-                </button>
-                <button
-                  type="button"
-                  className="message-edit-submit"
+                </ActionButton>
+                <ActionButton
+                  size="sm"
                   onClick={handleEditSubmit}
                   disabled={!editText.trim()}
                 >
                   {t["message.send"]}
-                </button>
+                </ActionButton>
               </div>
             </div>
           ) : (

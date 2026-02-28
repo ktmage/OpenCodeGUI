@@ -155,42 +155,6 @@ body {
   justify-content: flex-end;
 }
 
-.message-edit-cancel {
-  padding: 3px 10px;
-  background: none;
-  border: 1px solid var(--vscode-input-border);
-  border-radius: 4px;
-  color: var(--vscode-descriptionForeground);
-  font-family: var(--vscode-font-family);
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.message-edit-cancel:hover {
-  background-color: var(--vscode-toolbar-hoverBackground);
-  color: var(--vscode-foreground);
-}
-
-.message-edit-submit {
-  padding: 3px 10px;
-  background-color: var(--vscode-button-background);
-  border: none;
-  border-radius: 4px;
-  color: var(--vscode-button-foreground);
-  font-family: var(--vscode-font-family);
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.message-edit-submit:hover:not(:disabled) {
-  background-color: var(--vscode-button-hoverBackground);
-}
-
-.message-edit-submit:disabled {
-  opacity: 0.5;
-  cursor: default;
-}
-
 /* --- Checkpoint divider --- */
 
 .checkpoint-divider {
@@ -693,7 +657,9 @@ body {
 
 /* --- Buttons --- */
 
-.btn {
+/* --- Action button (shared atom) --- */
+
+.action-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -707,17 +673,39 @@ body {
   background-color: var(--vscode-button-background);
 }
 
-.btn:hover {
+.action-button:hover {
   background-color: var(--vscode-button-hoverBackground);
 }
 
-.btn-secondary {
+.action-button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.action-button--secondary {
   color: var(--vscode-button-secondaryForeground);
   background-color: var(--vscode-button-secondaryBackground);
 }
 
-.btn-secondary:hover {
+.action-button--secondary:hover {
   background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.action-button--ghost {
+  background: none;
+  border: 1px solid var(--vscode-input-border);
+  color: var(--vscode-descriptionForeground);
+}
+
+.action-button--ghost:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+  color: var(--vscode-foreground);
+}
+
+.action-button--sm {
+  padding: 3px 10px;
+  font-size: 11px;
+  border-radius: 4px;
 }
 
 /* --- Icon button (shared atom) --- */
@@ -1618,24 +1606,7 @@ body {
 
 .context-indicator-compress-button {
   width: 100%;
-  padding: 5px 10px;
   margin-top: 4px;
-  background-color: var(--vscode-button-secondaryBackground);
-  color: var(--vscode-button-secondaryForeground);
-  border: none;
-  border-radius: 4px;
-  font-family: var(--vscode-font-family);
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.context-indicator-compress-button:hover:not(:disabled) {
-  background-color: var(--vscode-button-secondaryHoverBackground);
-}
-
-.context-indicator-compress-button:disabled {
-  opacity: 0.6;
-  cursor: default;
 }
 
 /* --- Tool Config Button & Panel --- */

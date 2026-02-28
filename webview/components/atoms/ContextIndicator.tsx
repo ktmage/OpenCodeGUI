@@ -1,6 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import { useLocale } from "../../locales";
+import { ActionButton } from "./ActionButton";
 import { IconButton } from "./IconButton";
 
 type Props = {
@@ -95,8 +96,9 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
           <div className="context-indicator-popup-bar">
             <div className="context-indicator-popup-bar-fill" style={{ width: `${percent}%` }} />
           </div>
-          <button
-            type="button"
+          <ActionButton
+            variant="secondary"
+            size="sm"
             className="context-indicator-compress-button"
             onClick={() => {
               onCompress();
@@ -105,7 +107,7 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
             disabled={isCompressing}
           >
             {isCompressing ? t["context.compressing"] : t["context.compress"]}
-          </button>
+          </ActionButton>
         </div>
       )}
     </div>
