@@ -107,6 +107,13 @@ export const en = {
   "fileChanges.noChanges": "No file changes",
   "fileChanges.openDiff": "Open in diff editor",
   "fileChanges.toggle": "File changes",
+
+  // ChildSession
+  "childSession.agent": "Agent",
+  "childSession.backToParent": "Back to parent session",
+
+  // AgentMention
+  "input.noAgents": "No agents available",
 } as const;
 
 export type LocaleKeys = keyof typeof en;

@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import {
+  type Agent,
   type Config,
   createOpencodeClient,
   createOpencodeServer,
@@ -17,7 +18,20 @@ import {
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
-export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath, FileDiff, Todo };
+export type {
+  Agent,
+  Event,
+  Session,
+  Message,
+  Part,
+  Provider,
+  McpStatus,
+  ToolListItem,
+  Config,
+  OpenCodePath,
+  FileDiff,
+  Todo,
+};
 
 // provider.list() が返す生データ型
 export type ProviderListResult = {
@@ -180,10 +194,14 @@ export class OpenCodeConnection {
     text: string,
     model?: { providerID: string; modelID: string },
     files?: Array<{ filePath: string; fileName: string }>,
+    agent?: string,
   ): Promise<void> {
     const client = this.requireClient();
-    const parts: Array<{ type: "text"; text: string } | { type: "file"; mime: string; url: string; filename: string }> =
-      [{ type: "text", text }];
+    const parts: Array<
+      | { type: "text"; text: string }
+      | { type: "file"; mime: string; url: string; filename: string }
+      | { type: "agent"; name: string }
+    > = [{ type: "text", text }];
     if (files) {
       for (const file of files) {
         // filePath はワークスペース相対パス。cwd 基準で絶対パスに変換する。
@@ -197,6 +215,12 @@ export class OpenCodeConnection {
           filename: file.fileName,
         });
       }
+    }
+    // @agent メンションはサブエージェント呼び出しを示す AgentPartInput として parts に含める。
+    // body.agent はプロンプトを処理するエージェントの切り替え（primary agent 間）に使われるため、
+    // サブエージェント起動には AgentPartInput を使う。
+    if (agent) {
+      parts.push({ type: "agent", name: agent });
     }
     await client.session.promptAsync({
       path: { id: sessionId },
@@ -256,6 +280,16 @@ export class OpenCodeConnection {
     });
   }
 
+  // --- Session Children API ---
+
+  async getChildSessions(sessionId: string): Promise<Session[]> {
+    const client = this.requireClient();
+    const response = await client.session.children({
+      path: { id: sessionId },
+    });
+    return response.data!;
+  }
+
   // --- Session Todo API ---
 
   async getSessionTodos(sessionId: string): Promise<Todo[]> {
@@ -263,6 +297,14 @@ export class OpenCodeConnection {
     const response = await client.session.todo({
       path: { id: sessionId },
     });
+    return response.data!;
+  }
+
+  // --- Agent API ---
+
+  async getAgents(): Promise<Agent[]> {
+    const client = this.requireClient();
+    const response = await client.app.agents();
     return response.data!;
   }
 

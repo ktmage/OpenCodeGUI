@@ -2,6 +2,7 @@ import * as fs from "node:fs/promises";
 import * as path from "node:path";
 import * as vscode from "vscode";
 import type {
+  Agent,
   Event,
   FileDiff,
   Message,
@@ -40,7 +41,9 @@ export type ExtToWebviewMessage =
   | { type: "locale"; vscodeLanguage: string }
   | { type: "modelUpdated"; model: string; default: Record<string, string> }
   | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] }
-  | { type: "sessionTodos"; sessionId: string; todos: Todo[] };
+  | { type: "sessionTodos"; sessionId: string; todos: Todo[] }
+  | { type: "childSessions"; sessionId: string; children: Session[] }
+  | { type: "agents"; agents: Agent[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -50,6 +53,7 @@ export type WebviewToExtMessage =
       text: string;
       model?: { providerID: string; modelID: string };
       files?: FileAttachment[];
+      agent?: string;
     }
   | { type: "createSession"; title?: string }
   | { type: "listSessions" }
@@ -78,6 +82,8 @@ export type WebviewToExtMessage =
   | { type: "forkSession"; sessionId: string; messageId?: string }
   | { type: "getSessionDiff"; sessionId: string }
   | { type: "getSessionTodos"; sessionId: string }
+  | { type: "getChildSessions"; sessionId: string }
+  | { type: "getAgents" }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
@@ -158,7 +164,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         break;
       }
       case "sendMessage": {
-        await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files);
+        await this.connection.sendMessage(message.sessionId, message.text, message.model, message.files, message.agent);
         break;
       }
       case "createSession": {
@@ -351,6 +357,16 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       case "getSessionTodos": {
         const todos = await this.connection.getSessionTodos(message.sessionId);
         this.postMessage({ type: "sessionTodos", sessionId: message.sessionId, todos });
+        break;
+      }
+      case "getChildSessions": {
+        const children = await this.connection.getChildSessions(message.sessionId);
+        this.postMessage({ type: "childSessions", sessionId: message.sessionId, children });
+        break;
+      }
+      case "getAgents": {
+        const agents = await this.connection.getAgents();
+        this.postMessage({ type: "agents", agents });
         break;
       }
       case "openDiffEditor": {

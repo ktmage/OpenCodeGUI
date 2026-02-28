@@ -57,6 +57,11 @@ export type AppContextValue = {
   onOpenTerminal: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
+
+  // Child Sessions
+  childSessions: Session[];
+  onNavigateToChild: (sessionId: string) => void;
+  onNavigateToParent: () => void;
 };
 
 // Context は AppProvider 内でのみ使用される想定。

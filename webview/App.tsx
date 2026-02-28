@@ -1,4 +1,4 @@
-import type { Event, Todo } from "@opencode-ai/sdk";
+import type { Agent, Event, Session, Todo } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
 import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
@@ -33,6 +33,8 @@ export function App() {
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
+  const [childSessions, setChildSessions] = useState<Session[]>([]);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [openCodePaths, setOpenCodePaths] = useState<{
     home: string;
     config: string;
@@ -65,6 +67,12 @@ export function App() {
       if (event.type === "todo.updated" && event.properties.sessionID === session.activeSession?.id) {
         setTodos(event.properties.todos as Todo[]);
       }
+
+      // session.created イベント時にアクティブセッションの子セッションを再取得する
+      // （サブエージェントが起動すると子セッションが作成されるため）
+      if (event.type === "session.created" && session.activeSession) {
+        postMessage({ type: "getChildSessions", sessionId: session.activeSession.id });
+      }
     },
     [
       session.handleSessionEvent,
@@ -94,10 +102,12 @@ export function App() {
             postMessage({ type: "getMessages", sessionId: data.session.id });
             postMessage({ type: "getSessionDiff", sessionId: data.session.id });
             postMessage({ type: "getSessionTodos", sessionId: data.session.id });
+            postMessage({ type: "getChildSessions", sessionId: data.session.id });
           } else {
             msg.setMessages([]);
             fileChanges.clearDiffs();
             setTodos([]);
+            setChildSessions([]);
           }
           break;
         case "event":
@@ -154,11 +164,22 @@ export function App() {
           }
           break;
         }
+        case "childSessions": {
+          if (data.sessionId === session.activeSession?.id) {
+            setChildSessions(data.children);
+          }
+          break;
+        }
+        case "agents": {
+          setAgents(data.agents);
+          break;
+        }
       }
     };
     window.addEventListener("message", handler);
     postMessage({ type: "ready" });
     postMessage({ type: "getOpenEditors" });
+    postMessage({ type: "getAgents" });
     return () => window.removeEventListener("message", handler);
   }, [
     session.activeSession?.id,
@@ -177,7 +198,7 @@ export function App() {
   // Cross-cutting action handlers (span multiple hooks)
 
   const handleSend = useCallback(
-    (text: string, files: FileAttachment[]) => {
+    (text: string, files: FileAttachment[], agent?: string) => {
       if (!session.activeSession) return;
       postMessage({
         type: "sendMessage",
@@ -185,6 +206,7 @@ export function App() {
         text,
         model: prov.selectedModel ?? undefined,
         files: files.length > 0 ? files : undefined,
+        agent,
       });
     },
     [session.activeSession, prov.selectedModel],
@@ -285,6 +307,23 @@ export function App() {
     [session.activeSession],
   );
 
+  // 子セッションにナビゲートする
+  const handleNavigateToChild = useCallback(
+    (sessionId: string) => {
+      session.handleSelectSession(sessionId);
+    },
+    [session.handleSelectSession],
+  );
+
+  // 親セッションに戻る
+  const handleNavigateToParent = useCallback(() => {
+    if (!session.activeSession?.parentID) return;
+    session.handleSelectSession(session.activeSession.parentID);
+  }, [session.activeSession, session.handleSelectSession]);
+
+  // 子セッション閲覧中かの判定
+  const isChildSession = !!session.activeSession?.parentID;
+
   const contextValue: AppContextValue = {
     sessions: session.sessions,
     activeSession: session.activeSession,
@@ -323,6 +362,9 @@ export function App() {
     onOpenTerminal: handleOpenTerminal,
     localeSetting: locale.localeSetting,
     onLocaleSettingChange: locale.handleLocaleSettingChange,
+    childSessions,
+    onNavigateToChild: handleNavigateToChild,
+    onNavigateToParent: handleNavigateToParent,
   };
 
   return (
@@ -333,6 +375,7 @@ export function App() {
             activeSession={session.activeSession}
             onNewSession={session.handleNewSession}
             onToggleSessionList={session.toggleSessionList}
+            onNavigateToParent={isChildSession ? handleNavigateToParent : undefined}
           />
           {session.showSessionList && (
             <SessionList
@@ -358,29 +401,32 @@ export function App() {
               {fileChanges.diffs.length > 0 && (
                 <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} />
               )}
-              <InputArea
-                onSend={handleSend}
-                onShellExecute={handleShellExecute}
-                onAbort={handleAbort}
-                isBusy={session.sessionBusy}
-                providers={prov.providers}
-                allProvidersData={prov.allProvidersData}
-                selectedModel={prov.selectedModel}
-                onModelSelect={prov.handleModelSelect}
-                openEditors={openEditors}
-                workspaceFiles={workspaceFiles}
-                inputTokens={msg.inputTokens}
-                contextLimit={prov.contextLimit}
-                onCompress={handleCompress}
-                isCompressing={!!session.activeSession?.time?.compacting}
-                prefillText={msg.prefillText}
-                onPrefillConsumed={msg.consumePrefill}
-                openCodePaths={openCodePaths}
-                onOpenConfigFile={handleOpenConfigFile}
-                onOpenTerminal={handleOpenTerminal}
-                localeSetting={locale.localeSetting}
-                onLocaleSettingChange={locale.handleLocaleSettingChange}
-              />
+              {!isChildSession && (
+                <InputArea
+                  onSend={handleSend}
+                  onShellExecute={handleShellExecute}
+                  onAbort={handleAbort}
+                  isBusy={session.sessionBusy}
+                  providers={prov.providers}
+                  allProvidersData={prov.allProvidersData}
+                  selectedModel={prov.selectedModel}
+                  onModelSelect={prov.handleModelSelect}
+                  openEditors={openEditors}
+                  workspaceFiles={workspaceFiles}
+                  inputTokens={msg.inputTokens}
+                  contextLimit={prov.contextLimit}
+                  onCompress={handleCompress}
+                  isCompressing={!!session.activeSession?.time?.compacting}
+                  prefillText={msg.prefillText}
+                  onPrefillConsumed={msg.consumePrefill}
+                  openCodePaths={openCodePaths}
+                  onOpenConfigFile={handleOpenConfigFile}
+                  onOpenTerminal={handleOpenTerminal}
+                  localeSetting={locale.localeSetting}
+                  onLocaleSettingChange={locale.handleLocaleSettingChange}
+                  agents={agents}
+                />
+              )}
             </>
           ) : (
             <EmptyState onNewSession={session.handleNewSession} />

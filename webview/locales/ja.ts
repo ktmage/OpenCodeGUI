@@ -109,4 +109,11 @@ export const ja: typeof en = {
   "fileChanges.noChanges": "ファイル変更なし",
   "fileChanges.openDiff": "差分エディタで開く",
   "fileChanges.toggle": "ファイル変更",
+
+  // ChildSession
+  "childSession.agent": "エージェント",
+  "childSession.backToParent": "親セッションに戻る",
+
+  // AgentMention
+  "input.noAgents": "利用可能なエージェントがありません",
 };

@@ -1,0 +1,82 @@
+.root {
+  margin: 2px 0;
+  border-radius: 6px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 12px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+.header:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-terminal-ansiBlue, #3794ff);
+}
+
+.action {
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  padding: 0 5px;
+  border-radius: 3px;
+  color: var(--vscode-terminal-ansiBlue, #3794ff);
+  background-color: color-mix(in srgb, var(--vscode-terminal-ansiBlue, #3794ff) 12%, transparent);
+}
+
+.title {
+  flex: 1;
+  color: var(--vscode-descriptionForeground);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+}
+
+.navigate {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-textLink-foreground);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.actionError {
+  color: var(--vscode-errorForeground, #f44747);
+  background-color: color-mix(in srgb, var(--vscode-errorForeground, #f44747) 12%, transparent);
+}
+
+.errorBody {
+  padding: 4px 8px 4px 28px;
+}
+
+.errorText {
+  margin: 0;
+  font-size: 11px;
+  color: var(--vscode-errorForeground, #f44747);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
