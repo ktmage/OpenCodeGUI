@@ -75,6 +75,7 @@ export type WebviewToExtMessage =
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }
+  | { type: "forkSession"; sessionId: string; messageId?: string }
   | { type: "getSessionDiff"; sessionId: string }
   | { type: "getSessionTodos"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
@@ -331,6 +332,15 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         await fs.mkdir(path.dirname(configFilePath), { recursive: true });
         await fs.writeFile(configFilePath, `${JSON.stringify(configJson, null, 2)}\n`);
         this.postMessage({ type: "modelUpdated", model: message.model, default: {} });
+        break;
+      }
+      case "forkSession": {
+        // Fork で新しいセッションを作成し、アクティブセッションを切り替える
+        const forkedSession = await this.connection.forkSession(message.sessionId, message.messageId);
+        this.activeSession = forkedSession;
+        this.postMessage({ type: "activeSession", session: forkedSession });
+        const forkedSessions = await this.connection.listSessions();
+        this.postMessage({ type: "sessions", sessions: forkedSessions });
         break;
       }
       case "getSessionDiff": {

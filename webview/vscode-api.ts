@@ -102,6 +102,7 @@ export type WebviewToExtMessage =
   | { type: "openConfigFile"; filePath: string }
   | { type: "openTerminal" }
   | { type: "setModel"; model: string }
+  | { type: "forkSession"; sessionId: string; messageId?: string }
   | { type: "getSessionDiff"; sessionId: string }
   | { type: "getSessionTodos"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
