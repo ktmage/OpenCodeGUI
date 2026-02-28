@@ -1,5 +1,6 @@
 import type { Provider } from "@opencode-ai/sdk";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import { useLocale } from "../../locales";
 import type { AllProvidersData, ModelInfo, ProviderInfo } from "../../vscode-api";
 import { ChevronRightIcon, EyeIcon, EyeOffIcon } from "../atoms/icons";
@@ -28,16 +29,7 @@ export function ModelSelector({ providers, allProvidersData, selectedModel, onSe
   const [showAll, setShowAll] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [open]);
+  useClickOutside(containerRef, () => setOpen(false), open);
 
   // 表示用プロバイダーリスト: allProvidersData があればそちらを使い、なければ従来の providers を使う
   const allDisplayProviders = useMemo(() => {

@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import { useLocale } from "../../locales";
 
 type Props = {
@@ -19,17 +20,7 @@ export function ContextIndicator({ inputTokens, contextLimit, onCompress, isComp
   const [showPopup, setShowPopup] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // 外部クリックでポップアップを閉じる
-  useEffect(() => {
-    if (!showPopup) return;
-    const handler = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setShowPopup(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [showPopup]);
+  useClickOutside(containerRef, () => setShowPopup(false), showPopup);
 
   const handleClick = useCallback(() => {
     setShowPopup((s) => !s);

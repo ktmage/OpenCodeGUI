@@ -1,5 +1,6 @@
 import type { Provider } from "@opencode-ai/sdk";
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import type { LocaleSetting } from "../../locales";
 import { useLocale } from "../../locales";
 import type { AllProvidersData, FileAttachment } from "../../vscode-api";
@@ -139,34 +140,17 @@ export function InputArea({
   }, []);
 
   // 外部クリックでファイルピッカーを閉じる
-  useEffect(() => {
-    if (!showFilePicker) return;
-    const handler = (e: MouseEvent) => {
-      if (filePickerRef.current && !filePickerRef.current.contains(e.target as Node)) {
-        setShowFilePicker(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [showFilePicker]);
+  useClickOutside(filePickerRef, () => setShowFilePicker(false), showFilePicker);
 
-  // 外部クリックで # ポップアップを閉じる
-  useEffect(() => {
-    if (!hashTrigger.active) return;
-    const handler = (e: MouseEvent) => {
-      if (
-        hashPopupRef.current &&
-        !hashPopupRef.current.contains(e.target as Node) &&
-        textareaRef.current &&
-        !textareaRef.current.contains(e.target as Node)
-      ) {
-        setHashTrigger({ active: false, startIndex: -1 });
-        setHashQuery("");
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [hashTrigger.active]);
+  // 外部クリックで # ポップアップを閉じる（textarea 内のクリックは除外）
+  useClickOutside(
+    [hashPopupRef, textareaRef],
+    () => {
+      setHashTrigger({ active: false, startIndex: -1 });
+      setHashQuery("");
+    },
+    hashTrigger.active,
+  );
 
   // # トリガー: ワークスペースファイルを検索する
   useEffect(() => {

@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useClickOutside } from "../../hooks/useClickOutside";
 import type { LocaleSetting } from "../../locales";
 import { useLocale } from "../../locales";
 import { CloseIcon, FileIcon } from "../atoms/icons";
@@ -15,15 +16,7 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
   const t = useLocale();
   const panelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [onClose]);
+  useClickOutside(panelRef, onClose);
 
   return (
     <div className="tool-config-panel" ref={panelRef}>
