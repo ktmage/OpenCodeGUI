@@ -1,5 +1,6 @@
 import * as path from "node:path";
 import {
+  type Agent,
   type Config,
   createOpencodeClient,
   createOpencodeServer,
@@ -17,7 +18,20 @@ import {
 } from "@opencode-ai/sdk";
 import * as vscode from "vscode";
 
-export type { Event, Session, Message, Part, Provider, McpStatus, ToolListItem, Config, OpenCodePath, FileDiff, Todo };
+export type {
+  Agent,
+  Event,
+  Session,
+  Message,
+  Part,
+  Provider,
+  McpStatus,
+  ToolListItem,
+  Config,
+  OpenCodePath,
+  FileDiff,
+  Todo,
+};
 
 // provider.list() が返す生データ型
 export type ProviderListResult = {
@@ -180,6 +194,7 @@ export class OpenCodeConnection {
     text: string,
     model?: { providerID: string; modelID: string },
     files?: Array<{ filePath: string; fileName: string }>,
+    agent?: string,
   ): Promise<void> {
     const client = this.requireClient();
     const parts: Array<{ type: "text"; text: string } | { type: "file"; mime: string; url: string; filename: string }> =
@@ -203,6 +218,7 @@ export class OpenCodeConnection {
       body: {
         parts,
         model,
+        agent,
       },
     });
   }
@@ -273,6 +289,14 @@ export class OpenCodeConnection {
     const response = await client.session.todo({
       path: { id: sessionId },
     });
+    return response.data!;
+  }
+
+  // --- Agent API ---
+
+  async getAgents(): Promise<Agent[]> {
+    const client = this.requireClient();
+    const response = await client.app.agents();
     return response.data!;
   }
 

@@ -3,7 +3,7 @@
  * Extension Host 側の chat-view-provider.ts で定義したプロトコルに対応する。
  */
 
-import type { Event, FileDiff, Message, Part, Provider, Session, Todo } from "@opencode-ai/sdk";
+import type { Agent, Event, FileDiff, Message, Part, Provider, Session, Todo } from "@opencode-ai/sdk";
 
 // --- File attachment ---
 export type FileAttachment = {
@@ -68,7 +68,8 @@ export type ExtToWebviewMessage =
   | { type: "modelUpdated"; model: string; default: Record<string, string> }
   | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] }
   | { type: "sessionTodos"; sessionId: string; todos: Todo[] }
-  | { type: "childSessions"; sessionId: string; children: Session[] };
+  | { type: "childSessions"; sessionId: string; children: Session[] }
+  | { type: "agents"; agents: Agent[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -78,6 +79,7 @@ export type WebviewToExtMessage =
       text: string;
       model?: { providerID: string; modelID: string };
       files?: FileAttachment[];
+      agent?: string;
     }
   | { type: "createSession"; title?: string }
   | { type: "listSessions" }
@@ -107,6 +109,7 @@ export type WebviewToExtMessage =
   | { type: "getSessionDiff"; sessionId: string }
   | { type: "getSessionTodos"; sessionId: string }
   | { type: "getChildSessions"; sessionId: string }
+  | { type: "getAgents" }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
