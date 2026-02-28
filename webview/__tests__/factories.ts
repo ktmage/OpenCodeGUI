@@ -61,11 +61,7 @@ export function createToolPart(tool: string, overrides: Partial<ToolPart> = {}):
 
 // --- SubtaskPart ---
 
-export function createSubtaskPart(
-  agent: string,
-  description: string,
-  overrides: Record<string, unknown> = {},
-) {
+export function createSubtaskPart(agent: string, description: string, overrides: Record<string, unknown> = {}) {
   return {
     id: `part-${++partSeq}`,
     type: "subtask" as const,
