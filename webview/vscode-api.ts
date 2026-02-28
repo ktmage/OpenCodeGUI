@@ -67,7 +67,8 @@ export type ExtToWebviewMessage =
   | { type: "locale"; vscodeLanguage: string }
   | { type: "modelUpdated"; model: string; default: Record<string, string> }
   | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] }
-  | { type: "sessionTodos"; sessionId: string; todos: Todo[] };
+  | { type: "sessionTodos"; sessionId: string; todos: Todo[] }
+  | { type: "childSessions"; sessionId: string; children: Session[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -105,6 +106,7 @@ export type WebviewToExtMessage =
   | { type: "forkSession"; sessionId: string; messageId?: string }
   | { type: "getSessionDiff"; sessionId: string }
   | { type: "getSessionTodos"; sessionId: string }
+  | { type: "getChildSessions"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 

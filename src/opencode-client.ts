@@ -256,6 +256,16 @@ export class OpenCodeConnection {
     });
   }
 
+  // --- Session Children API ---
+
+  async getChildSessions(sessionId: string): Promise<Session[]> {
+    const client = this.requireClient();
+    const response = await client.session.children({
+      path: { id: sessionId },
+    });
+    return response.data!;
+  }
+
   // --- Session Todo API ---
 
   async getSessionTodos(sessionId: string): Promise<Todo[]> {

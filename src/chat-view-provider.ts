@@ -40,7 +40,8 @@ export type ExtToWebviewMessage =
   | { type: "locale"; vscodeLanguage: string }
   | { type: "modelUpdated"; model: string; default: Record<string, string> }
   | { type: "sessionDiff"; sessionId: string; diffs: FileDiff[] }
-  | { type: "sessionTodos"; sessionId: string; todos: Todo[] };
+  | { type: "sessionTodos"; sessionId: string; todos: Todo[] }
+  | { type: "childSessions"; sessionId: string; children: Session[] };
 
 // --- Webview → Extension Host ---
 export type WebviewToExtMessage =
@@ -78,6 +79,7 @@ export type WebviewToExtMessage =
   | { type: "forkSession"; sessionId: string; messageId?: string }
   | { type: "getSessionDiff"; sessionId: string }
   | { type: "getSessionTodos"; sessionId: string }
+  | { type: "getChildSessions"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
@@ -351,6 +353,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       case "getSessionTodos": {
         const todos = await this.connection.getSessionTodos(message.sessionId);
         this.postMessage({ type: "sessionTodos", sessionId: message.sessionId, todos });
+        break;
+      }
+      case "getChildSessions": {
+        const children = await this.connection.getChildSessions(message.sessionId);
+        this.postMessage({ type: "childSessions", sessionId: message.sessionId, children });
         break;
       }
       case "openDiffEditor": {
