@@ -86,6 +86,8 @@ export type WebviewToExtMessage =
   | { type: "getAgents" }
   | { type: "shareSession"; sessionId: string }
   | { type: "unshareSession"; sessionId: string }
+  | { type: "undoSession"; sessionId: string; messageId: string }
+  | { type: "redoSession"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 
@@ -385,6 +387,22 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         const session = await this.connection.unshareSession(message.sessionId);
         this.activeSession = session;
         this.postMessage({ type: "activeSession", session });
+        break;
+      }
+      case "undoSession": {
+        const session = await this.connection.revertSession(message.sessionId, message.messageId);
+        this.activeSession = session;
+        this.postMessage({ type: "activeSession", session });
+        const messages = await this.connection.getMessages(message.sessionId);
+        this.postMessage({ type: "messages", sessionId: message.sessionId, messages });
+        break;
+      }
+      case "redoSession": {
+        const session = await this.connection.unrevertSession(message.sessionId);
+        this.activeSession = session;
+        this.postMessage({ type: "activeSession", session });
+        const messages = await this.connection.getMessages(message.sessionId);
+        this.postMessage({ type: "messages", sessionId: message.sessionId, messages });
         break;
       }
       case "openDiffEditor": {

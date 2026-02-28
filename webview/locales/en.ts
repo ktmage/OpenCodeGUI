@@ -37,6 +37,10 @@ export const en = {
   "checkpoint.retryFromHere": "Retry from here",
   "checkpoint.forkFromHere": "Fork from here",
 
+  // Undo/Redo
+  "header.undo": "Undo",
+  "header.redo": "Redo",
+
   // PermissionView
   "permission.allow": "Allow",
   "permission.once": "Once",

@@ -347,6 +347,16 @@ export class OpenCodeConnection {
     return response.data!;
   }
 
+  // --- Unrevert API ---
+
+  async unrevertSession(sessionId: string): Promise<Session> {
+    const client = this.requireClient();
+    const response = await client.session.unrevert({
+      path: { id: sessionId },
+    });
+    return response.data!;
+  }
+
   // --- Summarize API ---
 
   async summarizeSession(sessionId: string, model?: { providerID: string; modelID: string }): Promise<void> {

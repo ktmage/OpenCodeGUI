@@ -112,6 +112,8 @@ export type WebviewToExtMessage =
   | { type: "getAgents" }
   | { type: "shareSession"; sessionId: string }
   | { type: "unshareSession"; sessionId: string }
+  | { type: "undoSession"; sessionId: string; messageId: string }
+  | { type: "redoSession"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
   | { type: "ready" };
 

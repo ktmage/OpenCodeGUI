@@ -329,3 +329,23 @@ export function AgentIcon({ width = 16, height = 16, ...props }: IconProps) {
     </svg>
   );
 }
+
+// ─── Undo / Redo ──────────────────────────────────────────────────────
+
+/** Codicon: discard — 反時計回り矢印（Undo） */
+export function UndoIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M5.7 3.3L1 8l4.7 4.7.7-.7L2.8 8.4H14v-1H2.8l3.6-3.4-.7-.7z" />
+    </svg>
+  );
+}
+
+/** Codicon: redo — 時計回り矢印（Redo） */
+export function RedoIcon({ width = 16, height = 16, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M10.3 3.3l4.7 4.7-4.7 4.7-.7-.7 3.6-3.6H2v-1h11.2L9.6 4l.7-.7z" />
+    </svg>
+  );
+}
