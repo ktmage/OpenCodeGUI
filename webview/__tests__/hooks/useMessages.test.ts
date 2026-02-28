@@ -150,6 +150,95 @@ describe("useMessages", () => {
     });
   });
 
+  // markPendingShell and isShellMessage
+  context("markPendingShell を呼び出した場合", () => {
+    // tags next assistant message as shell
+    it("次の assistant メッセージがシェルメッセージとしてタグ付けされること", () => {
+      const { result } = renderHook(() => useMessages());
+      act(() => result.current.markPendingShell());
+      const event = {
+        type: "message.updated",
+        properties: { info: { id: "shell-a1", role: "assistant" } },
+      } as unknown as Event;
+      act(() => result.current.handleMessageEvent(event));
+      expect(result.current.isShellMessage("shell-a1")).toBe(true);
+    });
+
+    // tags user message as shell
+    it("user メッセージもシェルメッセージとしてタグ付けされること", () => {
+      const { result } = renderHook(() => useMessages());
+      act(() => result.current.markPendingShell());
+      const event = {
+        type: "message.updated",
+        properties: { info: { id: "shell-u1", role: "user" } },
+      } as unknown as Event;
+      act(() => result.current.handleMessageEvent(event));
+      expect(result.current.isShellMessage("shell-u1")).toBe(true);
+    });
+
+    // clears pending flag after assistant message
+    it("assistant メッセージ後にフラグがクリアされること", () => {
+      const { result } = renderHook(() => useMessages());
+      act(() => result.current.markPendingShell());
+      // user message arrives first
+      act(() =>
+        result.current.handleMessageEvent({
+          type: "message.updated",
+          properties: { info: { id: "u1", role: "user" } },
+        } as unknown as Event),
+      );
+      // assistant message arrives and clears the flag
+      act(() =>
+        result.current.handleMessageEvent({
+          type: "message.updated",
+          properties: { info: { id: "a1", role: "assistant" } },
+        } as unknown as Event),
+      );
+      // next message should NOT be tagged
+      act(() =>
+        result.current.handleMessageEvent({
+          type: "message.updated",
+          properties: { info: { id: "a2", role: "assistant" } },
+        } as unknown as Event),
+      );
+      expect(result.current.isShellMessage("a2")).toBe(false);
+    });
+
+    // does not clear pending flag on user message alone
+    it("user メッセージだけではフラグがクリアされないこと", () => {
+      const { result } = renderHook(() => useMessages());
+      act(() => result.current.markPendingShell());
+      act(() =>
+        result.current.handleMessageEvent({
+          type: "message.updated",
+          properties: { info: { id: "u1", role: "user" } },
+        } as unknown as Event),
+      );
+      // next assistant should still be tagged
+      act(() =>
+        result.current.handleMessageEvent({
+          type: "message.updated",
+          properties: { info: { id: "a1", role: "assistant" } },
+        } as unknown as Event),
+      );
+      expect(result.current.isShellMessage("a1")).toBe(true);
+    });
+  });
+
+  // isShellMessage returns false for normal messages
+  context("markPendingShell を呼び出していない場合", () => {
+    // returns false for normal messages
+    it("通常メッセージの isShellMessage が false を返すこと", () => {
+      const { result } = renderHook(() => useMessages());
+      const event = {
+        type: "message.updated",
+        properties: { info: { id: "m1", role: "assistant" } },
+      } as unknown as Event;
+      act(() => result.current.handleMessageEvent(event));
+      expect(result.current.isShellMessage("m1")).toBe(false);
+    });
+  });
+
   // latestTodos derivation
   context("messages に todowrite ツールの完了出力がある場合", () => {
     // parses todos from completed tool output
