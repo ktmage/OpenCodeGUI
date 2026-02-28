@@ -1,5 +1,5 @@
 import type { Event, Message, Part } from "@opencode-ai/sdk";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import type { TodoItem } from "../utils/todo";
 import { parseTodos } from "../utils/todo";
 
@@ -50,6 +50,21 @@ export function useMessages() {
   const [messages, setMessages] = useState<MessageWithParts[]>([]);
   const [prefillText, setPrefillText] = useState("");
 
+  // ユーザーが ! プレフィクスで実行したシェルコマンドのメッセージ ID を追跡する。
+  // executeShell 呼び出し直前に pendingShell を true にし、
+  // 次に到着する assistant の message.updated でそのメッセージ ID を shellMessageIds に登録する。
+  const pendingShell = useRef(false);
+  const [shellMessageIds, setShellMessageIds] = useState<Set<string>>(new Set());
+
+  const markPendingShell = useCallback(() => {
+    pendingShell.current = true;
+  }, []);
+
+  const isShellMessage = useCallback(
+    (messageId: string) => shellMessageIds.has(messageId),
+    [shellMessageIds],
+  );
+
   // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
   const inputTokens = useMemo(() => {
     let total = 0;
@@ -95,9 +110,22 @@ export function useMessages() {
   // SSE event handler for message-related events
   const handleMessageEvent = useCallback((event: Event) => {
     switch (event.type) {
-      case "message.updated":
-        setMessages((prev) => upsertMessage(prev, event.properties.info));
+      case "message.updated": {
+        const info = event.properties.info as Message;
+        // pendingShell が true のとき、user / assistant メッセージ両方をシェルとしてタグ付けする。
+        // user メッセージは吹き出しを非表示にするため、assistant メッセージは ShellResultView 表示に使う。
+        if (pendingShell.current) {
+          if (info.role === "user" || info.role === "assistant") {
+            setShellMessageIds((prev) => new Set(prev).add(info.id));
+          }
+          // assistant が到着したらフラグをクリアする
+          if (info.role === "assistant") {
+            pendingShell.current = false;
+          }
+        }
+        setMessages((prev) => upsertMessage(prev, info));
         break;
+      }
       case "message.part.updated":
         setMessages((prev) => upsertPart(prev, event.properties.part));
         break;
@@ -116,5 +144,7 @@ export function useMessages() {
     latestTodos,
     consumePrefill,
     handleMessageEvent,
+    markPendingShell,
+    isShellMessage,
   } as const;
 }
