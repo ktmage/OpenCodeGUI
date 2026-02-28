@@ -83,12 +83,7 @@ export function App() {
         postMessage({ type: "getChildSessions", sessionId: currentSession.id });
       }
     },
-    [
-      session.handleSessionEvent,
-      msg.handleMessageEvent,
-      perm.handlePermissionEvent,
-      fileChanges.handleFileChangeEvent,
-    ],
+    [session.handleSessionEvent, msg.handleMessageEvent, perm.handlePermissionEvent, fileChanges.handleFileChangeEvent],
   );
 
   // Extension Host → Webview message listener
@@ -348,7 +343,10 @@ export function App() {
     } else {
       // ユーザーメッセージがない場合（アシスタントが最後のメッセージ）は空にしない
       // revert はアシスタントメッセージ自体を消すので、その前のユーザーメッセージのテキストを復元する
-      const prevUserMsg = [...messages].slice(0, assistantIdx).reverse().find((m) => m.info.role === "user");
+      const prevUserMsg = [...messages]
+        .slice(0, assistantIdx)
+        .reverse()
+        .find((m) => m.info.role === "user");
       if (prevUserMsg) {
         const textParts = prevUserMsg.parts.filter((p) => p.type === "text" && !(p as any).synthetic);
         const fallback = textParts.length > 0 ? textParts : prevUserMsg.parts.filter((p) => p.type === "text");
