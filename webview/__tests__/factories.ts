@@ -59,6 +59,26 @@ export function createToolPart(tool: string, overrides: Partial<ToolPart> = {}):
   } as unknown as ToolPart;
 }
 
+// --- SubtaskPart ---
+
+export function createSubtaskPart(
+  agent: string,
+  description: string,
+  overrides: Record<string, unknown> = {},
+) {
+  return {
+    id: `part-${++partSeq}`,
+    type: "subtask" as const,
+    sessionID: "session-1",
+    messageID: "msg-1",
+    prompt: description,
+    description,
+    agent,
+    time: { created: Date.now(), updated: Date.now() },
+    ...overrides,
+  };
+}
+
 // --- Permission ---
 
 export function createPermission(overrides: Partial<Permission> = {}): Permission {
