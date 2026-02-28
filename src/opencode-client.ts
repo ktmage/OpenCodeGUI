@@ -197,8 +197,11 @@ export class OpenCodeConnection {
     agent?: string,
   ): Promise<void> {
     const client = this.requireClient();
-    const parts: Array<{ type: "text"; text: string } | { type: "file"; mime: string; url: string; filename: string }> =
-      [{ type: "text", text }];
+    const parts: Array<
+      | { type: "text"; text: string }
+      | { type: "file"; mime: string; url: string; filename: string }
+      | { type: "agent"; name: string }
+    > = [{ type: "text", text }];
     if (files) {
       for (const file of files) {
         // filePath はワークスペース相対パス。cwd 基準で絶対パスに変換する。
@@ -213,12 +216,17 @@ export class OpenCodeConnection {
         });
       }
     }
+    // @agent メンションはサブエージェント呼び出しを示す AgentPartInput として parts に含める。
+    // body.agent はプロンプトを処理するエージェントの切り替え（primary agent 間）に使われるため、
+    // サブエージェント起動には AgentPartInput を使う。
+    if (agent) {
+      parts.push({ type: "agent", name: agent });
+    }
     await client.session.promptAsync({
       path: { id: sessionId },
       body: {
         parts,
         model,
-        agent,
       },
     });
   }
