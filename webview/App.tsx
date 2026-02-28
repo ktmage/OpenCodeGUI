@@ -1,4 +1,4 @@
-import type { Event, Session, Todo } from "@opencode-ai/sdk";
+import type { Agent, Event, Session, Todo } from "@opencode-ai/sdk";
 import { useCallback, useEffect, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
 import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
@@ -34,6 +34,7 @@ export function App() {
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [childSessions, setChildSessions] = useState<Session[]>([]);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const [openCodePaths, setOpenCodePaths] = useState<{
     home: string;
     config: string;
@@ -163,11 +164,16 @@ export function App() {
           }
           break;
         }
+        case "agents": {
+          setAgents(data.agents);
+          break;
+        }
       }
     };
     window.addEventListener("message", handler);
     postMessage({ type: "ready" });
     postMessage({ type: "getOpenEditors" });
+    postMessage({ type: "getAgents" });
     return () => window.removeEventListener("message", handler);
   }, [
     session.activeSession?.id,
@@ -186,7 +192,7 @@ export function App() {
   // Cross-cutting action handlers (span multiple hooks)
 
   const handleSend = useCallback(
-    (text: string, files: FileAttachment[]) => {
+    (text: string, files: FileAttachment[], agent?: string) => {
       if (!session.activeSession) return;
       postMessage({
         type: "sendMessage",
@@ -194,6 +200,7 @@ export function App() {
         text,
         model: prov.selectedModel ?? undefined,
         files: files.length > 0 ? files : undefined,
+        agent,
       });
     },
     [session.activeSession, prov.selectedModel],
@@ -411,6 +418,7 @@ export function App() {
                   onOpenTerminal={handleOpenTerminal}
                   localeSetting={locale.localeSetting}
                   onLocaleSettingChange={locale.handleLocaleSettingChange}
+                  agents={agents}
                 />
               )}
             </>

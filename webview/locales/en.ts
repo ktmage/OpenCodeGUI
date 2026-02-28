@@ -111,6 +111,9 @@ export const en = {
   // ChildSession
   "childSession.agent": "Agent",
   "childSession.backToParent": "Back to parent session",
+
+  // AgentMention
+  "input.noAgents": "No agents available",
 } as const;
 
 export type LocaleKeys = keyof typeof en;

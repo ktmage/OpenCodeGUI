@@ -1,4 +1,4 @@
-import type { Provider } from "@opencode-ai/sdk";
+import type { Agent, Provider } from "@opencode-ai/sdk";
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import type { LocaleSetting } from "../../../locales";
@@ -7,8 +7,9 @@ import type { AllProvidersData, FileAttachment } from "../../../vscode-api";
 import { postMessage } from "../../../vscode-api";
 import { ContextIndicator } from "../../atoms/ContextIndicator";
 import { IconButton } from "../../atoms/IconButton";
-import { ChevronRightIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
+import { AgentIcon, ChevronRightIcon, CloseIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
 import { Popover } from "../../atoms/Popover";
+import { AgentPopup } from "../../molecules/AgentPopup";
 import { FileAttachmentBar } from "../../molecules/FileAttachmentBar";
 import { HashFilePopup } from "../../molecules/HashFilePopup";
 import { ModelSelector } from "../../molecules/ModelSelector";
@@ -16,7 +17,7 @@ import { ToolConfigPanel } from "../../organisms/ToolConfigPanel";
 import styles from "./InputArea.module.css";
 
 type Props = {
-  onSend: (text: string, files: FileAttachment[]) => void;
+  onSend: (text: string, files: FileAttachment[], agent?: string) => void;
   onShellExecute: (command: string) => void;
   onAbort: () => void;
   isBusy: boolean;
@@ -37,6 +38,7 @@ type Props = {
   onOpenTerminal: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
+  agents: Agent[];
 };
 
 export function InputArea({
@@ -61,6 +63,7 @@ export function InputArea({
   onOpenTerminal,
   localeSetting,
   onLocaleSettingChange,
+  agents,
 }: Props) {
   const t = useLocale();
   const [text, setText] = useState("");
@@ -73,10 +76,18 @@ export function InputArea({
     startIndex: -1,
   });
   const [hashQuery, setHashQuery] = useState("");
+  // @ トリガー用
+  const [atTrigger, setAtTrigger] = useState<{ active: boolean; startIndex: number }>({
+    active: false,
+    startIndex: -1,
+  });
+  const [atQuery, setAtQuery] = useState("");
+  const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
   const filePickerRef = useRef<HTMLDivElement>(null);
   const hashPopupRef = useRef<HTMLDivElement>(null);
+  const agentPopupRef = useRef<HTMLDivElement>(null);
 
   // チェックポイントからの復元時にテキストをプリフィルする
   useEffect(() => {
@@ -150,12 +161,46 @@ export function InputArea({
     hashTrigger.active,
   );
 
+  // 外部クリックで @ ポップアップを閉じる
+  useClickOutside(
+    [agentPopupRef, textareaRef],
+    () => {
+      setAtTrigger({ active: false, startIndex: -1 });
+      setAtQuery("");
+    },
+    atTrigger.active,
+  );
+
   // # トリガー: ワークスペースファイルを検索する
   useEffect(() => {
     if (hashTrigger.active) {
       postMessage({ type: "searchWorkspaceFiles", query: hashQuery });
     }
   }, [hashTrigger.active, hashQuery]);
+
+  // @ トリガー: エージェント選択時のハンドラ
+  const selectAgent = useCallback(
+    (agent: Agent) => {
+      setSelectedAgent(agent);
+      // テキストから @query を削除する
+      if (atTrigger.active) {
+        setText((prev) => {
+          const before = prev.slice(0, atTrigger.startIndex);
+          const after = prev.slice(atTrigger.startIndex + 1 + atQuery.length);
+          return before + after;
+        });
+      }
+      setAtTrigger({ active: false, startIndex: -1 });
+      setAtQuery("");
+      textareaRef.current?.focus();
+    },
+    [atTrigger, atQuery],
+  );
+
+  // 選択済みエージェントを解除する
+  const clearAgent = useCallback(() => {
+    setSelectedAgent(null);
+  }, []);
 
   // ! プレフィクスでシェルコマンドモードかどうかを判定する
   const isShellMode = text.startsWith("!");
@@ -170,14 +215,15 @@ export function InputArea({
         onShellExecute(command);
       }
     } else {
-      onSend(trimmed, attachedFiles);
+      onSend(trimmed, attachedFiles, selectedAgent?.name);
     }
     setText("");
     setAttachedFiles([]);
+    setSelectedAgent(null);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [text, attachedFiles, onSend, onShellExecute]);
+  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -185,6 +231,12 @@ export function InputArea({
       if (e.key === "Escape" && hashTrigger.active) {
         setHashTrigger({ active: false, startIndex: -1 });
         setHashQuery("");
+        return;
+      }
+      // Escape で @ ポップアップを閉じる
+      if (e.key === "Escape" && atTrigger.active) {
+        setAtTrigger({ active: false, startIndex: -1 });
+        setAtQuery("");
         return;
       }
       // IME 変換中は送信しない
@@ -196,10 +248,14 @@ export function InputArea({
           setHashTrigger({ active: false, startIndex: -1 });
           setHashQuery("");
         }
+        if (atTrigger.active) {
+          setAtTrigger({ active: false, startIndex: -1 });
+          setAtQuery("");
+        }
         handleSend();
       }
     },
-    [handleSend, isBusy, hashTrigger.active],
+    [handleSend, isBusy, hashTrigger.active, atTrigger.active],
   );
 
   const handleTextChange = useCallback(
@@ -222,6 +278,15 @@ export function InputArea({
           postMessage({ type: "getOpenEditors" });
           return;
         }
+        if (
+          addedChar === "@" &&
+          (cursorPos === 1 || newText[cursorPos - 2] === " " || newText[cursorPos - 2] === "\n")
+        ) {
+          // @ の前が空白・改行・先頭の場合にトリガーを開始
+          setAtTrigger({ active: true, startIndex: cursorPos - 1 });
+          setAtQuery("");
+          return;
+        }
       }
 
       // # トリガーがアクティブなら、クエリを更新する
@@ -235,8 +300,19 @@ export function InputArea({
           setHashQuery(queryPart);
         }
       }
+
+      // @ トリガーがアクティブなら、クエリを更新する
+      if (atTrigger.active) {
+        const queryPart = newText.slice(atTrigger.startIndex + 1, cursorPos);
+        if (/[\s]/.test(queryPart) || cursorPos <= atTrigger.startIndex) {
+          setAtTrigger({ active: false, startIndex: -1 });
+          setAtQuery("");
+        } else {
+          setAtQuery(queryPart);
+        }
+      }
     },
-    [text, hashTrigger],
+    [text, hashTrigger, atTrigger],
   );
 
   const handleInput = useCallback(() => {
@@ -272,6 +348,11 @@ export function InputArea({
   const isActiveAttached = activeEditorFile
     ? attachedFiles.some((f) => f.filePath === activeEditorFile.filePath)
     : false;
+
+  // @ トリガーのエージェント候補
+  const filteredAgents = atQuery
+    ? agents.filter((a) => a.name.toLowerCase().includes(atQuery.toLowerCase())).slice(0, 10)
+    : agents.slice(0, 10);
 
   return (
     <div className={styles.root}>
@@ -329,6 +410,20 @@ export function InputArea({
           {/* # トリガー ファイル候補ポップアップ */}
           {hashTrigger.active && (
             <HashFilePopup hashFiles={hashFiles} onAddFile={addFile} hashPopupRef={hashPopupRef} />
+          )}
+          {/* @ トリガー エージェント候補ポップアップ */}
+          {atTrigger.active && (
+            <AgentPopup agents={filteredAgents} onSelectAgent={selectAgent} agentPopupRef={agentPopupRef} />
+          )}
+          {/* 選択済みエージェントインジケーター */}
+          {selectedAgent && (
+            <div className={styles.agentIndicator}>
+              <AgentIcon />
+              <span className={styles.agentName}>@{selectedAgent.name}</span>
+              <button type="button" className={styles.agentClear} onClick={clearAgent}>
+                <CloseIcon />
+              </button>
+            </div>
           )}
         </div>
 

@@ -113,4 +113,7 @@ export const ja: typeof en = {
   // ChildSession
   "childSession.agent": "エージェント",
   "childSession.backToParent": "親セッションに戻る",
+
+  // AgentMention
+  "input.noAgents": "利用可能なエージェントがありません",
 };
