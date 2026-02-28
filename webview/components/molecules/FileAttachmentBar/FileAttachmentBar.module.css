@@ -13,12 +13,14 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  height: 22px;
+  padding: 0 6px;
   background: none;
   border: 1px dashed var(--vscode-editorWidget-border, var(--vscode-panel-border));
   color: var(--vscode-descriptionForeground);
   font-family: var(--vscode-font-family);
   font-size: 11px;
+  line-height: 1;
   cursor: pointer;
   border-radius: 4px;
 }
@@ -84,12 +86,14 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 8px;
+  height: 22px;
+  padding: 0 6px;
   background-color: var(--vscode-input-background);
   color: var(--vscode-foreground);
   border: 1px solid var(--vscode-editorWidget-border, var(--vscode-panel-border));
   border-radius: 4px;
   font-size: 11px;
+  line-height: 1;
 }
 
 .chipName {
