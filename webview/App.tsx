@@ -1,7 +1,9 @@
 import type { Agent, Event, Session, Todo } from "@opencode-ai/sdk";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
 import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
+import { SummaryHeader } from "./components/molecules/SummaryHeader";
+import type { SummaryEntry } from "./components/molecules/SummaryHeader/SummaryHeader";
 import { TodoHeader } from "./components/molecules/TodoHeader";
 import { ChatHeader } from "./components/organisms/ChatHeader";
 import { InputArea } from "./components/organisms/InputArea";
@@ -324,6 +326,34 @@ export function App() {
   // 子セッション閲覧中かの判定
   const isChildSession = !!session.activeSession?.parentID;
 
+  // メッセージの summary フィールドから要約一覧を導出する。
+  // SDK の UserMessage.summary は圧縮（compress）とは独立した、人間向けの会話ダイジェスト。
+  const summaries: SummaryEntry[] = useMemo(() => {
+    const result: SummaryEntry[] = [];
+    let turnIndex = 0;
+    for (const m of msg.messages) {
+      if (m.info.role === "user") {
+        turnIndex++;
+        const s = m.info.summary;
+        if (s && (s.title || s.body)) {
+          result.push({
+            title: s.title || locale.strings["summary.noTitle"](turnIndex),
+            body: s.body,
+            files: s.diffs?.length ?? 0,
+            additions: s.diffs?.reduce((sum, d) => sum + d.additions, 0) ?? 0,
+            deletions: s.diffs?.reduce((sum, d) => sum + d.deletions, 0) ?? 0,
+          });
+        }
+      }
+    }
+    return result;
+  }, [msg.messages, locale.strings]);
+
+  const [showSummary, setShowSummary] = useState(false);
+  const handleToggleSummary = useCallback(() => {
+    setShowSummary((s) => !s);
+  }, []);
+
   const contextValue: AppContextValue = {
     sessions: session.sessions,
     activeSession: session.activeSession,
@@ -376,6 +406,8 @@ export function App() {
             onNewSession={session.handleNewSession}
             onToggleSessionList={session.toggleSessionList}
             onNavigateToParent={isChildSession ? handleNavigateToParent : undefined}
+            onToggleSummary={handleToggleSummary}
+            hasSummaries={summaries.length > 0}
           />
           {session.showSessionList && (
             <SessionList
@@ -401,6 +433,7 @@ export function App() {
               {fileChanges.diffs.length > 0 && (
                 <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} />
               )}
+              {showSummary && summaries.length > 0 && <SummaryHeader summaries={summaries} />}
               {!isChildSession && (
                 <InputArea
                   onSend={handleSend}

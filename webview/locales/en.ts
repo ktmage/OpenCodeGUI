@@ -114,6 +114,12 @@ export const en = {
 
   // AgentMention
   "input.noAgents": "No agents available",
+
+  // SummaryHeader
+  "summary.label": "Summary",
+  "summary.toggle": "Toggle summary",
+  "summary.showSummary": "Show summary",
+  "summary.noTitle": (n: number) => `Turn ${n}`,
 } as const;
 
 export type LocaleKeys = keyof typeof en;

@@ -1,0 +1,108 @@
+.root {
+  border-top: 1px solid var(--vscode-panel-border);
+  background-color: var(--vscode-sideBar-background);
+}
+
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  color: inherit;
+  text-align: left;
+}
+
+.bar:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--vscode-textLink-foreground);
+}
+
+.label {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--vscode-foreground);
+}
+
+.count {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-editor-font-family, monospace);
+  flex: 1;
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: transform 0.15s;
+}
+
+.chevron.expanded {
+  transform: rotate(90deg);
+}
+
+/* --- Summary List --- */
+
+.list {
+  padding: 0 12px 6px 12px;
+}
+
+/* --- Summary Item --- */
+
+.item {
+  padding: 6px 8px;
+  border-bottom: 1px solid color-mix(in srgb, var(--vscode-panel-border) 50%, transparent);
+}
+
+.item:last-child {
+  border-bottom: none;
+}
+
+.itemTitle {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vscode-foreground);
+  margin-bottom: 2px;
+}
+
+.itemBody {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.itemStats {
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 10px;
+  font-family: var(--vscode-editor-font-family, monospace);
+  color: var(--vscode-descriptionForeground);
+}
+
+.itemFiles {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.statAdd {
+  color: var(--vscode-testing-iconPassed, #73c991);
+}
+
+.statRemove {
+  color: var(--vscode-testing-iconFailed, #f14c4c);
+}

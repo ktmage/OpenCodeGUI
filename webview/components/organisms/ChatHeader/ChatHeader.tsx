@@ -1,7 +1,7 @@
 import type { Session } from "@opencode-ai/sdk";
 import { useLocale } from "../../../locales";
 import { IconButton } from "../../atoms/IconButton";
-import { AddIcon, BackIcon, ListIcon } from "../../atoms/icons";
+import { AddIcon, BackIcon, ListIcon, SummaryIcon } from "../../atoms/icons";
 import styles from "./ChatHeader.module.css";
 
 type Props = {
@@ -9,9 +9,18 @@ type Props = {
   onNewSession: () => void;
   onToggleSessionList: () => void;
   onNavigateToParent?: () => void;
+  onToggleSummary?: () => void;
+  hasSummaries?: boolean;
 };
 
-export function ChatHeader({ activeSession, onNewSession, onToggleSessionList, onNavigateToParent }: Props) {
+export function ChatHeader({
+  activeSession,
+  onNewSession,
+  onToggleSessionList,
+  onNavigateToParent,
+  onToggleSummary,
+  hasSummaries,
+}: Props) {
   const t = useLocale();
   return (
     <div className={styles.root}>
@@ -26,6 +35,11 @@ export function ChatHeader({ activeSession, onNewSession, onToggleSessionList, o
       )}
       <span className={styles.title}>{activeSession?.title || t["header.title.fallback"]}</span>
       <div className={styles.actions}>
+        {hasSummaries && onToggleSummary && (
+          <IconButton onClick={onToggleSummary} title={t["summary.showSummary"]}>
+            <SummaryIcon />
+          </IconButton>
+        )}
         {!onNavigateToParent && (
           <IconButton onClick={onNewSession} title={t["header.newChat"]}>
             <AddIcon />

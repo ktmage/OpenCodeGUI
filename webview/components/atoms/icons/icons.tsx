@@ -309,3 +309,14 @@ export function AgentIcon({ width = 16, height = 16, ...props }: IconProps) {
     </svg>
   );
 }
+
+// ─── Summary ──────────────────────────────────────────────────────────
+
+/** Codicon: book — session summary / digest icon */
+export function SummaryIcon({ width = 14, height = 14, ...props }: IconProps) {
+  return (
+    <svg aria-hidden="true" width={width} height={height} viewBox="0 0 16 16" fill="currentColor" {...props}>
+      <path d="M14.5 2H9l-.35.15-.65.64-.65-.64L7 2H1.5l-.5.5v10l.5.5h5.29l.86.85h.7l.86-.85H14.5l.5-.5v-10l-.5-.5zm-7 10.32l-.18-.17L7 12H2V3h4.79l.71.71v8.61zM14 12H9l-.35.15-.18.17V3.71L9.21 3H14v9z" />
+    </svg>
+  );
+}

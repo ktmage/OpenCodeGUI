@@ -116,4 +116,10 @@ export const ja: typeof en = {
 
   // AgentMention
   "input.noAgents": "利用可能なエージェントがありません",
+
+  // SummaryHeader
+  "summary.label": "要約",
+  "summary.toggle": "要約を切り替え",
+  "summary.showSummary": "要約を表示",
+  "summary.noTitle": (n: number) => `ターン ${n}`,
 };
