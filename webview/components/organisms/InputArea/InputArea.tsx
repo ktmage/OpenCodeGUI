@@ -321,9 +321,6 @@ export function InputArea({
               selectedModel={selectedModel}
               onSelect={onModelSelect}
             />
-            <IconButton variant="muted" onClick={onOpenTerminal} title={t["input.openTerminal"]}>
-              <TerminalIcon />
-            </IconButton>
             <Popover
               trigger={({ open, toggle }) => (
                 <IconButton variant="muted" onClick={toggle} title={t["input.settings"]}>
@@ -343,6 +340,9 @@ export function InputArea({
                 />
               )}
             />
+            <IconButton variant="muted" onClick={onOpenTerminal} title={t["input.openTerminal"]}>
+              <TerminalIcon />
+            </IconButton>
           </div>
           {isBusy ? (
             <IconButton className={styles.sendButton} onClick={onAbort} title={t["input.stop"]}>
