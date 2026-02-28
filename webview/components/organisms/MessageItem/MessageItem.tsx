@@ -95,48 +95,48 @@ export function MessageItem({ message, activeSessionId, permissions, onEditAndRe
         // シェルコマンドのユーザーメッセージは非表示。
         // ShellResultView が "$ command" を既に表示しているため冗長。
         isShellUser ? null : (
-        <>
-          {editing ? (
-            <div className={styles.editContainer}>
-              <textarea
-                ref={editRef}
-                className={styles.editTextarea}
-                value={editText}
-                onChange={(e) => {
-                  setEditText(e.target.value);
-                  e.target.style.height = "auto";
-                  e.target.style.height = `${e.target.scrollHeight}px`;
-                }}
-                onKeyDown={handleEditKeyDown}
-                rows={1}
-              />
-              <div className={styles.editActions}>
-                <ActionButton variant="ghost" size="sm" onClick={() => setEditing(false)}>
-                  {t["message.cancel"]}
-                </ActionButton>
-                <ActionButton size="sm" onClick={handleEditSubmit} disabled={!editText.trim()}>
-                  {t["message.send"]}
-                </ActionButton>
+          <>
+            {editing ? (
+              <div className={styles.editContainer}>
+                <textarea
+                  ref={editRef}
+                  className={styles.editTextarea}
+                  value={editText}
+                  onChange={(e) => {
+                    setEditText(e.target.value);
+                    e.target.style.height = "auto";
+                    e.target.style.height = `${e.target.scrollHeight}px`;
+                  }}
+                  onKeyDown={handleEditKeyDown}
+                  rows={1}
+                />
+                <div className={styles.editActions}>
+                  <ActionButton variant="ghost" size="sm" onClick={() => setEditing(false)}>
+                    {t["message.cancel"]}
+                  </ActionButton>
+                  <ActionButton size="sm" onClick={handleEditSubmit} disabled={!editText.trim()}>
+                    {t["message.send"]}
+                  </ActionButton>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className={styles.userBubble} onClick={handleStartEdit} title={t["message.clickToEdit"]}>
-              <div className={styles.content}>{userText}</div>
-              <div className={styles.editIcon}>
-                <EditIcon width={12} height={12} />
+            ) : (
+              <div className={styles.userBubble} onClick={handleStartEdit} title={t["message.clickToEdit"]}>
+                <div className={styles.content}>{userText}</div>
+                <div className={styles.editIcon}>
+                  <EditIcon width={12} height={12} />
+                </div>
               </div>
-            </div>
-          )}
-          {userFiles.length > 0 && (
-            <div className={styles.userFiles}>
-              {userFiles.map((name, i) => (
-                <span key={i} className={styles.userFileChip}>
-                  {name}
-                </span>
-              ))}
-            </div>
-          )}
-        </>
+            )}
+            {userFiles.length > 0 && (
+              <div className={styles.userFiles}>
+                {userFiles.map((name, i) => (
+                  <span key={i} className={styles.userFileChip}>
+                    {name}
+                  </span>
+                ))}
+              </div>
+            )}
+          </>
         )
       ) : (
         <div className={styles.content}>

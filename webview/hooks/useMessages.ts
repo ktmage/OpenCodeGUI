@@ -60,10 +60,7 @@ export function useMessages() {
     pendingShell.current = true;
   }, []);
 
-  const isShellMessage = useCallback(
-    (messageId: string) => shellMessageIds.has(messageId),
-    [shellMessageIds],
-  );
+  const isShellMessage = useCallback((messageId: string) => shellMessageIds.has(messageId), [shellMessageIds]);
 
   // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
   const inputTokens = useMemo(() => {

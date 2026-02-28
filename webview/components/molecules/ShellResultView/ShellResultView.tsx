@@ -56,7 +56,9 @@ export function ShellResultView({ parts }: Props) {
                 </div>
               )}
               {entry.output && <pre className={styles.output}>{entry.output}</pre>}
-              {entry.isError && entry.error && <pre className={`${styles.output} ${styles.outputError}`}>{entry.error}</pre>}
+              {entry.isError && entry.error && (
+                <pre className={`${styles.output} ${styles.outputError}`}>{entry.error}</pre>
+              )}
             </div>
           ))}
         </div>
