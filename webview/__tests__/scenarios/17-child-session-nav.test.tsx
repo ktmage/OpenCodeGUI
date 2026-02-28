@@ -2,7 +2,13 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
-import { createMessage, createSession, createSubtaskPart, createTextPart } from "../factories";
+import {
+  createMessage,
+  createSession,
+  createSubtaskPart,
+  createTaskToolPart,
+  createTextPart,
+} from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
 
 /** 親セッション + subtask パート + 子セッションをセットアップする */
@@ -125,6 +131,53 @@ describe("子セッションナビゲーション", () => {
     // shows new chat button
     it("新規チャットボタンが表示されること", () => {
       expect(screen.getByTitle("New chat")).toBeInTheDocument();
+    });
+  });
+
+  // task tool part rendered as subtask
+  context("task ツール呼び出しがメッセージに含まれる場合", () => {
+    beforeEach(async () => {
+      renderApp();
+      const parentSession = createSession({ id: "parent-2", title: "Parent Chat 2" });
+      await sendExtMessage({ type: "activeSession", session: parentSession });
+
+      const assistantMsg = createMessage({ id: "m2", sessionID: "parent-2", role: "assistant" });
+      const textPart = createTextPart("Delegating to subagent.", { messageID: "m2" });
+      const taskToolPart = createTaskToolPart("general", "Search for utils", { messageID: "m2" });
+
+      await sendExtMessage({
+        type: "messages",
+        sessionId: "parent-2",
+        messages: [{ info: assistantMsg, parts: [textPart, taskToolPart as any] }],
+      });
+
+      const childSession = createSession({ id: "child-task-1", title: "Search for utils", parentID: "parent-2" });
+      await sendExtMessage({ type: "childSessions", sessionId: "parent-2", children: [childSession] });
+      vi.mocked(postMessage).mockClear();
+    });
+
+    // displays Agent label (not Run label)
+    it("Agent ラベルが表示されること（Run ではなく）", () => {
+      const agentLabels = screen.getAllByText("Agent");
+      expect(agentLabels.length).toBeGreaterThan(0);
+    });
+
+    // displays agent name and description from state.input
+    it("エージェント名と説明が state.input から表示されること", () => {
+      expect(screen.getByText("general: Search for utils")).toBeInTheDocument();
+    });
+
+    // navigates to child session on click
+    it("クリックで子セッションにナビゲートすること", async () => {
+      const user = userEvent.setup();
+      // Find the subtask header showing "general: Search for utils"
+      const title = screen.getByText("general: Search for utils");
+      const header = title.closest(".header") as HTMLElement;
+      await user.click(header);
+      expect(postMessage).toHaveBeenCalledWith({
+        type: "selectSession",
+        sessionId: "child-task-1",
+      });
     });
   });
 });

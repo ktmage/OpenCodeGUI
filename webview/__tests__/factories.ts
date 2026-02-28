@@ -59,6 +59,31 @@ export function createToolPart(tool: string, overrides: Partial<ToolPart> = {}):
   } as unknown as ToolPart;
 }
 
+/** task ツール呼び出し（サブエージェント起動）のファクトリ */
+export function createTaskToolPart(
+  agentName: string,
+  description: string,
+  overrides: Record<string, unknown> = {},
+): ToolPart {
+  return {
+    id: `part-${++partSeq}`,
+    type: "tool",
+    tool: "task",
+    callID: `call-${partSeq}`,
+    sessionID: "session-1",
+    messageID: "msg-1",
+    state: {
+      status: "completed",
+      title: description,
+      input: { subagent_type: agentName, description, prompt: description },
+      output: "Task completed successfully.",
+      metadata: {},
+      time: { start: Date.now() - 1000, end: Date.now() },
+    },
+    ...overrides,
+  } as unknown as ToolPart;
+}
+
 // --- SubtaskPart ---
 
 export function createSubtaskPart(agent: string, description: string, overrides: Record<string, unknown> = {}) {
