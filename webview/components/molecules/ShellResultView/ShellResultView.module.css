@@ -1,0 +1,112 @@
+.root {
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--vscode-panel-border);
+  margin: 4px 0;
+  background-color: var(--vscode-terminal-background, #1e1e1e);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 12px;
+  background-color: var(--vscode-toolbar-hoverBackground, rgba(90, 93, 94, 0.31));
+}
+
+.header:hover {
+  opacity: 0.85;
+}
+
+.headerIcon {
+  display: flex;
+  align-items: center;
+  color: var(--vscode-terminal-ansiYellow, #e5c07b);
+}
+
+.headerLabel {
+  font-weight: 500;
+  color: var(--vscode-foreground);
+}
+
+.chevron {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  transition: transform 0.15s ease;
+  color: var(--vscode-descriptionForeground, #808080);
+}
+
+.expanded {
+  transform: rotate(90deg);
+}
+
+.terminal {
+  background-color: var(--vscode-terminal-background, #1e1e1e);
+  padding: 8px 12px;
+  font-family: var(--vscode-editor-font-family, "Menlo", "Monaco", "Courier New", monospace);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.entry {
+  margin-bottom: 4px;
+}
+
+.entry:last-child {
+  margin-bottom: 0;
+}
+
+.promptLine {
+  display: flex;
+  gap: 6px;
+  color: var(--vscode-terminal-foreground, #cccccc);
+}
+
+.dollar {
+  color: var(--vscode-terminal-ansiGreen, #6a9955);
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.command {
+  color: var(--vscode-terminal-foreground, #cccccc);
+  word-break: break-all;
+}
+
+.running {
+  padding: 4px 0;
+  color: var(--vscode-terminal-ansiBrightBlack, #808080);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.output {
+  margin: 4px 0 0;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--vscode-terminal-foreground, #cccccc);
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  background-color: inherit;
+  border: none;
+  overflow-x: auto;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.outputError {
+  color: var(--vscode-terminal-ansiRed, #f44747);
+}

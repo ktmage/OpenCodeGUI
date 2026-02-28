@@ -39,6 +39,8 @@ export type AppContextValue = {
 
   // Actions
   onSend: (text: string, files: FileAttachment[]) => void;
+  onShellExecute: (command: string) => void;
+  isShellMessage: (messageId: string) => boolean;
   onAbort: () => void;
   onCompress: () => void;
   isCompressing: boolean;
