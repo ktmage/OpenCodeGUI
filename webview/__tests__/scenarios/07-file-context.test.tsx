@@ -45,14 +45,15 @@ describe("ファイルコンテキスト", () => {
   });
 
   // Selecting a file shows a chip and closes the picker
+  // Selecting a file shows a chip and closes the picker
   context("ファイルを選択した場合", () => {
     beforeEach(async () => {
       await setupWithFiles();
       const user = userEvent.setup();
       await user.click(screen.getByTitle("Add context"));
       const items = screen.getAllByText("main.ts");
-      const clickTarget = items.find((el) => el.closest(".file-picker-item"))?.closest(".file-picker-item");
-      if (!clickTarget) throw new Error("file-picker-item not found");
+      const clickTarget = items.find((el) => el.closest(".list-item"))?.closest(".list-item");
+      if (!clickTarget) throw new Error("list-item not found");
       await user.click(clickTarget);
     });
 
@@ -76,8 +77,8 @@ describe("ファイルコンテキスト", () => {
     // ファイルを添付
     await user.click(screen.getByTitle("Add context"));
     const items = screen.getAllByText("main.ts");
-    const clickTarget = items.find((el) => el.closest(".file-picker-item"))?.closest(".file-picker-item");
-    if (!clickTarget) throw new Error("file-picker-item not found");
+    const clickTarget = items.find((el) => el.closest(".list-item"))?.closest(".list-item");
+    if (!clickTarget) throw new Error("list-item not found");
     await user.click(clickTarget);
 
     // チップが表示される
@@ -127,7 +128,7 @@ describe("ファイルコンテキスト", () => {
       textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "Look at #");
       const popup = document.querySelector(".hash-popup");
-      const popupItem = popup?.querySelector(".hash-popup-item");
+      const popupItem = popup?.querySelector(".list-item");
       await user.click(popupItem!);
     });
 
@@ -150,8 +151,8 @@ describe("ファイルコンテキスト", () => {
     // ファイルを添付
     await user.click(screen.getByTitle("Add context"));
     const items = screen.getAllByText("main.ts");
-    const clickTarget = items.find((el) => el.closest(".file-picker-item"))?.closest(".file-picker-item");
-    if (!clickTarget) throw new Error("file-picker-item not found");
+    const clickTarget = items.find((el) => el.closest(".list-item"))?.closest(".list-item");
+    if (!clickTarget) throw new Error("list-item not found");
     await user.click(clickTarget);
 
     // メッセージ送信
@@ -197,7 +198,7 @@ describe("ファイルコンテキスト", () => {
     await user.click(screen.getByTitle("Add context"));
 
     // main.ts は既に添付済みなのでピッカーのリストに表示されない（フィルタされている）
-    const pickerItems = document.querySelectorAll(".file-picker-item");
+    const pickerItems = document.querySelectorAll(".list-item");
     const mainInPicker = Array.from(pickerItems).find((el) => el.textContent?.includes("main.ts"));
     expect(mainInPicker).toBeFalsy();
   });

@@ -44,7 +44,7 @@ describe("TodoHeader", () => {
     it("全ての todo アイテムを表示すること", () => {
       const { container } = render(<TodoHeader todos={sampleTodos} />);
       fireEvent.click(container.querySelector(".todo-header-bar")!);
-      expect(container.querySelectorAll(".todo-header-item")).toHaveLength(3);
+      expect(container.querySelectorAll(".status-item")).toHaveLength(3);
     });
   });
 

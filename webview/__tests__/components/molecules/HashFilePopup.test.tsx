@@ -18,7 +18,7 @@ describe("HashFilePopup", () => {
       const { container } = render(
         <HashFilePopup hashFiles={[file1, file2]} onAddFile={vi.fn()} hashPopupRef={createRef()} />,
       );
-      expect(container.querySelectorAll(".hash-popup-item")).toHaveLength(2);
+      expect(container.querySelectorAll(".list-item")).toHaveLength(2);
     });
 
     // calls onAddFile when item is clicked
@@ -27,7 +27,7 @@ describe("HashFilePopup", () => {
       const { container } = render(
         <HashFilePopup hashFiles={[file1]} onAddFile={onAddFile} hashPopupRef={createRef()} />,
       );
-      fireEvent.click(container.querySelector(".hash-popup-item")!);
+      fireEvent.click(container.querySelector(".list-item")!);
       expect(onAddFile).toHaveBeenCalledWith(file1);
     });
   });

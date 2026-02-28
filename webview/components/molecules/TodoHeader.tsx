@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocale } from "../../locales";
 import type { TodoItem } from "../../utils/todo";
+import { StatusItem } from "../atoms/StatusItem";
+import type { BadgeVariant } from "../atoms/StatusItem";
 import { CheckboxIcon, ChevronRightIcon } from "../atoms/icons";
 
 type Props = {
@@ -36,13 +38,11 @@ export function TodoHeader({ todos }: Props) {
         <ul className="todo-header-list">
           {todos.map((todo, i) => {
             const isDone = todo.status === "completed" || todo.status === "done";
-            const priorityClass = todo.priority === "high" ? "high" : todo.priority === "low" ? "low" : "";
+            const badge = todo.priority
+              ? { label: todo.priority, variant: (todo.priority === "high" ? "danger" : "muted") as BadgeVariant }
+              : undefined;
             return (
-              <li key={i} className={`todo-header-item ${isDone ? "done" : ""}`}>
-                <span className="todo-header-item-check">{isDone ? "✓" : "○"}</span>
-                <span className="todo-header-item-content">{todo.content}</span>
-                {todo.priority && <span className={`todo-header-item-priority ${priorityClass}`}>{todo.priority}</span>}
-              </li>
+              <StatusItem key={i} indicator={isDone ? "✓" : "○"} content={todo.content} isDone={isDone} badge={badge} />
             );
           })}
         </ul>

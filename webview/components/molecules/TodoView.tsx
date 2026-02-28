@@ -1,5 +1,7 @@
 import { useLocale } from "../../locales";
 import type { TodoItem } from "../../utils/todo";
+import { StatusItem } from "../atoms/StatusItem";
+import type { BadgeVariant } from "../atoms/StatusItem";
 
 type Props = {
   todos: TodoItem[];
@@ -16,13 +18,11 @@ export function TodoView({ todos }: Props) {
       <ul className="tool-todo-list">
         {todos.map((todo, i) => {
           const isDone = todo.status === "completed" || todo.status === "done";
-          const priorityClass = todo.priority === "high" ? "high" : todo.priority === "low" ? "low" : "";
+          const badge = todo.priority
+            ? { label: todo.priority, variant: (todo.priority === "high" ? "danger" : "muted") as BadgeVariant }
+            : undefined;
           return (
-            <li key={i} className={`tool-todo-item ${isDone ? "done" : ""} ${priorityClass}`}>
-              <span className="tool-todo-check">{isDone ? "✓" : "○"}</span>
-              <span className="tool-todo-content">{todo.content}</span>
-              {todo.priority && <span className={`tool-todo-priority ${priorityClass}`}>{todo.priority}</span>}
-            </li>
+            <StatusItem key={i} indicator={isDone ? "✓" : "○"} content={todo.content} isDone={isDone} badge={badge} />
           );
         })}
       </ul>
