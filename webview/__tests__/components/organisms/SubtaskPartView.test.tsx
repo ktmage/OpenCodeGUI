@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { SubtaskPartView, isTaskToolPart } from "../../../components/organisms/SubtaskPartView";
+import { findMatchingChild, isTaskToolPart, SubtaskPartView } from "../../../components/organisms/SubtaskPartView";
 import { createSession, createSubtaskPart, createTaskToolPart } from "../../factories";
 
 const defaultProps = {
@@ -191,5 +191,153 @@ describe("isTaskToolPart", () => {
   // rejects non-tool parts
   it("type が tool でないパートを拒否すること", () => {
     expect(isTaskToolPart({ type: "subtask" })).toBe(false);
+  });
+});
+
+describe("findMatchingChild", () => {
+  // returns undefined when childSessions is empty
+  context("子セッションが空の場合", () => {
+    it("undefined を返すこと", () => {
+      const part = createTaskToolPart("general", "Do something");
+      expect(findMatchingChild(part, [], "Do something", "Do something")).toBeUndefined();
+    });
+  });
+
+  // matches by metadata.sessionId (Strategy 1)
+  context("state.metadata.sessionId で直接マッチする場合", () => {
+    it("metadata の sessionId で子セッションを特定すること", () => {
+      const childSession = createSession({ id: "child-meta-1", title: "Unrelated title" });
+      const part = createTaskToolPart("general", "Some task", {
+        state: {
+          status: "completed",
+          title: "Some task",
+          input: { subagent_type: "general", description: "Some task", prompt: "Some task" },
+          output: "Done",
+          metadata: { sessionId: "child-meta-1" },
+          time: { start: Date.now() - 1000, end: Date.now() },
+        },
+      });
+      expect(findMatchingChild(part, [childSession], "Some task", "Some task")).toBe(childSession);
+    });
+
+    it("metadata.sessionId が childSessions にない場合はフォールバックすること", () => {
+      const childSession = createSession({ id: "child-2", title: "Some task" });
+      const part = createTaskToolPart("general", "Some task", {
+        state: {
+          status: "completed",
+          title: "Some task",
+          input: { subagent_type: "general", description: "Some task", prompt: "Some task" },
+          output: "Done",
+          metadata: { sessionId: "non-existent-id" },
+          time: { start: Date.now() - 1000, end: Date.now() },
+        },
+      });
+      // Falls back to Strategy 2 (title includes description)
+      expect(findMatchingChild(part, [childSession], "Some task", "Some task")).toBe(childSession);
+    });
+  });
+
+  // matches by partial title containing description (Strategy 2 — server appends suffix)
+  context("子セッション title にサーバー付与のサフィックスがある場合", () => {
+    it("description が title に含まれる場合マッチすること", () => {
+      // Server sets title as: "Fix the bug (@coder subagent)"
+      const childSession = createSession({ id: "child-3", title: "Fix the bug (@coder subagent)" });
+      const part = createSubtaskPart("coder", "Fix the bug");
+      expect(findMatchingChild(part, [childSession], "Fix the bug", "Fix the bug")).toBe(childSession);
+    });
+  });
+
+  // matches by prompt when description doesn't match (Strategy 3)
+  context("description ではマッチせず prompt でマッチする場合", () => {
+    it("prompt が title に含まれる場合マッチすること", () => {
+      const childSession = createSession({ id: "child-4", title: "Find critical bugs (@general subagent)" });
+      const part = createSubtaskPart("general", "unrelated-desc", { prompt: "Find critical bugs" });
+      expect(findMatchingChild(part, [childSession], "unrelated-desc", "Find critical bugs")).toBe(childSession);
+    });
+  });
+
+  // returns undefined when no strategy matches
+  context("どの戦略でもマッチしない場合", () => {
+    it("undefined を返すこと", () => {
+      const childSession = createSession({ id: "child-5", title: "Completely different task" });
+      const part = createSubtaskPart("coder", "Some description", { prompt: "Some prompt" });
+      expect(findMatchingChild(part, [childSession], "Some description", "Some prompt")).toBeUndefined();
+    });
+  });
+
+  // skips metadata check for pending status
+  context("task ツールが pending 状態の場合", () => {
+    it("metadata チェックをスキップして title マッチにフォールバックすること", () => {
+      const childSession = createSession({ id: "child-6", title: "Pending task (@agent subagent)" });
+      const part = createTaskToolPart("agent", "Pending task", {
+        state: {
+          status: "pending",
+          input: {},
+          raw: "",
+        },
+      });
+      expect(findMatchingChild(part, [childSession], "Pending task", "")).toBe(childSession);
+    });
+  });
+
+  // metadata takes priority over title match
+  context("metadata と title の両方でマッチ可能な場合", () => {
+    it("metadata.sessionId のマッチを優先すること", () => {
+      const childByTitle = createSession({ id: "child-title", title: "Do X" });
+      const childByMeta = createSession({ id: "child-meta", title: "Different" });
+      const part = createTaskToolPart("general", "Do X", {
+        state: {
+          status: "completed",
+          title: "Do X",
+          input: { subagent_type: "general", description: "Do X", prompt: "Do X" },
+          output: "Done",
+          metadata: { sessionId: "child-meta" },
+          time: { start: Date.now() - 1000, end: Date.now() },
+        },
+      });
+      expect(findMatchingChild(part, [childByTitle, childByMeta], "Do X", "Do X")).toBe(childByMeta);
+    });
+  });
+});
+
+// Component: navigate with server-format title (suffix appended)
+describe("SubtaskPartView — サーバー形式のタイトルマッチング", () => {
+  context("子セッションの title にサフィックスが付与されている場合", () => {
+    it("description を含む title にマッチしてナビゲートできること", async () => {
+      const user = userEvent.setup();
+      const childSession = createSession({ id: "child-suffix", title: "Analyze code (@coder subagent)" });
+      const part = createTaskToolPart("coder", "Analyze code");
+      const onNav = vi.fn();
+      const { container } = render(
+        <SubtaskPartView part={part} childSessions={[childSession]} onNavigateToChild={onNav} />,
+      );
+      expect(container.querySelector(".navigate")).toBeInTheDocument();
+      await user.click(container.querySelector(".header")!);
+      expect(onNav).toHaveBeenCalledWith("child-suffix");
+    });
+  });
+
+  context("metadata.sessionId で子セッションに直接ナビゲートする場合", () => {
+    it("metadata の sessionId を使って正しい子セッションにナビゲートすること", async () => {
+      const user = userEvent.setup();
+      const childSession = createSession({ id: "child-from-meta", title: "Server assigned title" });
+      const part = createTaskToolPart("general", "My task", {
+        state: {
+          status: "completed",
+          title: "My task",
+          input: { subagent_type: "general", description: "My task", prompt: "details here" },
+          output: "ok",
+          metadata: { sessionId: "child-from-meta" },
+          time: { start: Date.now() - 1000, end: Date.now() },
+        },
+      });
+      const onNav = vi.fn();
+      const { container } = render(
+        <SubtaskPartView part={part} childSessions={[childSession]} onNavigateToChild={onNav} />,
+      );
+      expect(container.querySelector(".navigate")).toBeInTheDocument();
+      await user.click(container.querySelector(".header")!);
+      expect(onNav).toHaveBeenCalledWith("child-from-meta");
+    });
   });
 });

@@ -2,13 +2,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
-import {
-  createMessage,
-  createSession,
-  createSubtaskPart,
-  createTaskToolPart,
-  createTextPart,
-} from "../factories";
+import { createMessage, createSession, createSubtaskPart, createTaskToolPart, createTextPart } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
 
 /** 親セッション + subtask パート + 子セッションをセットアップする */
@@ -151,7 +145,11 @@ describe("子セッションナビゲーション", () => {
         messages: [{ info: assistantMsg, parts: [textPart, taskToolPart as any] }],
       });
 
-      const childSession = createSession({ id: "child-task-1", title: "Search for utils", parentID: "parent-2" });
+      const childSession = createSession({
+        id: "child-task-1",
+        title: "Search for utils (@general subagent)",
+        parentID: "parent-2",
+      });
       await sendExtMessage({ type: "childSessions", sessionId: "parent-2", children: [childSession] });
       vi.mocked(postMessage).mockClear();
     });
