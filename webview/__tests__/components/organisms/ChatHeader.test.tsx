@@ -10,6 +10,9 @@ describe("ChatHeader", () => {
     onToggleSessionList: vi.fn(),
     onShareSession: vi.fn(),
     onUnshareSession: vi.fn(),
+    canUndo: false,
+    canRedo: false,
+    isBusy: false,
   };
 
   // when rendered with an active session
@@ -123,6 +126,67 @@ describe("ChatHeader", () => {
     it("共有ボタンを表示しないこと", () => {
       const { queryByTitle } = render(<ChatHeader {...defaultProps} onShareSession={undefined} />);
       expect(queryByTitle("Share session")).not.toBeInTheDocument();
+    });
+  });
+
+  // Undo/Redo buttons
+  context("Undo/Redo ボタンの場合", () => {
+    // renders undo button
+    it("Undo ボタンを表示すること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canUndo canRedo={false} />);
+      expect(getByTitle("Undo")).toBeInTheDocument();
+    });
+
+    // renders redo button
+    it("Redo ボタンを表示すること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canUndo={false} canRedo />);
+      expect(getByTitle("Redo")).toBeInTheDocument();
+    });
+
+    // disables undo when canUndo is false
+    it("canUndo=false のとき Undo ボタンが disabled になること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canUndo={false} />);
+      expect((getByTitle("Undo") as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    // disables redo when canRedo is false
+    it("canRedo=false のとき Redo ボタンが disabled になること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canRedo={false} />);
+      expect((getByTitle("Redo") as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    // disables both when busy
+    it("isBusy=true のとき Undo ボタンが disabled になること", () => {
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canUndo canRedo isBusy />);
+      expect((getByTitle("Undo") as HTMLButtonElement).disabled).toBe(true);
+    });
+
+    // calls onUndo when clicked
+    it("クリック時に onUndo が呼ばれること", () => {
+      const onUndo = vi.fn();
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canUndo onUndo={onUndo} />);
+      fireEvent.click(getByTitle("Undo"));
+      expect(onUndo).toHaveBeenCalledOnce();
+    });
+
+    // calls onRedo when clicked
+    it("クリック時に onRedo が呼ばれること", () => {
+      const onRedo = vi.fn();
+      const { getByTitle } = render(<ChatHeader {...defaultProps} canRedo onRedo={onRedo} />);
+      fireEvent.click(getByTitle("Redo"));
+      expect(onRedo).toHaveBeenCalledOnce();
+    });
+
+    // does not render undo/redo when in child session
+    it("子セッション閲覧中は Undo/Redo ボタンを表示しないこと", () => {
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} onNavigateToParent={() => {}} canUndo canRedo />);
+      expect(queryByTitle("Undo")).not.toBeInTheDocument();
+    });
+
+    // does not render undo/redo when no active session
+    it("アクティブセッションがない場合は Undo/Redo ボタンを表示しないこと", () => {
+      const { queryByTitle } = render(<ChatHeader {...defaultProps} activeSession={null} canUndo canRedo />);
+      expect(queryByTitle("Undo")).not.toBeInTheDocument();
     });
   });
 });
