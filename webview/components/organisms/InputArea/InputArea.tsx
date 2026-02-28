@@ -358,21 +358,33 @@ export function InputArea({
   return (
     <div className={styles.root}>
       <div className={styles.wrapper}>
-        {/* コンテキストバー: クリップボタン + 添付ファイルチップ + quick-add を1行に */}
+        {/* コンテキストバー: エージェントチップ + クリップボタン + 添付ファイルチップ + quick-add を1行に */}
         <div className={styles.contextBar}>
-          <FileAttachmentBar
-            attachedFiles={attachedFiles}
-            activeEditorFile={activeEditorFile}
-            isActiveAttached={isActiveAttached}
-            showFilePicker={showFilePicker}
-            filePickerQuery={filePickerQuery}
-            pickerFiles={pickerFiles}
-            onClipClick={handleClipClick}
-            onFilePickerSearch={handleFilePickerSearch}
-            onAddFile={addFile}
-            onRemoveFile={removeFile}
-            filePickerRef={filePickerRef}
-          />
+          <div className={styles.contextBarLeft}>
+            {/* 選択済みエージェントチップ（ファイルチップの先頭に表示） */}
+            {selectedAgent && (
+              <div className={styles.agentChip}>
+                <AgentIcon />
+                <span className={styles.agentChipName}>@{selectedAgent.name}</span>
+                <button type="button" className={styles.agentChipClear} onClick={clearAgent}>
+                  <CloseIcon width={12} height={12} />
+                </button>
+              </div>
+            )}
+            <FileAttachmentBar
+              attachedFiles={attachedFiles}
+              activeEditorFile={activeEditorFile}
+              isActiveAttached={isActiveAttached}
+              showFilePicker={showFilePicker}
+              filePickerQuery={filePickerQuery}
+              pickerFiles={pickerFiles}
+              onClipClick={handleClipClick}
+              onFilePickerSearch={handleFilePickerSearch}
+              onAddFile={addFile}
+              onRemoveFile={removeFile}
+              filePickerRef={filePickerRef}
+            />
+          </div>
           {/* コンテキストウィンドウ使用率インジケーター (右側) */}
           {contextLimit > 0 && (
             <ContextIndicator
@@ -415,16 +427,6 @@ export function InputArea({
           {/* @ トリガー エージェント候補ポップアップ */}
           {atTrigger.active && (
             <AgentPopup agents={filteredAgents} onSelectAgent={selectAgent} agentPopupRef={agentPopupRef} />
-          )}
-          {/* 選択済みエージェントインジケーター */}
-          {selectedAgent && (
-            <div className={styles.agentIndicator}>
-              <AgentIcon />
-              <span className={styles.agentName}>@{selectedAgent.name}</span>
-              <button type="button" className={styles.agentClear} onClick={clearAgent}>
-                <CloseIcon />
-              </button>
-            </div>
           )}
         </div>
 
