@@ -50,3 +50,33 @@
   flex-shrink: 0;
   color: var(--vscode-textLink-foreground);
 }
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.actionError {
+  color: var(--vscode-errorForeground, #f44747);
+  background-color: color-mix(in srgb, var(--vscode-errorForeground, #f44747) 12%, transparent);
+}
+
+.errorBody {
+  padding: 4px 8px 4px 28px;
+}
+
+.errorText {
+  margin: 0;
+  font-size: 11px;
+  color: var(--vscode-errorForeground, #f44747);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

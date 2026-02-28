@@ -1,1 +1,1 @@
-export { type SubtaskPart, SubtaskPartView } from "./SubtaskPartView";
+export { isTaskToolPart, type SubtaskPart, SubtaskPartView } from "./SubtaskPartView";
