@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Session sharing
 - Undo / Redo
 - Settings panel
+- Keyboard navigation for inline popups (Tab / Arrow keys)
+
+### Changed
+
+- Replace hardcoded SVG icons with react-icons/vsc
 
 ## [0.1.0] - 2026-02-24
 
