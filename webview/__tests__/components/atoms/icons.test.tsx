@@ -4,6 +4,8 @@ import { describe, expect, it } from "vitest";
 import type { IconProps } from "../../../components/atoms/icons";
 import {
   AddIcon,
+  AgentIcon,
+  BackIcon,
   CheckboxIcon,
   ChevronRightIcon,
   ClipIcon,
@@ -17,19 +19,24 @@ import {
   EyeIcon,
   EyeOffIcon,
   FileIcon,
+  ForkIcon,
   GearIcon,
   InfoCircleIcon,
   ListIcon,
   PlusIcon,
   ReadActionIcon,
+  RedoIcon,
   RevertIcon,
   RunActionIcon,
   SearchActionIcon,
   SendIcon,
+  ShareIcon,
   SpinnerIcon,
   StopIcon,
   TerminalIcon,
   ToolIcon,
+  UndoIcon,
+  UnshareIcon,
   WriteActionIcon,
 } from "../../../components/atoms/icons";
 
@@ -219,4 +226,32 @@ describe("DiffIcon", () => {
 
 describe("ExternalLinkIcon", () => {
   describeIconComponent(ExternalLinkIcon, 12, 12);
+});
+
+describe("ForkIcon", () => {
+  describeIconComponent(ForkIcon, 12, 12);
+});
+
+describe("BackIcon", () => {
+  describeIconComponent(BackIcon, 16, 16);
+});
+
+describe("ShareIcon", () => {
+  describeIconComponent(ShareIcon, 16, 16);
+});
+
+describe("UnshareIcon", () => {
+  describeIconComponent(UnshareIcon, 16, 16);
+});
+
+describe("AgentIcon", () => {
+  describeIconComponent(AgentIcon, 16, 16);
+});
+
+describe("UndoIcon", () => {
+  describeIconComponent(UndoIcon, 16, 16);
+});
+
+describe("RedoIcon", () => {
+  describeIconComponent(RedoIcon, 16, 16);
 });
