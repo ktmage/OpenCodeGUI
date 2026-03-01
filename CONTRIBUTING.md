@@ -24,7 +24,7 @@ This project itself is developed primarily through AI-assisted coding, and we we
 
 - Node.js v22+
 - npm
-- [OpenCode](https://github.com/opencode-ai/opencode) installed with LLM provider authentication configured
+- [OpenCode](https://github.com/anomalyco/opencode) installed with LLM provider authentication configured
 
 #### Setup
 
@@ -75,7 +75,12 @@ npm run check:fix
 
 ### Testing
 
-When your change affects behavior, add or update scenario tests. Follow the existing test patterns in `webview/__tests__/scenarios/`.
+When your change affects behavior, add or update tests. Follow existing test patterns:
+
+- **Scenario tests:** `webview/__tests__/scenarios/`
+- **Component unit tests:** `webview/__tests__/components/`
+- **Hook unit tests:** `webview/__tests__/hooks/`
+- **Utility tests:** `webview/__tests__/utils/`
 
 ### Review Process
 
@@ -102,7 +107,7 @@ By submitting a pull request, you agree that your contributions are licensed und
 
 - Node.js v22+
 - npm
-- [OpenCode](https://github.com/opencode-ai/opencode) がインストール済みで、LLM プロバイダの認証が完了していること
+- [OpenCode](https://github.com/anomalyco/opencode) がインストール済みで、LLM プロバイダの認証が完了していること
 
 #### セットアップ
 
@@ -153,7 +158,12 @@ npm run check:fix
 
 ### テスト
 
-動作に影響する変更の場合は、シナリオテストを追加・更新してください。`webview/__tests__/scenarios/` にある既存のテストパターンに習って書いてください。
+動作に影響する変更の場合は、テストを追加・更新してください。既存のテストパターンに習って書いてください:
+
+- **シナリオテスト:** `webview/__tests__/scenarios/`
+- **コンポーネント単体テスト:** `webview/__tests__/components/`
+- **フック単体テスト:** `webview/__tests__/hooks/`
+- **ユーティリティテスト:** `webview/__tests__/utils/`
 
 ### レビュー体制
 
