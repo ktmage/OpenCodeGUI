@@ -40,5 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Todo display
 - i18n support (English, Japanese)
 
-[Unreleased]: https://github.com/ktmage/OpenCodeGUI/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/ktmage/OpenCodeGUI/releases/tag/v0.1.0
+[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ktmage/opencode-gui/releases/tag/v0.1.0

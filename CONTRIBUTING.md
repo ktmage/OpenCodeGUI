@@ -29,8 +29,8 @@ This project itself is developed primarily through AI-assisted coding, and we we
 #### Setup
 
 ```sh
-git clone https://github.com/<your-fork>/OpenCodeGUI.git
-cd OpenCodeGUI
+git clone https://github.com/<your-fork>/opencode-gui.git
+cd opencode-gui
 npm install
 npm run build
 ```
@@ -45,7 +45,7 @@ npm test
 
 #### Reporting Bugs / Requesting Features
 
-Opening an issue before starting work is recommended. Use the provided [issue templates](https://github.com/ktmage/OpenCodeGUI/issues/new/choose).
+Opening an issue before starting work is recommended. Use the provided [issue templates](https://github.com/ktmage/opencode-gui/issues/new/choose).
 
 For small fixes (typos, documentation improvements), you may open a PR directly.
 
@@ -112,8 +112,8 @@ By submitting a pull request, you agree that your contributions are licensed und
 #### セットアップ
 
 ```sh
-git clone https://github.com/<your-fork>/OpenCodeGUI.git
-cd OpenCodeGUI
+git clone https://github.com/<your-fork>/opencode-gui.git
+cd opencode-gui
 npm install
 npm run build
 ```
@@ -128,7 +128,7 @@ npm test
 
 #### バグ報告・機能リクエスト
 
-作業を開始する前に Issue を立てることを推奨します。[Issue テンプレート](https://github.com/ktmage/OpenCodeGUI/issues/new/choose)を利用してください。
+作業を開始する前に Issue を立てることを推奨します。[Issue テンプレート](https://github.com/ktmage/opencode-gui/issues/new/choose)を利用してください。
 
 小さな修正（typo、ドキュメント改善など）は直接 PR を出しても構いません。
 
