@@ -85,6 +85,7 @@ export function InputArea({
   });
   const [atQuery, setAtQuery] = useState("");
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [isShellMode, setIsShellMode] = useState(false);
   // ポップアップ内のフォーカス位置（-1 = フォーカスなし）
   const [hashFocusedIndex, setHashFocusedIndex] = useState(-1);
   const [atFocusedIndex, setAtFocusedIndex] = useState(-1);
@@ -132,6 +133,8 @@ export function InputArea({
         if (prev.some((f) => f.filePath === file.filePath)) return prev;
         return [...prev, file];
       });
+      // ファイル添付はシェルモードと排他
+      setIsShellMode(false);
       setShowFilePicker(false);
       // # トリガーの場合はテキストから #query を消す
       if (hashTrigger.active) {
@@ -183,10 +186,33 @@ export function InputArea({
     }
   }, [hashTrigger.active, hashQuery]);
 
+  // シェルモード ON: session.shell() はファイル・エージェントパラメータを受け付けないため排他にする
+  const enableShellMode = useCallback(() => {
+    setIsShellMode(true);
+    setAttachedFiles([]);
+    setSelectedAgent(null);
+  }, []);
+
+  // シェルモード OFF
+  const disableShellMode = useCallback(() => {
+    setIsShellMode(false);
+  }, []);
+
+  // シェルモードトグル（統合メニュー用）
+  const toggleShellMode = useCallback(() => {
+    if (isShellMode) {
+      disableShellMode();
+    } else {
+      enableShellMode();
+    }
+  }, [isShellMode, enableShellMode, disableShellMode]);
+
   // @ トリガー: エージェント選択時のハンドラ
   const selectAgent = useCallback(
     (agent: Agent) => {
       setSelectedAgent(agent);
+      // エージェント選択はシェルモードと排他
+      setIsShellMode(false);
       // テキストから @query を削除する
       if (atTrigger.active) {
         setText((prev) => {
@@ -207,28 +233,22 @@ export function InputArea({
     setSelectedAgent(null);
   }, []);
 
-  // ! プレフィクスでシェルコマンドモードかどうかを判定する
-  const isShellMode = text.startsWith("!");
-
   const handleSend = useCallback(() => {
     const trimmed = text.trim();
     if (!trimmed) return;
-    // ! プレフィクスの場合はシェルコマンドとして実行する
-    if (trimmed.startsWith("!")) {
-      const command = trimmed.slice(1).trim();
-      if (command) {
-        onShellExecute(command);
-      }
+    if (isShellMode) {
+      onShellExecute(trimmed);
     } else {
       onSend(trimmed, attachedFiles, selectedAgent?.name);
     }
     setText("");
     setAttachedFiles([]);
     setSelectedAgent(null);
+    setIsShellMode(false);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name]);
+  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name, isShellMode]);
 
   // # トリガーのファイル候補
   const hashFiles = hashQuery
@@ -348,6 +368,14 @@ export function InputArea({
       const newText = e.target.value;
       setText(newText);
 
+      // ! プレフィクス検出: 先頭に ! が入力されたらシェルモードを ON にし ! をテキストから除去する
+      if (newText.startsWith("!") && !isShellMode) {
+        enableShellMode();
+        const withoutBang = newText.slice(1);
+        setText(withoutBang);
+        return;
+      }
+
       // # トリガー検出
       const cursorPos = e.target.selectionStart;
       if (newText.length > text.length) {
@@ -403,7 +431,7 @@ export function InputArea({
         }
       }
     },
-    [text, hashTrigger, atTrigger],
+    [text, hashTrigger, atTrigger, isShellMode, enableShellMode],
   );
 
   const handleInput = useCallback(() => {
@@ -430,6 +458,16 @@ export function InputArea({
         {/* コンテキストバー: エージェントチップ + クリップボタン + 添付ファイルチップ + quick-add を1行に */}
         <div className={styles.contextBar}>
           <div className={styles.contextBarLeft}>
+            {/* シェルモードチップ */}
+            {isShellMode && (
+              <div className={styles.shellChip} data-testid="shell-chip">
+                <TerminalIcon />
+                <span className={styles.shellChipName}>{t["input.shellMode"]}</span>
+                <button type="button" className={styles.shellChipClear} onClick={disableShellMode}>
+                  <CloseIcon width={12} height={12} />
+                </button>
+              </div>
+            )}
             {/* 選択済みエージェントチップ（ファイルチップの先頭に表示） */}
             {selectedAgent && (
               <div className={styles.agentChip}>
@@ -452,6 +490,11 @@ export function InputArea({
               onAddFile={addFile}
               onRemoveFile={removeFile}
               filePickerRef={filePickerRef}
+              agents={subagents}
+              selectedAgent={selectedAgent}
+              onSelectAgent={selectAgent}
+              isShellMode={isShellMode}
+              onToggleShellMode={toggleShellMode}
             />
           </div>
           {/* コンテキストウィンドウ使用率インジケーター (右側) */}
@@ -467,12 +510,6 @@ export function InputArea({
 
         {/* テキスト入力エリア（# ポップアップ付き） */}
         <div className={styles.textareaContainer}>
-          {isShellMode && (
-            <div className={styles.shellIndicator}>
-              <TerminalIcon />
-              <span>{t["input.shellMode"]}</span>
-            </div>
-          )}
           <textarea
             ref={textareaRef}
             className={styles.textarea}

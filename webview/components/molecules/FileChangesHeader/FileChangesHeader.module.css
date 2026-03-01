@@ -118,6 +118,10 @@
   color: var(--vscode-editorWarning-foreground, #ff9800);
 }
 
+.fileIcon {
+  flex-shrink: 0;
+}
+
 .fileName {
   font-weight: 500;
   white-space: nowrap;

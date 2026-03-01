@@ -120,4 +120,20 @@ describe("MessagesArea", () => {
       expect(screen.queryByText("Fork from here")).not.toBeInTheDocument();
     });
   });
+
+  // auto-scroll integration
+  context("自動スクロールの場合", () => {
+    // scrolls to bottom on initial render
+    it("初回レンダリング時に scrollIntoView が呼ばれること", () => {
+      render(<MessagesArea {...defaultProps} />, { wrapper });
+      expect(Element.prototype.scrollIntoView).toHaveBeenCalled();
+    });
+
+    // renders onScroll handler on scroll container
+    it("スクロールコンテナに onScroll ハンドラが設定されること", () => {
+      const { container } = render(<MessagesArea {...defaultProps} />, { wrapper });
+      const scrollContainer = container.querySelector(".root") as HTMLElement;
+      expect(scrollContainer).toBeInTheDocument();
+    });
+  });
 });

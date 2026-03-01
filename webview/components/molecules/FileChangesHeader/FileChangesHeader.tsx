@@ -1,6 +1,7 @@
 import type { FileDiff } from "@opencode-ai/sdk";
 import { useState } from "react";
 import { useLocale } from "../../../locales";
+import { getFileIcon } from "../../../utils/file-icons";
 import { IconButton } from "../../atoms/IconButton";
 import { ChevronRightIcon, DiffIcon, ExternalLinkIcon } from "../../atoms/icons";
 import { DiffView } from "../DiffView";
@@ -63,6 +64,10 @@ function FileChangeItem({
           <ChevronRightIcon />
         </span>
         <span className={`${styles.statusBadge} ${statusClass[status] ?? ""}`}>{statusLabel[status]}</span>
+        {(() => {
+          const FileTypeIcon = getFileIcon(fileName);
+          return <FileTypeIcon width={14} height={14} className={styles.fileIcon} />;
+        })()}
         <span className={styles.fileName} title={diff.file}>
           {fileName}
         </span>

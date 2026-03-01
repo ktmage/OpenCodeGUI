@@ -1,4 +1,5 @@
 import { useLocale } from "../../../locales";
+import { getFileIcon } from "../../../utils/file-icons";
 import type { FileAttachment } from "../../../vscode-api";
 import { ListItem } from "../../atoms/ListItem";
 import styles from "./HashFilePopup.module.css";
@@ -16,15 +17,19 @@ export function HashFilePopup({ hashFiles, onAddFile, hashPopupRef, focusedIndex
   return (
     <div className={styles.root} ref={hashPopupRef} data-testid="hash-popup">
       {hashFiles.length > 0 ? (
-        hashFiles.map((file, i) => (
-          <ListItem
-            key={file.filePath}
-            title={file.fileName}
-            description={file.filePath}
-            onClick={() => onAddFile(file)}
-            focused={i === focusedIndex}
-          />
-        ))
+        hashFiles.map((file, i) => {
+          const FileIcon = getFileIcon(file.fileName);
+          return (
+            <ListItem
+              key={file.filePath}
+              title={file.fileName}
+              description={file.filePath}
+              icon={<FileIcon width={14} height={14} />}
+              onClick={() => onAddFile(file)}
+              focused={i === focusedIndex}
+            />
+          );
+        })
       ) : (
         <div className={styles.empty}>{t["input.noFiles"]}</div>
       )}
