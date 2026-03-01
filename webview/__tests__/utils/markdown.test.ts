@@ -39,9 +39,7 @@ describe("preprocessNestedCodeBlocks", () => {
   it("複数のコードブロックを正しく処理する", () => {
     const input = "text\n```md\n```ts\nx\n```\n```\nmore text\n```js\nconsole.log();\n```";
     const result = preprocessNestedCodeBlocks(input);
-    expect(result).toBe(
-      "text\n````md\n```ts\nx\n```\n````\nmore text\n```js\nconsole.log();\n```",
-    );
+    expect(result).toBe("text\n````md\n```ts\nx\n```\n````\nmore text\n```js\nconsole.log();\n```");
   });
 
   it("深くネストされたフェンスも正しく処理する", () => {

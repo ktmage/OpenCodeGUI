@@ -42,14 +42,10 @@ export function preprocessNestedCodeBlocks(text: string): string {
     const info = openMatch[5]; // 言語情報等（空文字の場合もある）
 
     // 閉じフェンスのパターン: 同じ文字で同じ長さ以上、かつ空白のみ（情報文字列なし）
-    const closeFenceRe = new RegExp(
-      `^${indent}(${fenceChar === "`" ? "`" : "~"}{${openFenceLen},})\\s*$`,
-    );
+    const closeFenceRe = new RegExp(`^${indent}(${fenceChar === "`" ? "`" : "~"}{${openFenceLen},})\\s*$`);
 
     // 内部フェンスの開始パターン: 同じ文字で3文字以上 + 情報文字列あり
-    const innerOpenRe = new RegExp(
-      `^\\s*(${fenceChar === "`" ? "`" : "~"}{3,})\\S`,
-    );
+    const innerOpenRe = new RegExp(`^\\s*(${fenceChar === "`" ? "`" : "~"}{3,})\\S`);
 
     // ネストを追跡しながら閉じフェンスを探す
     let closingLineIndex = -1;
@@ -82,9 +78,7 @@ export function preprocessNestedCodeBlocks(text: string): string {
     // 内部コンテンツに含まれるフェンスの最大長を調べる
     let maxInnerFence = 0;
     for (const line of contentLines) {
-      const innerMatch = line.match(
-        fenceChar === "`" ? /`{3,}/g : /~{3,}/g,
-      );
+      const innerMatch = line.match(fenceChar === "`" ? /`{3,}/g : /~{3,}/g);
       if (innerMatch) {
         for (const m of innerMatch) {
           maxInnerFence = Math.max(maxInnerFence, m.length);
