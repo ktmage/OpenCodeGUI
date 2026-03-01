@@ -1,6 +1,6 @@
 # OpenCodeGUI
 
-An unofficial VS Code sidebar chat interface for [OpenCode](https://github.com/opencode-ai/opencode).
+An unofficial VS Code sidebar chat interface for [OpenCode](https://github.com/anomalyco/opencode).
 
 OpenCode の非公式 VS Code サイドバーチャットインターフェース。
 
@@ -37,16 +37,25 @@ Use all OpenCode features from a familiar sidebar chat UI.
 - Markdown rendering
 - Tool call collapsible display
 - Permission approval UI (Allow / Once / Deny)
-- Session management (create, switch, delete)
+- Session management (create, switch, fork, delete)
+- Message editing & checkpoint restore
 - Model selection
 - File context attachment
+- File changes diff view
+- Shell command execution
 - Context compression indicator
+- Reasoning / thinking display
 - Todo display
+- Undo / Redo
+- Session sharing
+- Agent mention (`@` mention)
+- Child session navigation (subtask)
+- Settings panel
 - i18n support (English, Japanese)
 
 ### Requirements
 
-- [OpenCode](https://github.com/opencode-ai/opencode) installed
+- [OpenCode](https://github.com/anomalyco/opencode) installed
 - LLM provider authentication configured in OpenCode
 
 ### Installation
@@ -118,6 +127,11 @@ webview/                  # Webview (Browser, React)
   vscode-api.ts           # VS Code Webview API wrapper
   styles.css              # Styles using VS Code theme variables
   components/             # React components
+  hooks/                  # Custom React hooks
+  contexts/               # React Context providers
+  locales/                # i18n locale files
+  utils/                  # Utility functions
+  __tests__/              # Tests (unit, scenario)
 
 dist/                     # Build output (not tracked by git)
   extension.js            # Extension bundle
@@ -163,16 +177,25 @@ OpenCode の全機能をサイドバーのチャット UI から操作できま�
 - Markdown レンダリング
 - ツールコールの折りたたみ表示
 - パーミッション承認 UI（Allow / Once / Deny）
-- セッション管理（作成、切替、削除）
+- セッション管理（作成、切替、フォーク、削除）
+- メッセージ編集とチェックポイント復元
 - モデル選択
 - ファイルコンテキスト添付
+- ファイル変更差分表示
+- シェルコマンド実行
 - コンテキスト圧縮インジケーター
+- 推論（思考過程）表示
 - Todo 表示
+- Undo / Redo
+- セッション共有
+- エージェントメンション（`@` メンション）
+- 子セッションナビゲーション（サブタスク）
+- 設定パネル
 - 多言語対応（英語、日本語）
 
 ### 必要条件
 
-- [OpenCode](https://github.com/opencode-ai/opencode) がインストール済みであること
+- [OpenCode](https://github.com/anomalyco/opencode) がインストール済みであること
 - OpenCode 側で LLM プロバイダの認証が完了していること
 
 ### インストール
@@ -238,16 +261,17 @@ src/                      # Extension Host (Node.js)
   opencode-client.ts      # OpenCode サーバー接続
   chat-view-provider.ts   # Webview パネル & メッセージングプロトコル
 
-webview/                  # Webview (ブラウザ, React)
+webview/                  # Webview (Browser, React)
   main.tsx                # React エントリーポイント
   App.tsx                 # 状態管理 & SSE イベントハンドリング
   vscode-api.ts           # VS Code Webview API ラッパー
   styles.css              # VS Code テーマ変数を使ったスタイル
   components/             # React コンポーネント
-
-dist/                     # ビルド出力（git 管理外）
-  extension.js            # Extension バンドル
-  webview/                # Webview バンドル
+  hooks/                  # カスタム React フック
+  contexts/               # React Context プロバイダー
+  locales/                # i18n ロケールファイル
+  utils/                  # ユーティリティ関数
+  __tests__/              # テスト（単体、シナリオ）
 
 esbuild.mjs               # Extension ビルド設定
 vite.config.ts             # Webview ビルド設定
