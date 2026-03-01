@@ -25,10 +25,10 @@ describe("ToolConfigPanel", () => {
       expect(container.querySelector(".muted.sm")).toBeInTheDocument();
     });
 
-    // renders language options
+    // renders language options (auto + 8 locales = 9)
     it("言語オプションをレンダリングすること", () => {
       const { container } = render(<ToolConfigPanel {...defaultProps} />);
-      expect(container.querySelectorAll("input[name='locale']")).toHaveLength(3);
+      expect(container.querySelectorAll("input[name='locale']")).toHaveLength(9);
     });
   });
 

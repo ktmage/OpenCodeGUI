@@ -107,6 +107,12 @@ export const ja: typeof en = {
   "config.langAuto": "自動 (VS Code)",
   "config.langEn": "English",
   "config.langJa": "日本語",
+  "config.langZhCn": "简体中文",
+  "config.langKo": "한국어",
+  "config.langZhTw": "繁體中文",
+  "config.langEs": "Español",
+  "config.langPtBr": "Português (Brasil)",
+  "config.langRu": "Русский",
 
   // FileChangesHeader
   "fileChanges.title": "ファイル変更",

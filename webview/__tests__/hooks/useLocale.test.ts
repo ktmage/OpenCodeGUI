@@ -59,4 +59,109 @@ describe("useLocale", () => {
       expect(result.current.resolvedLocale).toBe("ja");
     });
   });
+
+  // resolveLocale for zh-cn
+  context("setVscodeLanguage で 'zh-cn' を設定した場合", () => {
+    // resolves to zh-cn
+    it("resolvedLocale が 'zh-cn' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.setVscodeLanguage("zh-cn"));
+      expect(result.current.resolvedLocale).toBe("zh-cn");
+    });
+  });
+
+  // resolveLocale for ko
+  context("setVscodeLanguage で 'ko' を設定した場合", () => {
+    // resolves to ko
+    it("resolvedLocale が 'ko' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.setVscodeLanguage("ko"));
+      expect(result.current.resolvedLocale).toBe("ko");
+    });
+  });
+
+  // resolveLocale for zh-tw
+  context("setVscodeLanguage で 'zh-tw' を設定した場合", () => {
+    // resolves to zh-tw
+    it("resolvedLocale が 'zh-tw' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.setVscodeLanguage("zh-tw"));
+      expect(result.current.resolvedLocale).toBe("zh-tw");
+    });
+  });
+
+  // resolveLocale for es
+  context("setVscodeLanguage で 'es' を設定した場合", () => {
+    // resolves to es
+    it("resolvedLocale が 'es' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.setVscodeLanguage("es"));
+      expect(result.current.resolvedLocale).toBe("es");
+    });
+  });
+
+  // resolveLocale for pt-br
+  context("setVscodeLanguage で 'pt-br' を設定した場合", () => {
+    // resolves to pt-br
+    it("resolvedLocale が 'pt-br' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.setVscodeLanguage("pt-br"));
+      expect(result.current.resolvedLocale).toBe("pt-br");
+    });
+  });
+
+  // resolveLocale for ru
+  context("setVscodeLanguage で 'ru' を設定した場合", () => {
+    // resolves to ru
+    it("resolvedLocale が 'ru' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.setVscodeLanguage("ru"));
+      expect(result.current.resolvedLocale).toBe("ru");
+    });
+  });
+
+  // handleLocaleSettingChange with new locales
+  context("handleLocaleSettingChange で直接ロケールを指定した場合", () => {
+    // sets zh-cn directly
+    it("resolvedLocale が 'zh-cn' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.handleLocaleSettingChange("zh-cn"));
+      expect(result.current.resolvedLocale).toBe("zh-cn");
+    });
+
+    // sets ko directly
+    it("resolvedLocale が 'ko' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.handleLocaleSettingChange("ko"));
+      expect(result.current.resolvedLocale).toBe("ko");
+    });
+
+    // sets zh-tw directly
+    it("resolvedLocale が 'zh-tw' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.handleLocaleSettingChange("zh-tw"));
+      expect(result.current.resolvedLocale).toBe("zh-tw");
+    });
+
+    // sets es directly
+    it("resolvedLocale が 'es' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.handleLocaleSettingChange("es"));
+      expect(result.current.resolvedLocale).toBe("es");
+    });
+
+    // sets pt-br directly
+    it("resolvedLocale が 'pt-br' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.handleLocaleSettingChange("pt-br"));
+      expect(result.current.resolvedLocale).toBe("pt-br");
+    });
+
+    // sets ru directly
+    it("resolvedLocale が 'ru' になること", () => {
+      const { result } = renderHook(() => useLocale());
+      act(() => result.current.handleLocaleSettingChange("ru"));
+      expect(result.current.resolvedLocale).toBe("ru");
+    });
+  });
 });
