@@ -33,6 +33,8 @@
 
 .textareaContainer {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .textarea {
@@ -47,7 +49,8 @@
   line-height: 1.4;
   resize: none;
   max-height: 120px;
-  min-height: 20px;
+  min-height: 28px;
+  padding: 2px 0;
 }
 
 .textarea::placeholder {
