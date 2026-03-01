@@ -31,6 +31,7 @@ export function App() {
 
   // Extension Host → Webview メッセージでのみ更新される単純なステート
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
+  const [activeEditorFile, setActiveEditorFile] = useState<FileAttachment | null>(null);
   const [workspaceFiles, setWorkspaceFiles] = useState<FileAttachment[]>([]);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [childSessions, setChildSessions] = useState<Session[]>([]);
@@ -135,6 +136,9 @@ export function App() {
         }
         case "openEditors":
           setOpenEditors(data.files);
+          break;
+        case "activeEditor":
+          setActiveEditorFile(data.file);
           break;
         case "workspaceFiles":
           setWorkspaceFiles(data.files);
@@ -487,6 +491,7 @@ export function App() {
                   selectedModel={prov.selectedModel}
                   onModelSelect={prov.handleModelSelect}
                   openEditors={openEditors}
+                  activeEditorFile={activeEditorFile}
                   workspaceFiles={workspaceFiles}
                   inputTokens={msg.inputTokens}
                   contextLimit={prov.contextLimit}
