@@ -1,7 +1,8 @@
+import type { Agent } from "@opencode-ai/sdk";
 import { useLocale } from "../../../locales";
 import type { FileAttachment } from "../../../vscode-api";
 import { IconButton } from "../../atoms/IconButton";
-import { ClipIcon, CloseIcon, PlusIcon } from "../../atoms/icons";
+import { AgentIcon, ClipIcon, CloseIcon, PlusIcon, TerminalIcon } from "../../atoms/icons";
 import { ListItem } from "../../atoms/ListItem";
 import styles from "./FileAttachmentBar.module.css";
 
@@ -17,6 +18,11 @@ type Props = {
   onAddFile: (file: FileAttachment) => void;
   onRemoveFile: (filePath: string) => void;
   filePickerRef: React.RefObject<HTMLDivElement | null>;
+  agents: Agent[];
+  selectedAgent: Agent | null;
+  onSelectAgent: (agent: Agent) => void;
+  isShellMode: boolean;
+  onToggleShellMode: () => void;
 };
 
 export function FileAttachmentBar({
@@ -31,6 +37,11 @@ export function FileAttachmentBar({
   onAddFile,
   onRemoveFile,
   filePickerRef,
+  agents,
+  selectedAgent,
+  onSelectAgent,
+  isShellMode,
+  onToggleShellMode,
 }: Props) {
   const t = useLocale();
 
@@ -49,28 +60,65 @@ export function FileAttachmentBar({
         </IconButton>
         {showFilePicker && (
           <div className={styles.pickerDropdown}>
-            <input
-              className={styles.pickerSearch}
-              placeholder={t["input.searchFiles"]}
-              value={filePickerQuery}
-              onChange={(e) => onFilePickerSearch(e.target.value)}
-            />
-            <div className={styles.pickerList}>
-              {pickerFiles.length > 0 ? (
-                pickerFiles
-                  .slice(0, 15)
-                  .map((file) => (
+            {/* ファイルセクション */}
+            <div className={isShellMode ? styles.sectionDisabled : undefined}>
+              <div className={styles.sectionHeader}>{t["input.section.files"]}</div>
+              <input
+                className={styles.pickerSearch}
+                placeholder={t["input.searchFiles"]}
+                value={filePickerQuery}
+                onChange={(e) => onFilePickerSearch(e.target.value)}
+                disabled={isShellMode}
+              />
+              <div className={styles.pickerList}>
+                {pickerFiles.length > 0 ? (
+                  pickerFiles
+                    .slice(0, 15)
+                    .map((file) => (
+                      <ListItem
+                        key={file.filePath}
+                        title={file.fileName}
+                        description={file.filePath}
+                        onClick={() => onAddFile(file)}
+                      />
+                    ))
+                ) : (
+                  <div className={styles.pickerEmpty}>{t["input.noFiles"]}</div>
+                )}
+              </div>
+            </div>
+
+            {/* エージェントセクション */}
+            <div className={isShellMode ? styles.sectionDisabled : undefined}>
+              <div className={styles.sectionDivider} />
+              <div className={styles.sectionHeader}>{t["input.section.agents"]}</div>
+              <div className={styles.pickerList}>
+                {agents.length > 0 ? (
+                  agents.map((agent) => (
                     <ListItem
-                      key={file.filePath}
-                      title={file.fileName}
-                      description={file.filePath}
-                      onClick={() => onAddFile(file)}
+                      key={agent.name}
+                      title={agent.name}
+                      description={agent.description}
+                      onClick={() => onSelectAgent(agent)}
+                      focused={selectedAgent?.name === agent.name}
                     />
                   ))
-              ) : (
-                <div className={styles.pickerEmpty}>{t["input.noFiles"]}</div>
-              )}
+                ) : (
+                  <div className={styles.pickerEmpty}>{t["input.noAgents"]}</div>
+                )}
+              </div>
             </div>
+
+            {/* シェルモードセクション */}
+            <div className={styles.sectionDivider} />
+            <div className={styles.sectionHeader}>{t["input.section.shell"]}</div>
+            <button type="button" className={styles.toggleRow} onClick={onToggleShellMode} data-testid="shell-toggle">
+              <TerminalIcon />
+              <span className={styles.toggleLabel}>{t["input.shellMode"]}</span>
+              <div className={`${styles.toggleTrack} ${isShellMode ? styles.toggleOn : ""}`}>
+                <div className={styles.toggleThumb} />
+              </div>
+            </button>
           </div>
         )}
       </div>

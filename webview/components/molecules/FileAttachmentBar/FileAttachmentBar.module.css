@@ -38,7 +38,8 @@
   margin-bottom: 4px;
   min-width: 280px;
   max-width: 400px;
-  max-height: 300px;
+  max-height: 400px;
+  overflow-y: auto;
   background-color: var(--vscode-quickInput-background);
   border: 1px solid var(--vscode-dropdown-border);
   border-radius: 4px;
@@ -118,4 +119,76 @@
 
 .chipRemove:hover {
   opacity: 1;
+}
+
+.sectionHeader {
+  padding: 6px 10px 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--vscode-descriptionForeground);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sectionDivider {
+  height: 1px;
+  background-color: var(--vscode-panel-border);
+  margin: 4px 0;
+}
+
+.sectionDisabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  color: var(--vscode-foreground);
+  font-family: var(--vscode-font-family);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.toggleRow:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.toggleLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.toggleTrack {
+  position: relative;
+  width: 28px;
+  height: 14px;
+  background-color: var(--vscode-panel-border);
+  border-radius: 7px;
+  transition: background-color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.toggleOn {
+  background-color: var(--vscode-terminal-ansiYellow, #e5c07b);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--vscode-foreground);
+  border-radius: 50%;
+  transition: transform 0.15s ease;
+}
+
+.toggleOn .toggleThumb {
+  transform: translateX(14px);
 }

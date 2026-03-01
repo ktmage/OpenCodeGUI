@@ -123,6 +123,11 @@ export const ja: typeof en = {
   "childSession.agent": "エージェント",
   "childSession.backToParent": "親セッションに戻る",
 
+  // Context menu sections
+  "input.section.files": "ファイル",
+  "input.section.agents": "エージェント",
+  "input.section.shell": "シェルモード",
+
   // AgentMention
   "input.noAgents": "利用可能なエージェントがありません",
 };

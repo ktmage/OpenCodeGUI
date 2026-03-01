@@ -121,6 +121,11 @@ export const en = {
   "childSession.agent": "Agent",
   "childSession.backToParent": "Back to parent session",
 
+  // Context menu sections
+  "input.section.files": "Files",
+  "input.section.agents": "Agents",
+  "input.section.shell": "Shell Mode",
+
   // AgentMention
   "input.noAgents": "No agents available",
 } as const;
