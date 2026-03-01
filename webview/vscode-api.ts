@@ -116,6 +116,7 @@ export type WebviewToExtMessage =
   | { type: "undoSession"; sessionId: string; messageId: string }
   | { type: "redoSession"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
+  | { type: "copyToClipboard"; text: string }
   | { type: "ready" };
 
 interface VsCodeApi {

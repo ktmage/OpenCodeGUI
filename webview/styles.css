@@ -20,6 +20,79 @@ body {
   background-color: var(--vscode-sideBar-background);
 }
 
+/* --- highlight.js - VSCode テーマ連動 --- */
+
+.hljs {
+  color: var(--vscode-editor-foreground);
+  background: var(--vscode-textCodeBlock-background);
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: var(--vscode-editorLineNumber-foreground, #6a9955);
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-name,
+.hljs-tag {
+  color: var(--vscode-symbolIcon-keywordForeground, #c586c0);
+}
+
+.hljs-string,
+.hljs-title,
+.hljs-section,
+.hljs-attribute,
+.hljs-literal,
+.hljs-template-tag,
+.hljs-template-variable,
+.hljs-type {
+  color: var(--vscode-symbolIcon-stringForeground, #ce9178);
+}
+
+.hljs-number,
+.hljs-meta,
+.hljs-meta .hljs-keyword {
+  color: var(--vscode-symbolIcon-numberForeground, #b5cea8);
+}
+
+.hljs-function,
+.hljs-title.function_,
+.hljs-title.class_ {
+  color: var(--vscode-symbolIcon-functionForeground, #dcdcaa);
+}
+
+.hljs-variable,
+.hljs-variable.language_,
+.hljs-params {
+  color: var(--vscode-symbolIcon-variableForeground, #9cdcfe);
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #d16969;
+}
+
+.hljs-deletion {
+  color: #ce9178;
+  background-color: rgba(206, 145, 120, 0.1);
+}
+
+.hljs-addition {
+  color: #b5cea8;
+  background-color: rgba(181, 206, 168, 0.1);
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
 /* --- Layout --- */
 
 .chat-container {

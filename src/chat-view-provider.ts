@@ -90,6 +90,7 @@ export type WebviewToExtMessage =
   | { type: "undoSession"; sessionId: string; messageId: string }
   | { type: "redoSession"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
+  | { type: "copyToClipboard"; text: string }
   | { type: "ready" };
 
 export class ChatViewProvider implements vscode.WebviewViewProvider {
@@ -395,6 +396,10 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         const session = await this.connection.unshareSession(message.sessionId);
         this.activeSession = session;
         this.postMessage({ type: "activeSession", session });
+        break;
+      }
+      case "copyToClipboard": {
+        await vscode.env.clipboard.writeText(message.text);
         break;
       }
       case "undoSession": {

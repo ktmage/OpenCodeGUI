@@ -26,13 +26,19 @@ vi.mock("../vscode-api", () => ({
 }));
 
 // --- marked モック ---
-// TextPartView は marked.parse を使うが、テストでは markdown レンダリングの検証は不要。
+// TextPartView は Marked インスタンスを使うが、テストでは markdown レンダリングの検証は不要。
 // プレーンテキストをそのまま <p> タグで返す。
 
 vi.mock("marked", () => ({
+  Marked: class {
+    parse(text: string) {
+      return `<p>${text}</p>`;
+    }
+  },
   marked: {
     parse: (text: string) => `<p>${text}</p>`,
     setOptions: vi.fn(),
+    use: vi.fn(),
   },
 }));
 
