@@ -16,7 +16,7 @@ describe("HashFilePopup", () => {
     // renders file items
     it("ファイルアイテムをレンダリングすること", () => {
       const { container } = render(
-        <HashFilePopup hashFiles={[file1, file2]} onAddFile={vi.fn()} hashPopupRef={createRef()} />,
+        <HashFilePopup hashFiles={[file1, file2]} onAddFile={vi.fn()} hashPopupRef={createRef()} focusedIndex={-1} />,
       );
       expect(container.querySelectorAll("[data-testid='hash-popup'] > div")).toHaveLength(2);
     });
@@ -25,7 +25,7 @@ describe("HashFilePopup", () => {
     it("アイテムクリックで onAddFile が呼ばれること", () => {
       const onAddFile = vi.fn();
       const { container } = render(
-        <HashFilePopup hashFiles={[file1]} onAddFile={onAddFile} hashPopupRef={createRef()} />,
+        <HashFilePopup hashFiles={[file1]} onAddFile={onAddFile} hashPopupRef={createRef()} focusedIndex={-1} />,
       );
       fireEvent.click(container.querySelector("[data-testid='hash-popup'] > div")!);
       expect(onAddFile).toHaveBeenCalledWith(file1);
@@ -36,8 +36,23 @@ describe("HashFilePopup", () => {
   context("ファイル候補がない場合", () => {
     // renders empty message
     it("空メッセージを表示すること", () => {
-      const { container } = render(<HashFilePopup hashFiles={[]} onAddFile={vi.fn()} hashPopupRef={createRef()} />);
+      const { container } = render(
+        <HashFilePopup hashFiles={[]} onAddFile={vi.fn()} hashPopupRef={createRef()} focusedIndex={-1} />,
+      );
       expect(container.querySelector(".empty")).toBeInTheDocument();
+    });
+  });
+
+  // when focusedIndex highlights a specific item
+  context("focusedIndex が指定された場合", () => {
+    // applies data-focused to the correct item
+    it("対応するアイテムに data-focused 属性が付与されること", () => {
+      const { container } = render(
+        <HashFilePopup hashFiles={[file1, file2]} onAddFile={vi.fn()} hashPopupRef={createRef()} focusedIndex={1} />,
+      );
+      const items = container.querySelectorAll("[data-testid='hash-popup'] > div");
+      expect(items[0]?.hasAttribute("data-focused")).toBe(false);
+      expect(items[1]?.getAttribute("data-focused")).toBe("true");
     });
   });
 });

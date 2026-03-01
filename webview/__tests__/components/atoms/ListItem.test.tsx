@@ -55,4 +55,22 @@ describe("ListItem", () => {
       expect(container.querySelector(".root")?.classList.contains("custom")).toBe(true);
     });
   });
+
+  // when focused is true
+  context("focused が true の場合", () => {
+    // has data-focused attribute
+    it("data-focused 属性を持つこと", () => {
+      const { container } = render(<ListItem title="index.ts" focused={true} />);
+      expect(container.querySelector(".root")?.getAttribute("data-focused")).toBe("true");
+    });
+  });
+
+  // when focused is false or undefined
+  context("focused が false または未指定の場合", () => {
+    // does not have data-focused attribute
+    it("data-focused 属性を持たないこと", () => {
+      const { container } = render(<ListItem title="index.ts" focused={false} />);
+      expect(container.querySelector(".root")?.hasAttribute("data-focused")).toBe(false);
+    });
+  });
 });
