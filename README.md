@@ -22,6 +22,10 @@ Use all OpenCode features from a familiar sidebar chat UI.
 > **Disclaimer:**
 > This project is experimental and developed primarily through AI-assisted coding. It is provided "as-is" without warranty of any kind. It may contain unexpected behavior, unconventional implementations, or undiscovered defects. Use at your own risk. The authors assume no liability for any damages arising from the use of this software.
 
+### Demo
+
+https://github.com/ktmage/opencode-gui/raw/master/media/demo.mp4
+
 ### Documents
 
 | File | Description |
@@ -51,6 +55,8 @@ Use all OpenCode features from a familiar sidebar chat UI.
 - Agent mention (`@` mention)
 - Child session navigation (subtask)
 - Settings panel
+- Keyboard navigation for inline popups (Tab / Arrow keys)
+- Subtask display
 - i18n support (English, Japanese)
 
 ### Requirements
@@ -101,6 +107,12 @@ npm run watch:ext
 npm run watch:webview
 ```
 
+#### Lint & Format
+
+```sh
+npm run check
+```
+
 #### Debug
 
 1. Run `npm run build`
@@ -125,17 +137,12 @@ webview/                  # Webview (Browser, React)
   main.tsx                # React entry point
   App.tsx                 # State management & SSE event handling
   vscode-api.ts           # VS Code Webview API wrapper
-  styles.css              # Styles using VS Code theme variables
-  components/             # React components
+  components/             # React components (CSS Modules)
   hooks/                  # Custom React hooks
   contexts/               # React Context providers
   locales/                # i18n locale files
   utils/                  # Utility functions
   __tests__/              # Tests (unit, scenario)
-
-dist/                     # Build output (not tracked by git)
-  extension.js            # Extension bundle
-  webview/                # Webview bundle
 
 esbuild.mjs               # Extension build config
 vite.config.ts             # Webview build config
@@ -161,6 +168,10 @@ OpenCode の全機能をサイドバーのチャット UI から操作できま�
 > [!CAUTION]
 > **免責事項：**
 > 本プロジェクトは実験的な取り組みであり、主に AI を活用したコーディングにより開発されています。いかなる保証もなく「現状のまま」提供されます。予期しない動作、一般的でない実装、未発見の不具合が含まれる可能性があります。ご利用は自己責任でお願いいたします。本ソフトウェアの使用により生じたいかなる損害についても、作者は一切の責任を負いません。
+
+### デモ
+
+https://github.com/ktmage/opencode-gui/raw/master/media/demo.mp4
 
 ### ドキュメント
 
@@ -191,6 +202,8 @@ OpenCode の全機能をサイドバーのチャット UI から操作できま�
 - エージェントメンション（`@` メンション）
 - 子セッションナビゲーション（サブタスク）
 - 設定パネル
+- インラインポップアップのキーボードナビゲーション（Tab / 矢印キー）
+- サブタスク表示
 - 多言語対応（英語、日本語）
 
 ### 必要条件
@@ -241,6 +254,12 @@ npm run watch:ext
 npm run watch:webview
 ```
 
+#### リント & フォーマット
+
+```sh
+npm run check
+```
+
 #### デバッグ実行
 
 1. `npm run build` でビルドする
@@ -265,8 +284,7 @@ webview/                  # Webview (Browser, React)
   main.tsx                # React エントリーポイント
   App.tsx                 # 状態管理 & SSE イベントハンドリング
   vscode-api.ts           # VS Code Webview API ラッパー
-  styles.css              # VS Code テーマ変数を使ったスタイル
-  components/             # React コンポーネント
+  components/             # React コンポーネント（CSS Modules）
   hooks/                  # カスタム React フック
   contexts/               # React Context プロバイダー
   locales/                # i18n ロケールファイル
