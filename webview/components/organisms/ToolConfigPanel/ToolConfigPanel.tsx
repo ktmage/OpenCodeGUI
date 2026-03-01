@@ -30,9 +30,18 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
         <div className={styles.section}>
           <div className={styles.sectionTitle}>{t["config.language"]}</div>
           <div>
-            {(["auto", "en", "ja"] as const).map((opt) => {
-              const label =
-                opt === "auto" ? t["config.langAuto"] : opt === "en" ? t["config.langEn"] : t["config.langJa"];
+            {(["auto", "en", "ja", "zh-cn", "ko", "zh-tw", "es", "pt-br", "ru"] as const).map((opt) => {
+              const labelMap = {
+                auto: t["config.langAuto"],
+                en: t["config.langEn"],
+                ja: t["config.langJa"],
+                "zh-cn": t["config.langZhCn"],
+                ko: t["config.langKo"],
+                "zh-tw": t["config.langZhTw"],
+                es: t["config.langEs"],
+                "pt-br": t["config.langPtBr"],
+                ru: t["config.langRu"],
+              } as const;
               return (
                 <label key={opt} className={`${styles.toggle} ${styles.toolItem}`}>
                   <input
@@ -41,7 +50,7 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
                     checked={localeSetting === opt}
                     onChange={() => onLocaleSettingChange(opt)}
                   />
-                  <span className={styles.toolName}>{label}</span>
+                  <span className={styles.toolName}>{labelMap[opt]}</span>
                 </label>
               );
             })}
