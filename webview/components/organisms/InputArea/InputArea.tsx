@@ -1,6 +1,7 @@
 import type { Agent, Provider } from "@opencode-ai/sdk";
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../../../hooks/useClickOutside";
+import { useInputHistory } from "../../../hooks/useInputHistory";
 import type { LocaleSetting } from "../../../locales";
 import { useLocale } from "../../../locales";
 import type { AllProvidersData, FileAttachment } from "../../../vscode-api";
@@ -94,6 +95,9 @@ export function InputArea({
   const filePickerRef = useRef<HTMLDivElement>(null);
   const hashPopupRef = useRef<HTMLDivElement>(null);
   const agentPopupRef = useRef<HTMLDivElement>(null);
+  const inputHistory = useInputHistory();
+  // 履歴テキスト適用時は onChange が走るが resetNavigation を呼ばないようにするフラグ
+  const applyingHistoryRef = useRef(false);
 
   // チェックポイントからの復元時にテキストをプリフィルする
   useEffect(() => {
@@ -236,6 +240,8 @@ export function InputArea({
   const handleSend = useCallback(() => {
     const trimmed = text.trim();
     if (!trimmed) return;
+    // 送信テキストを履歴に追加する
+    inputHistory.addEntry(trimmed);
     if (isShellMode) {
       onShellExecute(trimmed);
     } else {
@@ -248,7 +254,7 @@ export function InputArea({
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name, isShellMode]);
+  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name, isShellMode, inputHistory]);
 
   // # トリガーのファイル候補
   const hashFiles = hashQuery
@@ -331,6 +337,62 @@ export function InputArea({
         }
       }
 
+      // ArrowUp: カーソルが先頭行にあるとき履歴を遡る
+      if (e.key === "ArrowUp" && !composingRef.current) {
+        const el = textareaRef.current;
+        if (el) {
+          const cursorPos = el.selectionStart;
+          const firstNewline = text.indexOf("\n");
+          const isFirstLine = firstNewline === -1 || cursorPos <= firstNewline;
+          if (isFirstLine) {
+            const entry = inputHistory.navigateUp(text);
+            if (entry !== null) {
+              e.preventDefault();
+              applyingHistoryRef.current = true;
+              setText(entry);
+              // テキスト変更後に高さを調整してカーソルを先頭に置く
+              requestAnimationFrame(() => {
+                if (el) {
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
+                  el.setSelectionRange(0, 0);
+                }
+                applyingHistoryRef.current = false;
+              });
+              return;
+            }
+          }
+        }
+      }
+
+      // ArrowDown: カーソルが末尾行にあるとき履歴を進める
+      if (e.key === "ArrowDown" && !composingRef.current) {
+        const el = textareaRef.current;
+        if (el) {
+          const cursorPos = el.selectionStart;
+          const lastNewline = text.lastIndexOf("\n");
+          const isLastLine = lastNewline === -1 || cursorPos > lastNewline;
+          if (isLastLine) {
+            const entry = inputHistory.navigateDown(text);
+            if (entry !== null) {
+              e.preventDefault();
+              applyingHistoryRef.current = true;
+              setText(entry);
+              requestAnimationFrame(() => {
+                if (el) {
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
+                  const len = entry.length;
+                  el.setSelectionRange(len, len);
+                }
+                applyingHistoryRef.current = false;
+              });
+              return;
+            }
+          }
+        }
+      }
+
       // IME 変換中は送信しない
       if (e.key === "Enter" && !e.shiftKey && !composingRef.current) {
         e.preventDefault();
@@ -360,6 +422,8 @@ export function InputArea({
       filteredAgents,
       addFile,
       selectAgent,
+      text,
+      inputHistory,
     ],
   );
 
@@ -367,6 +431,11 @@ export function InputArea({
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
       const newText = e.target.value;
       setText(newText);
+
+      // 履歴適用による setText 以外のテキスト変更ではナビゲーションをリセットする
+      if (!applyingHistoryRef.current) {
+        inputHistory.resetNavigation();
+      }
 
       // ! プレフィクス検出: 先頭に ! が入力されたらシェルモードを ON にし ! をテキストから除去する
       if (newText.startsWith("!") && !isShellMode) {
@@ -431,7 +500,7 @@ export function InputArea({
         }
       }
     },
-    [text, hashTrigger, atTrigger, isShellMode, enableShellMode],
+    [text, hashTrigger, atTrigger, isShellMode, enableShellMode, inputHistory],
   );
 
   const handleInput = useCallback(() => {

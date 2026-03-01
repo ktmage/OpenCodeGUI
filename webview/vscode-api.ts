@@ -127,6 +127,7 @@ interface VsCodeApi {
 
 export interface WebviewPersistedState {
   localeSetting?: "auto" | "en" | "ja";
+  inputHistory?: string[];
 }
 
 declare function acquireVsCodeApi(): VsCodeApi;
