@@ -28,6 +28,12 @@ async function setupWithFiles() {
     ],
   });
 
+  // アクティブエディタを設定
+  await sendExtMessage({
+    type: "activeEditor",
+    file: { filePath: "src/main.ts", fileName: "main.ts" },
+  });
+
   vi.mocked(postMessage).mockClear();
 }
 
@@ -169,12 +175,12 @@ describe("ファイルコンテキスト", () => {
     );
   });
 
-  // Quick-add button attaches the first open editor file
-  it("アクティブエディタの quick-add ボタンで先頭ファイルが添付されること", async () => {
+  // Quick-add button attaches the active editor file
+  it("アクティブエディタの quick-add ボタンでファイルが添付されること", async () => {
     await setupWithFiles();
     const user = userEvent.setup();
 
-    // quick-add ボタン（最初の openEditor ファイル: main.ts）が表示される
+    // quick-add ボタン（アクティブエディタ: main.ts）が表示される
     const quickAdd = screen.getByTitle("Add src/main.ts");
     expect(quickAdd).toBeInTheDocument();
 
@@ -229,5 +235,37 @@ describe("ファイルコンテキスト", () => {
 
     // スペースを入力したのでポップアップが閉じる
     expect(document.querySelector("[data-testid='hash-popup']")).toBeFalsy();
+  });
+
+  // activeEditor message updates the quick-add button in real-time
+  it("activeEditor メッセージで quick-add ボタンがリアルタイムに更新されること", async () => {
+    await setupWithFiles();
+
+    // 初期状態: main.ts が表示されている
+    expect(screen.getByTitle("Add src/main.ts")).toBeInTheDocument();
+
+    // アクティブエディタを config.ts に切り替え
+    await sendExtMessage({
+      type: "activeEditor",
+      file: { filePath: "src/config.ts", fileName: "config.ts" },
+    });
+
+    // quick-add ボタンが config.ts に切り替わる
+    expect(screen.getByTitle("Add src/config.ts")).toBeInTheDocument();
+    expect(screen.queryByTitle("Add src/main.ts")).not.toBeInTheDocument();
+  });
+
+  // activeEditor null hides the quick-add button
+  it("activeEditor が null の場合 quick-add ボタンが非表示になること", async () => {
+    await setupWithFiles();
+
+    // 初期状態: main.ts が表示されている
+    expect(screen.getByTitle("Add src/main.ts")).toBeInTheDocument();
+
+    // アクティブエディタを null に
+    await sendExtMessage({ type: "activeEditor", file: null });
+
+    // quick-add ボタンが消える
+    expect(document.querySelector(".fileButton")).not.toBeInTheDocument();
   });
 });

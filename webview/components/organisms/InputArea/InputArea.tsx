@@ -26,6 +26,7 @@ type Props = {
   selectedModel: { providerID: string; modelID: string } | null;
   onModelSelect: (model: { providerID: string; modelID: string }) => void;
   openEditors: FileAttachment[];
+  activeEditorFile: FileAttachment | null;
   workspaceFiles: FileAttachment[];
   inputTokens: number;
   contextLimit: number;
@@ -51,6 +52,7 @@ export function InputArea({
   selectedModel,
   onModelSelect,
   openEditors,
+  activeEditorFile,
   workspaceFiles,
   inputTokens,
   contextLimit,
@@ -418,8 +420,6 @@ export function InputArea({
         (f) => !attachedFiles.some((a) => a.filePath === f.filePath),
       );
 
-  // 現在アクティブなエディタファイル (リストの先頭)
-  const activeEditorFile = openEditors.length > 0 ? openEditors[0] : null;
   const isActiveAttached = activeEditorFile
     ? attachedFiles.some((f) => f.filePath === activeEditorFile.filePath)
     : false;

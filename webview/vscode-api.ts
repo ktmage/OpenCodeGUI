@@ -61,6 +61,7 @@ export type ExtToWebviewMessage =
       configModel?: string;
     }
   | { type: "openEditors"; files: FileAttachment[] }
+  | { type: "activeEditor"; file: FileAttachment | null }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
   | { type: "toolConfig"; paths: { home: string; config: string; state: string; directory: string } }

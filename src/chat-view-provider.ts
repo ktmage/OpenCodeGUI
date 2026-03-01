@@ -35,6 +35,7 @@ export type ExtToWebviewMessage =
       configModel?: string;
     }
   | { type: "openEditors"; files: FileAttachment[] }
+  | { type: "activeEditor"; file: FileAttachment | null }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
   | { type: "toolConfig"; paths: OpenCodePath }
@@ -124,6 +125,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
     this.connection.onEvent((event) => {
       this.postMessage({ type: "event", event });
     });
+
+    // アクティブエディタが変わるたびに Webview に通知する
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      this.postMessage({ type: "activeEditor", file: this.getActiveEditorFile(editor) });
+    });
   }
 
   private async handleWebviewMessage(message: WebviewToExtMessage): Promise<void> {
@@ -165,6 +171,8 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           configModel,
         });
         this.postMessage({ type: "toolConfig", paths });
+        // 初期アクティブエディタを送信する
+        this.postMessage({ type: "activeEditor", file: this.getActiveEditorFile(vscode.window.activeTextEditor) });
         break;
       }
       case "sendMessage": {
@@ -418,6 +426,19 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         break;
       }
     }
+  }
+
+  /** アクティブなテキストエディタから FileAttachment を生成する。エディタがない場合は null を返す。 */
+  private getActiveEditorFile(editor: vscode.TextEditor | undefined): FileAttachment | null {
+    if (!editor) return null;
+    const uri = editor.document.uri;
+    // 出力パネルや設定画面など、file スキーム以外は対象外
+    if (uri.scheme !== "file") return null;
+    const workspaceFolder = vscode.workspace.workspaceFolders?.[0]?.uri;
+    const relativePath = workspaceFolder
+      ? path.relative(workspaceFolder.fsPath, uri.fsPath)
+      : path.basename(uri.fsPath);
+    return { filePath: relativePath, fileName: path.basename(uri.fsPath) };
   }
 
   private postMessage(message: ExtToWebviewMessage): void {
