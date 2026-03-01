@@ -73,4 +73,28 @@ describe("ListItem", () => {
       expect(container.querySelector(".root")?.hasAttribute("data-focused")).toBe(false);
     });
   });
+
+  // when icon is provided
+  context("icon が指定された場合", () => {
+    // renders the icon element
+    it("icon 要素を表示すること", () => {
+      const { container } = render(<ListItem title="index.ts" icon={<span data-testid="mock-icon" />} />);
+      expect(container.querySelector(".icon")).toBeInTheDocument();
+    });
+
+    // renders the icon content inside the icon wrapper
+    it("icon の中身が描画されること", () => {
+      const { container } = render(<ListItem title="index.ts" icon={<span data-testid="mock-icon" />} />);
+      expect(container.querySelector("[data-testid='mock-icon']")).toBeInTheDocument();
+    });
+  });
+
+  // when icon is not provided
+  context("icon が未指定の場合", () => {
+    // does not render icon wrapper
+    it("icon 要素を表示しないこと", () => {
+      const { container } = render(<ListItem title="index.ts" />);
+      expect(container.querySelector(".icon")).toBeNull();
+    });
+  });
 });
