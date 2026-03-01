@@ -18,7 +18,7 @@ export const ja: typeof en = {
   "input.remove": "削除",
   "input.placeholder": "OpenCode に質問... (# でファイルを添付)",
   "input.addFile": (name: string) => `${name} を追加`,
-  "input.openTerminal": "ターミナルで開く",
+  "input.openTerminal": "セッションをターミナルで開く",
   "input.shellMode": "シェルモード",
   "input.placeholder.shell": "シェルコマンドを入力...",
   "input.settings": "設定",
