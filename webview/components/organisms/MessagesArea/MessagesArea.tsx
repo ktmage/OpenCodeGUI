@@ -1,6 +1,6 @@
 import type { Permission } from "@opencode-ai/sdk";
-import { useEffect, useRef } from "react";
 import type { MessageWithParts } from "../../../App";
+import { useAutoScroll } from "../../../hooks/useAutoScroll";
 import { useLocale } from "../../../locales";
 import { ForkIcon, RevertIcon } from "../../atoms/icons";
 import { StreamingIndicator } from "../../atoms/StreamingIndicator";
@@ -27,14 +27,10 @@ export function MessagesArea({
   onForkFromCheckpoint,
 }: Props) {
   const t = useLocale();
-  const bottomRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  const { containerRef, bottomRef, handleScroll } = useAutoScroll(messages);
 
   return (
-    <div className={styles.root}>
+    <div ref={containerRef} className={styles.root} onScroll={handleScroll}>
       {messages.map((msg, index) => {
         // アシスタントメッセージの直後にチェックポイント区切り線を表示する
         // ただし最後のメッセージの後、busy 中、次がユーザーメッセージの場合のみ
