@@ -6,7 +6,8 @@
   font-size: 12px;
 }
 
-.root:hover {
+.root:hover,
+.root[data-focused] {
   background-color: var(--vscode-list-hoverBackground);
 }
 
