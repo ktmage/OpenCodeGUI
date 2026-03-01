@@ -83,6 +83,9 @@ export function InputArea({
   });
   const [atQuery, setAtQuery] = useState("");
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  // ポップアップ内のフォーカス位置（-1 = フォーカスなし）
+  const [hashFocusedIndex, setHashFocusedIndex] = useState(-1);
+  const [atFocusedIndex, setAtFocusedIndex] = useState(-1);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
   const filePickerRef = useRef<HTMLDivElement>(null);
@@ -225,20 +228,87 @@ export function InputArea({
     }
   }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name]);
 
+  // # トリガーのファイル候補
+  const hashFiles = hashQuery
+    ? workspaceFiles
+        .filter(
+          (f) =>
+            f.fileName.toLowerCase().includes(hashQuery.toLowerCase()) ||
+            f.filePath.toLowerCase().includes(hashQuery.toLowerCase()),
+        )
+        .filter((f) => !attachedFiles.some((a) => a.filePath === f.filePath))
+        .slice(0, 10)
+    : [...openEditors, ...workspaceFiles.filter((f) => !openEditors.some((o) => o.filePath === f.filePath))]
+        .filter((f) => !attachedFiles.some((a) => a.filePath === f.filePath))
+        .slice(0, 10);
+
+  // @ トリガーのエージェント候補（サブエージェントのみ表示）
+  const subagents = agents.filter((a) => a.mode === "subagent" || a.mode === "all");
+  const filteredAgents = atQuery
+    ? subagents.filter((a) => a.name.toLowerCase().includes(atQuery.toLowerCase())).slice(0, 10)
+    : subagents.slice(0, 10);
+
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
       // Escape で # ポップアップを閉じる
       if (e.key === "Escape" && hashTrigger.active) {
         setHashTrigger({ active: false, startIndex: -1 });
         setHashQuery("");
+        setHashFocusedIndex(-1);
         return;
       }
       // Escape で @ ポップアップを閉じる
       if (e.key === "Escape" && atTrigger.active) {
         setAtTrigger({ active: false, startIndex: -1 });
         setAtQuery("");
+        setAtFocusedIndex(-1);
         return;
       }
+
+      // # ポップアップ表示中の Tab / ↑ / ↓ / Enter ナビゲーション
+      if (hashTrigger.active && hashFiles.length > 0) {
+        // Tab / ↓ はフォーカスを次の項目に移動する
+        if (e.key === "Tab" || e.key === "ArrowDown") {
+          e.preventDefault();
+          setHashFocusedIndex((prev) => (prev + 1) % hashFiles.length);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setHashFocusedIndex((prev) => (prev <= 0 ? hashFiles.length - 1 : prev - 1));
+          return;
+        }
+        // Enter でフォーカス中の項目を確定する
+        if (e.key === "Enter" && !e.shiftKey && !composingRef.current && hashFocusedIndex >= 0) {
+          e.preventDefault();
+          addFile(hashFiles[hashFocusedIndex]);
+          setHashFocusedIndex(-1);
+          return;
+        }
+      }
+
+      // @ ポップアップ表示中の Tab / ↑ / ↓ / Enter ナビゲーション
+      if (atTrigger.active && filteredAgents.length > 0) {
+        // Tab / ↓ はフォーカスを次の項目に移動する
+        if (e.key === "Tab" || e.key === "ArrowDown") {
+          e.preventDefault();
+          setAtFocusedIndex((prev) => (prev + 1) % filteredAgents.length);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setAtFocusedIndex((prev) => (prev <= 0 ? filteredAgents.length - 1 : prev - 1));
+          return;
+        }
+        // Enter でフォーカス中の項目を確定する
+        if (e.key === "Enter" && !e.shiftKey && !composingRef.current && atFocusedIndex >= 0) {
+          e.preventDefault();
+          selectAgent(filteredAgents[atFocusedIndex]);
+          setAtFocusedIndex(-1);
+          return;
+        }
+      }
+
       // IME 変換中は送信しない
       if (e.key === "Enter" && !e.shiftKey && !composingRef.current) {
         e.preventDefault();
@@ -247,15 +317,28 @@ export function InputArea({
         if (hashTrigger.active) {
           setHashTrigger({ active: false, startIndex: -1 });
           setHashQuery("");
+          setHashFocusedIndex(-1);
         }
         if (atTrigger.active) {
           setAtTrigger({ active: false, startIndex: -1 });
           setAtQuery("");
+          setAtFocusedIndex(-1);
         }
         handleSend();
       }
     },
-    [handleSend, isBusy, hashTrigger.active, atTrigger.active],
+    [
+      handleSend,
+      isBusy,
+      hashTrigger.active,
+      atTrigger.active,
+      hashFocusedIndex,
+      atFocusedIndex,
+      hashFiles,
+      filteredAgents,
+      addFile,
+      selectAgent,
+    ],
   );
 
   const handleTextChange = useCallback(
@@ -296,8 +379,11 @@ export function InputArea({
         if (/[\s]/.test(queryPart) || cursorPos <= hashTrigger.startIndex) {
           setHashTrigger({ active: false, startIndex: -1 });
           setHashQuery("");
+          setHashFocusedIndex(-1);
         } else {
           setHashQuery(queryPart);
+          // クエリ変更時にフォーカスをリセットする
+          setHashFocusedIndex(-1);
         }
       }
 
@@ -307,8 +393,11 @@ export function InputArea({
         if (/[\s]/.test(queryPart) || cursorPos <= atTrigger.startIndex) {
           setAtTrigger({ active: false, startIndex: -1 });
           setAtQuery("");
+          setAtFocusedIndex(-1);
         } else {
           setAtQuery(queryPart);
+          // クエリ変更時にフォーカスをリセットする
+          setAtFocusedIndex(-1);
         }
       }
     },
@@ -329,31 +418,11 @@ export function InputArea({
         (f) => !attachedFiles.some((a) => a.filePath === f.filePath),
       );
 
-  // # トリガーのファイル候補
-  const hashFiles = hashQuery
-    ? workspaceFiles
-        .filter(
-          (f) =>
-            f.fileName.toLowerCase().includes(hashQuery.toLowerCase()) ||
-            f.filePath.toLowerCase().includes(hashQuery.toLowerCase()),
-        )
-        .filter((f) => !attachedFiles.some((a) => a.filePath === f.filePath))
-        .slice(0, 10)
-    : [...openEditors, ...workspaceFiles.filter((f) => !openEditors.some((o) => o.filePath === f.filePath))]
-        .filter((f) => !attachedFiles.some((a) => a.filePath === f.filePath))
-        .slice(0, 10);
-
   // 現在アクティブなエディタファイル (リストの先頭)
   const activeEditorFile = openEditors.length > 0 ? openEditors[0] : null;
   const isActiveAttached = activeEditorFile
     ? attachedFiles.some((f) => f.filePath === activeEditorFile.filePath)
     : false;
-
-  // @ トリガーのエージェント候補（サブエージェントのみ表示）
-  const subagents = agents.filter((a) => a.mode === "subagent" || a.mode === "all");
-  const filteredAgents = atQuery
-    ? subagents.filter((a) => a.name.toLowerCase().includes(atQuery.toLowerCase())).slice(0, 10)
-    : subagents.slice(0, 10);
 
   return (
     <div className={styles.root}>
@@ -422,11 +491,21 @@ export function InputArea({
           />
           {/* # トリガー ファイル候補ポップアップ */}
           {hashTrigger.active && (
-            <HashFilePopup hashFiles={hashFiles} onAddFile={addFile} hashPopupRef={hashPopupRef} />
+            <HashFilePopup
+              hashFiles={hashFiles}
+              onAddFile={addFile}
+              hashPopupRef={hashPopupRef}
+              focusedIndex={hashFocusedIndex}
+            />
           )}
           {/* @ トリガー エージェント候補ポップアップ */}
           {atTrigger.active && (
-            <AgentPopup agents={filteredAgents} onSelectAgent={selectAgent} agentPopupRef={agentPopupRef} />
+            <AgentPopup
+              agents={filteredAgents}
+              onSelectAgent={selectAgent}
+              agentPopupRef={agentPopupRef}
+              focusedIndex={atFocusedIndex}
+            />
           )}
         </div>
 

@@ -23,7 +23,7 @@ describe("AgentPopup", () => {
     // renders agent names
     it("エージェント名を表示すること", () => {
       const { container } = render(
-        <AgentPopup agents={agents} onSelectAgent={vi.fn()} agentPopupRef={{ current: null }} />,
+        <AgentPopup agents={agents} onSelectAgent={vi.fn()} agentPopupRef={{ current: null }} focusedIndex={-1} />,
       );
       const titles = container.querySelectorAll(".title");
       expect(titles[0]?.textContent).toBe("coder");
@@ -33,7 +33,7 @@ describe("AgentPopup", () => {
     // renders agent descriptions
     it("エージェントの説明を表示すること", () => {
       const { container } = render(
-        <AgentPopup agents={agents} onSelectAgent={vi.fn()} agentPopupRef={{ current: null }} />,
+        <AgentPopup agents={agents} onSelectAgent={vi.fn()} agentPopupRef={{ current: null }} focusedIndex={-1} />,
       );
       const descriptions = container.querySelectorAll(".description");
       expect(descriptions[0]?.textContent).toBe("Coding agent");
@@ -44,7 +44,7 @@ describe("AgentPopup", () => {
       const onSelect = vi.fn();
       const user = userEvent.setup();
       const { container } = render(
-        <AgentPopup agents={agents} onSelectAgent={onSelect} agentPopupRef={{ current: null }} />,
+        <AgentPopup agents={agents} onSelectAgent={onSelect} agentPopupRef={{ current: null }} focusedIndex={-1} />,
       );
       const items = container.querySelectorAll(".root > div");
       await user.click(items[0]!);
@@ -52,14 +52,18 @@ describe("AgentPopup", () => {
     });
   });
 
-  // when no agents available
-  context("エージェントがない場合", () => {
-    // shows empty message
-    it("空メッセージを表示すること", () => {
+  // when focusedIndex highlights a specific agent
+  context("focusedIndex が指定された場合", () => {
+    const agents = [createAgent("coder", "Coding agent"), createAgent("researcher", "Research agent")];
+
+    // applies data-focused to the correct item
+    it("対応するアイテムに data-focused 属性が付与されること", () => {
       const { container } = render(
-        <AgentPopup agents={[]} onSelectAgent={vi.fn()} agentPopupRef={{ current: null }} />,
+        <AgentPopup agents={agents} onSelectAgent={vi.fn()} agentPopupRef={{ current: null }} focusedIndex={0} />,
       );
-      expect(container.querySelector(".empty")?.textContent).toBe("No agents available");
+      const items = container.querySelectorAll(".root > div");
+      expect(items[0]?.getAttribute("data-focused")).toBe("true");
+      expect(items[1]?.hasAttribute("data-focused")).toBe(false);
     });
   });
 });
