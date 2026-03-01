@@ -24,8 +24,7 @@ Use all OpenCode features from a familiar sidebar chat UI.
 
 ### Demo
 
-<!-- TODO: Replace with actual demo GIF -->
-![Demo](media/demo.gif)
+https://github.com/ktmage/opencode-gui/raw/master/media/demo.mp4
 
 ### Documents
 
@@ -172,8 +171,7 @@ OpenCode の全機能をサイドバーのチャット UI から操作できま�
 
 ### デモ
 
-<!-- TODO: 実際のデモ GIF に差し替えてください -->
-![デモ](media/demo.gif)
+https://github.com/ktmage/opencode-gui/raw/master/media/demo.mp4
 
 ### ドキュメント
 
