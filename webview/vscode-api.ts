@@ -61,6 +61,7 @@ export type ExtToWebviewMessage =
       configModel?: string;
     }
   | { type: "openEditors"; files: FileAttachment[] }
+  | { type: "activeEditor"; file: FileAttachment | null }
   | { type: "workspaceFiles"; files: FileAttachment[] }
   | { type: "contextUsage"; usage: { inputTokens: number; contextLimit: number } }
   | { type: "toolConfig"; paths: { home: string; config: string; state: string; directory: string } }
@@ -115,6 +116,7 @@ export type WebviewToExtMessage =
   | { type: "undoSession"; sessionId: string; messageId: string }
   | { type: "redoSession"; sessionId: string }
   | { type: "openDiffEditor"; filePath: string; before: string; after: string }
+  | { type: "copyToClipboard"; text: string }
   | { type: "ready" };
 
 interface VsCodeApi {
@@ -125,6 +127,7 @@ interface VsCodeApi {
 
 export interface WebviewPersistedState {
   localeSetting?: "auto" | "en" | "ja";
+  inputHistory?: string[];
 }
 
 declare function acquireVsCodeApi(): VsCodeApi;

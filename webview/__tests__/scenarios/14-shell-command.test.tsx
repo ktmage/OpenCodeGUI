@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
@@ -65,30 +65,45 @@ describe("シェルコマンド実行", () => {
       await user.type(textarea, "!");
     });
 
-    // Shell mode indicator is displayed
-    it("シェルモードインジケーターが表示されること", () => {
-      expect(screen.getByText("Shell mode")).toBeInTheDocument();
+    // Shell mode chip is displayed in contextBar
+    it("シェルモードチップが contextBar に表示されること", () => {
+      const chip = screen.getByTestId("shell-chip");
+      expect(within(chip).getByText("Shell mode")).toBeInTheDocument();
     });
 
     // Placeholder changes to shell-specific text
     it("プレースホルダーがシェルコマンド用に変わること", () => {
       expect(screen.getByPlaceholderText("Enter shell command...")).toBeInTheDocument();
     });
+
+    // ! is removed from textarea text
+    it("テキストエリアから ! が除去されること", () => {
+      const textarea = screen.getByPlaceholderText("Enter shell command...");
+      expect(textarea).toHaveValue("");
+    });
   });
 
-  // Shell mode indicator disappears when ! is removed
-  context("! を削除した場合", () => {
+  // Shell mode chip × button disables shell mode
+  context("シェルモードチップの × ボタンをクリックした場合", () => {
     beforeEach(async () => {
       await setupActiveSession();
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "!");
-      await user.clear(textarea);
+      // × ボタンをクリックしてシェルモードを解除する
+      const chip = screen.getByTestId("shell-chip");
+      const closeButton = within(chip).getByRole("button");
+      await user.click(closeButton);
     });
 
-    // Shell mode indicator is hidden
-    it("シェルモードインジケーターが非表示になること", () => {
-      expect(screen.queryByText("Shell mode")).not.toBeInTheDocument();
+    // Shell mode chip is hidden
+    it("シェルモードチップが非表示になること", () => {
+      expect(screen.queryByTestId("shell-chip")).not.toBeInTheDocument();
+    });
+
+    // Placeholder reverts to normal
+    it("プレースホルダーが通常に戻ること", () => {
+      expect(screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)")).toBeInTheDocument();
     });
   });
 

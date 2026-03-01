@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-03-02
+
+### Added
+
+- Auto-scroll during message streaming (#41)
+- Quick-add button shows active editor file in real-time (#40)
+- Unified context menu for clip button with shell mode and agent mention (#42)
+- File type icons for file name displays (#45)
+- Multi-language locale support: Simplified Chinese, Korean, Traditional Chinese, Spanish, Brazilian Portuguese, Russian (#47)
+- Syntax highlighting for code blocks with highlight.js (#54)
+- Copy button for code blocks (#54)
+- Input history navigation with ArrowUp/ArrowDown (#60)
+
+### Changed
+
+- Terminal button tooltip text clarified to "Open session in terminal" (#43)
+- File changes list limited to max-height with scrollbar (#55)
+- Input area expanded vertically with centered text input (#59)
+- Markdown list item margins compacted (#54)
+- Nested code block rendering improved (#54)
+
 ## [0.2.0] - 2026-03-01
 
 ### Added
@@ -54,6 +75,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Todo display
 - i18n support (English, Japanese)
 
-[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/ktmage/opencode-gui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ktmage/opencode-gui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ktmage/opencode-gui/releases/tag/v0.1.0

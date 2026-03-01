@@ -18,7 +18,7 @@ export const ja: typeof en = {
   "input.remove": "削除",
   "input.placeholder": "OpenCode に質問... (# でファイルを添付)",
   "input.addFile": (name: string) => `${name} を追加`,
-  "input.openTerminal": "ターミナルで開く",
+  "input.openTerminal": "セッションをターミナルで開く",
   "input.shellMode": "シェルモード",
   "input.placeholder.shell": "シェルコマンドを入力...",
   "input.settings": "設定",
@@ -107,6 +107,12 @@ export const ja: typeof en = {
   "config.langAuto": "自動 (VS Code)",
   "config.langEn": "English",
   "config.langJa": "日本語",
+  "config.langZhCn": "简体中文",
+  "config.langKo": "한국어",
+  "config.langZhTw": "繁體中文",
+  "config.langEs": "Español",
+  "config.langPtBr": "Português (Brasil)",
+  "config.langRu": "Русский",
 
   // FileChangesHeader
   "fileChanges.title": "ファイル変更",
@@ -122,6 +128,11 @@ export const ja: typeof en = {
   // ChildSession
   "childSession.agent": "エージェント",
   "childSession.backToParent": "親セッションに戻る",
+
+  // Context menu sections
+  "input.section.files": "ファイル",
+  "input.section.agents": "エージェント",
+  "input.section.shell": "シェルモード",
 
   // AgentMention
   "input.noAgents": "利用可能なエージェントがありません",

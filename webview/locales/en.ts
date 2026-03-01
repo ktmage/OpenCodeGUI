@@ -16,7 +16,7 @@ export const en = {
   "input.remove": "Remove",
   "input.placeholder": "Ask OpenCode... (type # to attach files)",
   "input.addFile": (name: string) => `Add ${name}`,
-  "input.openTerminal": "Open in terminal",
+  "input.openTerminal": "Open session in terminal",
   "input.shellMode": "Shell mode",
   "input.placeholder.shell": "Enter shell command...",
   "input.settings": "Settings",
@@ -105,6 +105,12 @@ export const en = {
   "config.langAuto": "Auto (VS Code)",
   "config.langEn": "English",
   "config.langJa": "日本語",
+  "config.langZhCn": "简体中文",
+  "config.langKo": "한국어",
+  "config.langZhTw": "繁體中文",
+  "config.langEs": "Español",
+  "config.langPtBr": "Português (Brasil)",
+  "config.langRu": "Русский",
 
   // FileChangesHeader
   "fileChanges.title": "File Changes",
@@ -120,6 +126,11 @@ export const en = {
   // ChildSession
   "childSession.agent": "Agent",
   "childSession.backToParent": "Back to parent session",
+
+  // Context menu sections
+  "input.section.files": "Files",
+  "input.section.agents": "Agents",
+  "input.section.shell": "Shell Mode",
 
   // AgentMention
   "input.noAgents": "No agents available",

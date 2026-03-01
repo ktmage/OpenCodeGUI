@@ -1,6 +1,8 @@
 .root {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
   padding: 4px 10px;
   cursor: pointer;
   font-size: 12px;
@@ -9,6 +11,18 @@
 .root:hover,
 .root[data-focused] {
   background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
 
 .title {

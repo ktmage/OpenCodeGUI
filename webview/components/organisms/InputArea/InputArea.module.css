@@ -33,6 +33,8 @@
 
 .textareaContainer {
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .textarea {
@@ -47,7 +49,8 @@
   line-height: 1.4;
   resize: none;
   max-height: 120px;
-  min-height: 20px;
+  min-height: 28px;
+  padding: 2px 0;
 }
 
 .textarea::placeholder {
@@ -87,17 +90,39 @@
   transform: rotate(90deg);
 }
 
-.shellIndicator {
-  display: flex;
+.shellChip {
+  display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 2px 6px;
-  margin-bottom: 2px;
+  height: 22px;
+  padding: 0 6px;
   font-size: 11px;
+  line-height: 1;
   color: var(--vscode-terminal-ansiYellow, #e5c07b);
-  background-color: var(--vscode-badge-background);
-  border-radius: 3px;
-  width: fit-content;
+  background-color: var(--vscode-input-background);
+  border: 1px solid var(--vscode-terminal-ansiYellow, #e5c07b);
+  border-radius: 4px;
+}
+
+.shellChipName {
+  font-weight: 600;
+}
+
+.shellChipClear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.shellChipClear:hover {
+  opacity: 1;
 }
 
 .agentChip {
