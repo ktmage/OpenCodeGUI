@@ -20,7 +20,6 @@ import type {
   PermissionResponse,
   ProviderInfo,
   QuestionAnswer,
-  SendMessageOptions,
   TodoItem,
 } from "./domain";
 

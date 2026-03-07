@@ -51,6 +51,12 @@ export class DiffReviewManager implements vscode.Disposable {
       const child = spawn("difit", ["-", "--no-open"], { stdio: ["pipe", "pipe", "pipe"] });
       this.process = child;
 
+      const { stdout, stderr, stdin } = child;
+      if (!stdout || !stderr || !stdin) {
+        reject(new Error("Failed to create stdio streams"));
+        return;
+      }
+
       let output = "";
       const urlPattern = /https?:\/\/(?:localhost|127\.0\.0\.1):\d+/;
 
@@ -63,8 +69,8 @@ export class DiffReviewManager implements vscode.Disposable {
         }
       };
 
-      child.stdout!.on("data", handleData);
-      child.stderr!.on("data", handleData);
+      stdout.on("data", handleData);
+      stderr.on("data", handleData);
 
       child.on("error", (err) => {
         this.process = null;
@@ -78,8 +84,8 @@ export class DiffReviewManager implements vscode.Disposable {
         }
       });
 
-      child.stdin!.write(unifiedDiff);
-      child.stdin!.end();
+      stdin.write(unifiedDiff);
+      stdin.end();
     });
   }
 }
@@ -93,10 +99,7 @@ export function fileDiffsToUnifiedDiff(diffs: FileDiff[]): string {
     .map((d) => {
       const patch = createTwoFilesPatch(`a/${d.file}`, `b/${d.file}`, d.before, d.after);
       // jsdiff は "===...===" ヘッダーを出力するが difit は "diff --git" を期待する
-      return patch.replace(
-        /^={10,}\n/,
-        `diff --git a/${d.file} b/${d.file}\n`,
-      );
+      return patch.replace(/^={10,}\n/, `diff --git a/${d.file} b/${d.file}\n`);
     })
     .join("\n");
 }
