@@ -47,6 +47,9 @@ export interface IPlatformServices {
   /** Open a config file in the editor */
   openConfigFile(filePath: string): Promise<void>;
 
+  /** Open a file in the editor, optionally at a specific line */
+  openFile(filePath: string, line?: number): Promise<void>;
+
   /** Search for files in the workspace */
   searchWorkspaceFiles(query: string): Promise<FileAttachment[]>;
 

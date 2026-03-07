@@ -50,6 +50,17 @@ export class VscodePlatformServices implements IPlatformServices {
     await vscode.window.showTextDocument(doc);
   }
 
+  async openFile(filePath: string, line?: number): Promise<void> {
+    const uri = vscode.Uri.file(filePath);
+    const doc = await vscode.workspace.openTextDocument(uri);
+    const editor = await vscode.window.showTextDocument(doc);
+    if (line !== undefined && line >= 1) {
+      const position = new vscode.Position(line - 1, 0);
+      editor.selection = new vscode.Selection(position, position);
+      editor.revealRange(new vscode.Range(position, position), vscode.TextEditorRevealType.InCenter);
+    }
+  }
+
   async searchWorkspaceFiles(query: string): Promise<FileAttachment[]> {
     const pattern = query ? `**/*${query}*` : "**/*";
     const uris = await vscode.workspace.findFiles(pattern, "**/node_modules/**", 20);

@@ -122,6 +122,7 @@ export type UIToHostMessage =
       after: string;
     }
   | { type: "copyToClipboard"; text: string }
+  | { type: "openFile"; filePath: string; line?: number }
 
   // --- Legacy (kept during migration) ---
   | {
