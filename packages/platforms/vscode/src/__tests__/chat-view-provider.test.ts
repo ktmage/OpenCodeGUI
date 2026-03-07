@@ -1058,7 +1058,7 @@ describe("ChatViewProvider", () => {
       expect(() => {
         // postMessage はプライベートだが、view が undefined の場合 optional chaining で安全
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (provider as any)["postMessage"]({ type: "sessions", sessions: [] });
+        (provider as any).postMessage({ type: "sessions", sessions: [] });
       }).not.toThrow();
     });
   });

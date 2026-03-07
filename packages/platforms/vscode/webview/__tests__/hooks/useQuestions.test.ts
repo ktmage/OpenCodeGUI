@@ -23,7 +23,9 @@ describe("useQuestions", () => {
         properties: {
           id: "req-1",
           sessionID: "session-1",
-          questions: [{ question: "Which tool?", header: "Tool selection", options: [{ label: "A", description: "" }] }],
+          questions: [
+            { question: "Which tool?", header: "Tool selection", options: [{ label: "A", description: "" }] },
+          ],
         },
       } as unknown as AgentEvent;
       act(() => result.current.handleQuestionEvent(event));
