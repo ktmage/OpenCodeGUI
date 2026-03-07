@@ -83,6 +83,7 @@ function createMockPlatformServices(): {
     copyToClipboard: vi.fn().mockResolvedValue(undefined),
     openTerminal: vi.fn().mockResolvedValue(undefined),
     openConfigFile: vi.fn().mockResolvedValue(undefined),
+    openFile: vi.fn().mockResolvedValue(undefined),
     searchWorkspaceFiles: vi.fn().mockResolvedValue([]),
     getOpenEditors: vi.fn().mockResolvedValue([]),
   };
@@ -996,6 +997,37 @@ describe("ChatViewProvider", () => {
       });
 
       expect(mockPS.openDiffEditor).toHaveBeenCalledWith("src/index.ts", "const a = 1;", "const a = 2;");
+    });
+  });
+
+  // ============================================================
+  // openFile
+  // ============================================================
+
+  describe("openFile", () => {
+    it("should delegate to platformServices.openFile", async () => {
+      const mockPS = createMockPlatformServices();
+      const { sendMessage } = setupProvider(mockAgent, mockPS);
+
+      await sendMessage({
+        type: "openFile",
+        filePath: "/home/user/project/src/main.ts",
+        line: 42,
+      });
+
+      expect(mockPS.openFile).toHaveBeenCalledWith("/home/user/project/src/main.ts", 42);
+    });
+
+    it("should delegate to platformServices.openFile without line", async () => {
+      const mockPS = createMockPlatformServices();
+      const { sendMessage } = setupProvider(mockAgent, mockPS);
+
+      await sendMessage({
+        type: "openFile",
+        filePath: "/home/user/project/src/main.ts",
+      });
+
+      expect(mockPS.openFile).toHaveBeenCalledWith("/home/user/project/src/main.ts", undefined);
     });
   });
 

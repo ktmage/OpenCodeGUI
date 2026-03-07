@@ -1,6 +1,7 @@
-import { render } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { TextPartView } from "../../../components/molecules/TextPartView";
+import { postMessage } from "../../../vscode-api";
 import { createTextPart } from "../../factories";
 
 describe("TextPartView", () => {
@@ -66,6 +67,39 @@ describe("TextPartView", () => {
       const part = createTextPart("safe <b>bold</b> text");
       const { container } = render(<TextPartView part={part} />);
       expect(container.textContent).toContain("safe bold text");
+    });
+  });
+
+  // file path link click handling
+  context("ファイルパスリンクをクリックした場合", () => {
+    // sends openFile message when file link is clicked
+    it("openFile メッセージが送信されること", () => {
+      // marked モックは <p>text</p> を返すが、linkifyAbsolutePaths が
+      // 絶対パスを data-file-path 付きリンクに変換する
+      const part = createTextPart("See /home/user/project/src/main.ts for details");
+      const { container } = render(<TextPartView part={part} />);
+      const link = container.querySelector("a[data-file-path]");
+      expect(link).toBeInTheDocument();
+      fireEvent.click(link!);
+      expect(vi.mocked(postMessage)).toHaveBeenCalledWith({
+        type: "openFile",
+        filePath: "/home/user/project/src/main.ts",
+        line: undefined,
+      });
+    });
+
+    // sends openFile message with line number when path has :line suffix
+    it("行番号付きパスの場合 line が送信されること", () => {
+      const part = createTextPart("Error at /home/user/project/src/main.ts:42 found");
+      const { container } = render(<TextPartView part={part} />);
+      const link = container.querySelector("a[data-file-path]");
+      expect(link).toBeInTheDocument();
+      fireEvent.click(link!);
+      expect(vi.mocked(postMessage)).toHaveBeenCalledWith({
+        type: "openFile",
+        filePath: "/home/user/project/src/main.ts",
+        line: 42,
+      });
     });
   });
 });
