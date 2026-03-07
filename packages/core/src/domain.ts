@@ -282,6 +282,18 @@ export type AgentEvent =
       properties: { sessionID: string; todos: TodoItem[] };
     }
   | {
+      type: "question.asked";
+      properties: QuestionRequest;
+    }
+  | {
+      type: "question.replied";
+      properties: { sessionID: string; requestID: string };
+    }
+  | {
+      type: "question.rejected";
+      properties: { sessionID: string; requestID: string };
+    }
+  | {
       type: "file.edited";
       properties: { sessionID: string; file: string };
     };
@@ -313,6 +325,35 @@ export type Permission = {
 };
 
 export type PermissionResponse = "once" | "always" | "reject";
+
+// ============================================================
+// Questions (AI → User interactive questions)
+// ============================================================
+
+export type QuestionOption = {
+  label: string;
+  description: string;
+};
+
+export type QuestionInfo = {
+  question: string;
+  header: string;
+  options: QuestionOption[];
+  multiple?: boolean;
+  custom?: boolean;
+};
+
+export type QuestionRequest = {
+  id: string;
+  sessionID: string;
+  questions: QuestionInfo[];
+  tool?: {
+    messageID: string;
+    callID: string;
+  };
+};
+
+export type QuestionAnswer = string[];
 
 // ============================================================
 // File Attachment (local files for message context)

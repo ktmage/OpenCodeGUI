@@ -27,6 +27,7 @@ import type {
   ModelRef,
   PermissionResponse,
   ProviderInfo,
+  QuestionAnswer,
   SendMessageOptions,
   TodoItem,
   ToolListItem,
@@ -69,6 +70,7 @@ export class OpenCodeAgent implements IAgent {
       todo: true,
       multiProvider: true,
       permission: true,
+      question: true,
       mcp: true,
       subAgent: true,
       shell: true,
@@ -332,6 +334,34 @@ export class OpenCodeAgent implements IAgent {
       path: { id: sessionId, permissionID: permissionId },
       body: { response },
     });
+  }
+
+  // --- Questions ---
+  // question API は SDK の v2 クライアントにのみ存在するため、
+  // サーバー URL に直接 HTTP リクエストを送信する。
+
+  async replyQuestion(requestId: string, answers: QuestionAnswer[]): Promise<void> {
+    const baseUrl = this.getServerUrl();
+    if (!baseUrl) throw new Error("OpenCode server is not running.");
+    const response = await fetch(`${baseUrl}/question/${encodeURIComponent(requestId)}/reply`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ answers }),
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to reply question: ${response.status} ${response.statusText}`);
+    }
+  }
+
+  async rejectQuestion(requestId: string): Promise<void> {
+    const baseUrl = this.getServerUrl();
+    if (!baseUrl) throw new Error("OpenCode server is not running.");
+    const response = await fetch(`${baseUrl}/question/${encodeURIComponent(requestId)}/reject`, {
+      method: "POST",
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to reject question: ${response.status} ${response.statusText}`);
+    }
   }
 
   // --- Session metadata ---

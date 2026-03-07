@@ -20,6 +20,7 @@ import type {
   ModelRef,
   PermissionResponse,
   ProviderInfo,
+  QuestionAnswer,
   SendMessageOptions,
   TodoItem,
   ToolListItem,
@@ -45,6 +46,8 @@ export type AgentCapabilities = {
   multiProvider: boolean;
   /** Permission management (tool execution approval flow) */
   permission: boolean;
+  /** Question interaction (AI asks user questions with options) */
+  question: boolean;
   /** MCP (Model Context Protocol) support */
   mcp: boolean;
   /** Sub-agents (child sessions) */
@@ -101,6 +104,10 @@ export interface IAgent {
 
   // --- Permissions (capabilities.permission) ---
   replyPermission(sessionId: string, permissionId: string, response: PermissionResponse): Promise<void>;
+
+  // --- Questions (capabilities.question) ---
+  replyQuestion(requestId: string, answers: QuestionAnswer[]): Promise<void>;
+  rejectQuestion(requestId: string): Promise<void>;
 
   // --- Session metadata (capabilities-dependent) ---
   getSessionDiff(sessionId: string): Promise<FileDiff[]>;

@@ -19,6 +19,7 @@ import type {
   ModelRef,
   PermissionResponse,
   ProviderInfo,
+  QuestionAnswer,
   SendMessageOptions,
   TodoItem,
 } from "./domain";
@@ -83,6 +84,17 @@ export type UIToHostMessage =
       sessionId: string;
       permissionId: string;
       response: PermissionResponse;
+    }
+
+  // --- Questions (via agent) ---
+  | {
+      type: "replyQuestion";
+      requestId: string;
+      answers: QuestionAnswer[];
+    }
+  | {
+      type: "rejectQuestion";
+      requestId: string;
     }
 
   // --- Data retrieval (via agent) ---
