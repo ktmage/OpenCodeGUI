@@ -48,6 +48,11 @@ export const ko: typeof en = {
   "permission.once": "한 번만",
   "permission.deny": "거부",
 
+  // QuestionView
+  "question.submit": "제출",
+  "question.reject": "거부",
+  "question.customPlaceholder": "사용자 정의 답변을 입력하세요...",
+
   // SessionList
   "session.noSessions": "세션 없음",
   "session.untitled": "제목 없음",

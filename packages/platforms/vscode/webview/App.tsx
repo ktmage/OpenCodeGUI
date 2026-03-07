@@ -13,6 +13,7 @@ import { useLocale } from "./hooks/useLocale";
 import { useMessages } from "./hooks/useMessages";
 import { usePermissions } from "./hooks/usePermissions";
 import { useProviders } from "./hooks/useProviders";
+import { useQuestions } from "./hooks/useQuestions";
 import { useSession } from "./hooks/useSession";
 import { useSoundNotification } from "./hooks/useSoundNotification";
 import { LocaleProvider } from "./locales";
@@ -27,6 +28,7 @@ export function App() {
   const msg = useMessages();
   const prov = useProviders();
   const perm = usePermissions();
+  const quest = useQuestions();
   const locale = useLocale();
   const fileChanges = useFileChanges();
   const sound = useSoundNotification();
@@ -66,6 +68,7 @@ export function App() {
       session.handleSessionEvent(event);
       msg.handleMessageEvent(event);
       perm.handlePermissionEvent(event);
+      quest.handleQuestionEvent(event);
       fileChanges.handleFileChangeEvent(event);
       sound.handleSoundEvent(event);
 
@@ -91,6 +94,7 @@ export function App() {
       session.handleSessionEvent,
       msg.handleMessageEvent,
       perm.handlePermissionEvent,
+      quest.handleQuestionEvent,
       fileChanges.handleFileChangeEvent,
       sound.handleSoundEvent,
     ],
@@ -418,6 +422,7 @@ export function App() {
     selectedModel: prov.selectedModel,
     onModelSelect: prov.handleModelSelect,
     permissions: perm.permissions,
+    questions: quest.questions,
     openEditors,
     workspaceFiles,
     fileDiffs: fileChanges.diffs,
@@ -474,6 +479,7 @@ export function App() {
                 sessionBusy={session.sessionBusy}
                 activeSessionId={session.activeSession.id}
                 permissions={perm.permissions}
+                questions={quest.questions}
                 onEditAndResend={handleEditAndResend}
                 onRevertToCheckpoint={handleRevertToCheckpoint}
                 onForkFromCheckpoint={handleForkFromCheckpoint}

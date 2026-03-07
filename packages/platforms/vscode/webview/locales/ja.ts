@@ -48,6 +48,11 @@ export const ja: typeof en = {
   "permission.once": "一度だけ",
   "permission.deny": "拒否",
 
+  // QuestionView
+  "question.submit": "送信",
+  "question.reject": "拒否",
+  "question.customPlaceholder": "カスタム回答を入力...",
+
   // SessionList
   "session.noSessions": "セッションなし",
   "session.untitled": "無題",

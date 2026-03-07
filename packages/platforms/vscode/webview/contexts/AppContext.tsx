@@ -3,6 +3,7 @@ import type {
   FileDiff,
   Permission,
   ProviderInfo,
+  QuestionRequest,
   SoundEventSetting,
   SoundEventType,
   SoundSettings,
@@ -38,6 +39,9 @@ export type AppContextValue = {
 
   // Permissions
   permissions: Map<string, Permission>;
+
+  // Questions
+  questions: Map<string, QuestionRequest>;
 
   // Files
   openEditors: FileAttachment[];
