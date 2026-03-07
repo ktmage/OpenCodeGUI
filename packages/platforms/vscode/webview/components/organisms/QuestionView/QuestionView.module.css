@@ -1,0 +1,90 @@
+.root {
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid var(--vscode-inputValidation-infoBorder);
+  border-radius: 4px;
+  background-color: var(--vscode-inputValidation-infoBackground);
+}
+
+.questionCard {
+  margin-bottom: 8px;
+}
+
+.questionCard:last-child {
+  margin-bottom: 0;
+}
+
+.header {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.questionText {
+  font-size: 12px;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 10px;
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 4px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  cursor: pointer;
+  text-align: left;
+  font-size: 12px;
+  width: 100%;
+}
+
+.option:hover {
+  border-color: var(--vscode-focusBorder);
+}
+
+.option.selected {
+  border-color: var(--vscode-focusBorder);
+  background: var(--vscode-list-activeSelectionBackground);
+  color: var(--vscode-list-activeSelectionForeground);
+}
+
+.optionLabel {
+  font-weight: 500;
+}
+
+.optionDesc {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
+.customInput {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid var(--vscode-input-border, transparent);
+  border-radius: 4px;
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  font-size: 12px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+.customInput::placeholder {
+  color: var(--vscode-input-placeholderForeground);
+}
+
+.actions {
+  display: flex;
+  gap: 6px;
+}

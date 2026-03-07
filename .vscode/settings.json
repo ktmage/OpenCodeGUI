@@ -55,5 +55,7 @@
   },
   "accessibility.signals.chatUserActionRequired": {
     "sound": "on"
-  }
+  },
+  "chat.useAgentsMdFile": true,
+  "chat.useNestedAgentsMdFiles": true
 }

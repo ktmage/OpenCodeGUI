@@ -1,0 +1,12 @@
+src/**
+webview/**
+node_modules/**
+tsconfig.json
+vite.config.ts
+vitest.config.ts
+vitest.config.ext.ts
+esbuild.mjs
+config.json
+*.vsix
+.DS_Store
+.env

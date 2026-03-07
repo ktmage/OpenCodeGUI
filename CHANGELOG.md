@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-03-08
+
+### Added
+
+- File path links in tool and text views — clickable file chips with extension-based icons (#81)
+- Diff review feature using difit for session file changes (#82)
+- Sound notification on assistant response completion
+- Question interaction UI (QuestionView) for agent-initiated questions
+- Agent selector UI for primary agent selection
+- Shell/agent chips repositioned after clip button (#83)
+
+### Changed
+
+- Monorepo architecture — migrated to pnpm workspaces with `@opencodegui/core`, `@opencodegui/agent-opencode`, and platform abstraction layer (VscodeBridge / VscodePlatformServices)
+- Architecture documentation added
+- ContextIndicator component removed (context limit UI)
+- Default notification sound volume reduced from 0.5 to 0.2
+
+### Fixed
+
+- Unintended horizontal scrolling from tilt scroll
+- Overscroll behavior on MessagesArea
+- File chip icon and text vertical alignment
+- CI environment test failures for extension tests
+- Test setup compatibility with vitest 4.x (`@testing-library/jest-dom` ESM import)
+
 ## [0.3.0] - 2026-03-02
 
 ### Added
@@ -75,7 +101,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Todo display
 - i18n support (English, Japanese)
 
-[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/ktmage/opencode-gui/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ktmage/opencode-gui/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/ktmage/opencode-gui/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ktmage/opencode-gui/releases/tag/v0.1.0

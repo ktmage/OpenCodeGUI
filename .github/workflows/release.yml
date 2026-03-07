@@ -17,23 +17,30 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
-      - run: npm ci
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
-      - run: npm run build
+      - name: Install dependencies
+        run: pnpm install
 
-      - run: npm test
+      - name: Build
+        run: pnpm build
+
+      - name: Test
+        run: pnpm test:all
 
       - name: Package extension
-        run: npx vsce package -o opencodegui.vsix
+        run: pnpm --filter opencodegui run package
+        working-directory: .
 
       - name: Publish to Marketplace
-        run: npx vsce publish --skip-duplicate
+        run: pnpm --filter opencodegui run publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Upload .vsix to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: opencodegui.vsix
+          files: packages/platforms/vscode/*.vsix

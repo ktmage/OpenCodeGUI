@@ -1,0 +1,160 @@
+import type {
+  AgentEvent,
+  ChatMessage,
+  ChatSession,
+  Permission,
+  ProviderInfo,
+  TextPart,
+  ToolPart,
+} from "@opencodegui/core";
+
+// --- Session ---
+
+let sessionSeq = 0;
+
+export function createSession(overrides: Partial<ChatSession> = {}): ChatSession {
+  const id = `session-${++sessionSeq}`;
+  return {
+    id,
+    title: `Session ${sessionSeq}`,
+    time: {
+      created: Date.now(),
+      updated: Date.now(),
+    },
+    ...overrides,
+  } as ChatSession;
+}
+
+// --- Message ---
+
+let messageSeq = 0;
+
+export function createMessage(overrides: Partial<ChatMessage> = {}): ChatMessage {
+  const id = `msg-${++messageSeq}`;
+  return {
+    id,
+    sessionID: "session-1",
+    role: "assistant",
+    time: { created: Date.now(), updated: Date.now() },
+    ...overrides,
+  } as ChatMessage;
+}
+
+// --- Part ---
+
+let partSeq = 0;
+
+export function createTextPart(text: string, overrides: Partial<TextPart> = {}): TextPart {
+  return {
+    id: `part-${++partSeq}`,
+    type: "text",
+    text,
+    messageID: "msg-1",
+    time: { created: Date.now(), updated: Date.now() },
+    ...overrides,
+  } as TextPart;
+}
+
+export function createToolPart(tool: string, overrides: Partial<ToolPart> = {}): ToolPart {
+  return {
+    id: `part-${++partSeq}`,
+    type: "tool",
+    tool,
+    messageID: "msg-1",
+    time: { created: Date.now(), updated: Date.now() },
+    state: { status: "completed", title: tool, input: {}, output: "ok" },
+    ...overrides,
+  } as unknown as ToolPart;
+}
+
+/** task ツール呼び出し（サブエージェント起動）のファクトリ */
+export function createTaskToolPart(
+  agentName: string,
+  description: string,
+  overrides: Record<string, unknown> = {},
+): ToolPart {
+  return {
+    id: `part-${++partSeq}`,
+    type: "tool",
+    tool: "task",
+    callID: `call-${partSeq}`,
+    sessionID: "session-1",
+    messageID: "msg-1",
+    state: {
+      status: "completed",
+      title: description,
+      input: { subagent_type: agentName, description, prompt: description },
+      output: "Task completed successfully.",
+      metadata: {},
+      time: { start: Date.now() - 1000, end: Date.now() },
+    },
+    ...overrides,
+  } as unknown as ToolPart;
+}
+
+// --- SubtaskPart ---
+
+export function createSubtaskPart(agent: string, description: string, overrides: Record<string, unknown> = {}) {
+  return {
+    id: `part-${++partSeq}`,
+    type: "subtask" as const,
+    sessionID: "session-1",
+    messageID: "msg-1",
+    prompt: description,
+    description,
+    agent,
+    time: { created: Date.now(), updated: Date.now() },
+    ...overrides,
+  };
+}
+
+// --- Permission ---
+
+export function createPermission(overrides: Partial<Permission> = {}): Permission {
+  return {
+    id: `perm-${++partSeq}`,
+    title: "Allow file write?",
+    messageID: "msg-1",
+    sessionID: "session-1",
+    ...overrides,
+  } as Permission;
+}
+
+// --- Provider ---
+
+export function createProvider(
+  id: string,
+  models: Record<
+    string,
+    { id: string; name: string; limit?: { context: number; output: number }; status?: string }
+  > = {},
+): ProviderInfo {
+  return {
+    id,
+    name: id.charAt(0).toUpperCase() + id.slice(1),
+    models,
+  } as unknown as ProviderInfo;
+}
+
+// --- Event ---
+
+export function createEvent(type: string, properties: Record<string, unknown> = {}): AgentEvent {
+  return { type, properties } as unknown as AgentEvent;
+}
+
+// --- AllProvidersData ---
+
+export function createAllProvidersData(
+  connected: string[] = [],
+  all: Array<{ id: string; name: string; models: Record<string, unknown> }> = [],
+  defaultModel: Record<string, string> = {},
+) {
+  return {
+    connected,
+    all: all.map((p) => ({
+      ...p,
+      env: [],
+    })),
+    default: defaultModel,
+  };
+}
