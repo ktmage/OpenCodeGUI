@@ -84,14 +84,6 @@ export const ja: typeof en = {
   "todo.label": "ToDo",
   "todo.toggleList": "ToDoリストを切り替え",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `コンテキスト: ${percent}% 使用中`,
-  "context.windowUsage": "コンテキストウィンドウ使用量",
-  "context.inputTokens": "入力トークン",
-  "context.contextLimit": "コンテキスト上限",
-  "context.compressing": "圧縮中...",
-  "context.compress": "会話を圧縮",
-
   // ShellResultView
   "shell.title": "シェル",
 

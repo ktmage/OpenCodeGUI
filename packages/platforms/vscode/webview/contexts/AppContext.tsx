@@ -17,7 +17,6 @@ export type AppContextValue = {
 
   // Messages
   messages: MessageWithParts[];
-  inputTokens: number;
   latestTodos: TodoItem[];
   prefillText: string;
   onPrefillConsumed: () => void;
@@ -27,7 +26,6 @@ export type AppContextValue = {
   allProvidersData: AllProvidersData | null;
   selectedModel: { providerID: string; modelID: string } | null;
   onModelSelect: (model: { providerID: string; modelID: string }) => void;
-  contextLimit: number;
 
   // Permissions
   permissions: Map<string, Permission>;
@@ -45,8 +43,6 @@ export type AppContextValue = {
   onShellExecute: (command: string) => void;
   isShellMessage: (messageId: string) => boolean;
   onAbort: () => void;
-  onCompress: () => void;
-  isCompressing: boolean;
   onEditAndResend: (messageId: string, text: string) => void;
   onRevertToCheckpoint: (assistantMessageId: string, userText: string | null) => void;
   onForkFromCheckpoint: (messageId: string) => void;

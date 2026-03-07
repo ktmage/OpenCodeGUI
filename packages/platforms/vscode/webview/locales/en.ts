@@ -82,14 +82,6 @@ export const en = {
   "todo.label": "To Do",
   "todo.toggleList": "Toggle to-do list",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `Context: ${percent}% used`,
-  "context.windowUsage": "Context Window Usage",
-  "context.inputTokens": "Input tokens",
-  "context.contextLimit": "Context limit",
-  "context.compressing": "Compressing...",
-  "context.compress": "Compress Conversation",
-
   // ShellResultView
   "shell.title": "Shell",
 

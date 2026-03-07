@@ -84,14 +84,6 @@ export const ptBr: typeof en = {
   "todo.label": "Tarefas",
   "todo.toggleList": "Alternar lista de tarefas",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `Contexto: ${percent}% usado`,
-  "context.windowUsage": "Uso da janela de contexto",
-  "context.inputTokens": "Tokens de entrada",
-  "context.contextLimit": "Limite de contexto",
-  "context.compressing": "Comprimindo...",
-  "context.compress": "Comprimir conversa",
-
   // ShellResultView
   "shell.title": "Shell",
 

@@ -84,14 +84,6 @@ export const es: typeof en = {
   "todo.label": "Tareas",
   "todo.toggleList": "Alternar lista de tareas",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `Contexto: ${percent}% usado`,
-  "context.windowUsage": "Uso de ventana de contexto",
-  "context.inputTokens": "Tokens de entrada",
-  "context.contextLimit": "Límite de contexto",
-  "context.compressing": "Comprimiendo...",
-  "context.compress": "Comprimir conversación",
-
   // ShellResultView
   "shell.title": "Shell",
 

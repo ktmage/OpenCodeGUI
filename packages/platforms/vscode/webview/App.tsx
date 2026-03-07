@@ -244,15 +244,6 @@ export function App() {
     postMessage({ type: "abort", sessionId: session.activeSession.id });
   }, [session.activeSession]);
 
-  const handleCompress = useCallback(() => {
-    if (!session.activeSession) return;
-    postMessage({
-      type: "compressSession",
-      sessionId: session.activeSession.id,
-      model: prov.selectedModel ?? undefined,
-    });
-  }, [session.activeSession, prov.selectedModel]);
-
   // ユーザーメッセージを編集して再送信する
   const handleEditAndResend = useCallback(
     (messageId: string, text: string) => {
@@ -410,7 +401,6 @@ export function App() {
     onDeleteSession: session.handleDeleteSession,
     onToggleSessionList: session.toggleSessionList,
     messages: msg.messages,
-    inputTokens: msg.inputTokens,
     latestTodos: todos,
     prefillText: msg.prefillText,
     onPrefillConsumed: msg.consumePrefill,
@@ -418,7 +408,6 @@ export function App() {
     allProvidersData: prov.allProvidersData,
     selectedModel: prov.selectedModel,
     onModelSelect: prov.handleModelSelect,
-    contextLimit: prov.contextLimit,
     permissions: perm.permissions,
     openEditors,
     workspaceFiles,
@@ -428,8 +417,6 @@ export function App() {
     onShellExecute: handleShellExecute,
     isShellMessage: msg.isShellMessage,
     onAbort: handleAbort,
-    onCompress: handleCompress,
-    isCompressing: !!session.activeSession?.time?.compacting,
     onEditAndResend: handleEditAndResend,
     onRevertToCheckpoint: handleRevertToCheckpoint,
     onForkFromCheckpoint: handleForkFromCheckpoint,
@@ -497,10 +484,6 @@ export function App() {
                   openEditors={openEditors}
                   activeEditorFile={activeEditorFile}
                   workspaceFiles={workspaceFiles}
-                  inputTokens={msg.inputTokens}
-                  contextLimit={prov.contextLimit}
-                  onCompress={handleCompress}
-                  isCompressing={!!session.activeSession?.time?.compacting}
                   prefillText={msg.prefillText}
                   onPrefillConsumed={msg.consumePrefill}
                   openCodePaths={openCodePaths}

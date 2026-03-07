@@ -84,14 +84,6 @@ export const ru: typeof en = {
   "todo.label": "Задачи",
   "todo.toggleList": "Переключить список задач",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `Контекст: использовано ${percent}%`,
-  "context.windowUsage": "Использование окна контекста",
-  "context.inputTokens": "Входные токены",
-  "context.contextLimit": "Лимит контекста",
-  "context.compressing": "Сжатие...",
-  "context.compress": "Сжать диалог",
-
   // ShellResultView
   "shell.title": "Shell",
 

@@ -84,14 +84,6 @@ export const ko: typeof en = {
   "todo.label": "할 일",
   "todo.toggleList": "할 일 목록 전환",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `컨텍스트: ${percent}% 사용 중`,
-  "context.windowUsage": "컨텍스트 윈도우 사용량",
-  "context.inputTokens": "입력 토큰",
-  "context.contextLimit": "컨텍스트 한도",
-  "context.compressing": "압축 중...",
-  "context.compress": "대화 압축",
-
   // ShellResultView
   "shell.title": "셸",
 

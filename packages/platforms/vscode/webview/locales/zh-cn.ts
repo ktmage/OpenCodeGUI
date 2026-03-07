@@ -84,14 +84,6 @@ export const zhCn: typeof en = {
   "todo.label": "待办",
   "todo.toggleList": "切换待办列表",
 
-  // ContextIndicator
-  "context.title": (percent: number) => `上下文：已使用 ${percent}%`,
-  "context.windowUsage": "上下文窗口使用量",
-  "context.inputTokens": "输入 Token",
-  "context.contextLimit": "上下文上限",
-  "context.compressing": "压缩中...",
-  "context.compress": "压缩对话",
-
   // ShellResultView
   "shell.title": "Shell",
 

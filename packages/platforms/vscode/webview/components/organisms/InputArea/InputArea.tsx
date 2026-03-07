@@ -6,7 +6,6 @@ import type { LocaleSetting } from "../../../locales";
 import { useLocale } from "../../../locales";
 import type { AllProvidersData, FileAttachment } from "../../../vscode-api";
 import { postMessage } from "../../../vscode-api";
-import { ContextIndicator } from "../../atoms/ContextIndicator";
 import { IconButton } from "../../atoms/IconButton";
 import { AgentIcon, ChevronRightIcon, CloseIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
 import { Popover } from "../../atoms/Popover";
@@ -29,10 +28,6 @@ type Props = {
   openEditors: FileAttachment[];
   activeEditorFile: FileAttachment | null;
   workspaceFiles: FileAttachment[];
-  inputTokens: number;
-  contextLimit: number;
-  onCompress: () => void;
-  isCompressing: boolean;
   prefillText?: string;
   onPrefillConsumed?: () => void;
   openCodePaths: { home?: string; config: string; state: string; directory: string } | null;
@@ -55,10 +50,6 @@ export function InputArea({
   openEditors,
   activeEditorFile,
   workspaceFiles,
-  inputTokens,
-  contextLimit,
-  onCompress,
-  isCompressing,
   prefillText,
   onPrefillConsumed,
   openCodePaths,
@@ -566,15 +557,6 @@ export function InputArea({
               onToggleShellMode={toggleShellMode}
             />
           </div>
-          {/* コンテキストウィンドウ使用率インジケーター (右側) */}
-          {contextLimit > 0 && (
-            <ContextIndicator
-              inputTokens={inputTokens}
-              contextLimit={contextLimit}
-              onCompress={onCompress}
-              isCompressing={isCompressing}
-            />
-          )}
         </div>
 
         {/* テキスト入力エリア（# ポップアップ付き） */}
