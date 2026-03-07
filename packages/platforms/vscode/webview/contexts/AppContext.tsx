@@ -50,6 +50,7 @@ export type AppContextValue = {
   // File Changes
   fileDiffs: FileDiff[];
   onOpenDiffEditor: (filePath: string, before: string, after: string) => void;
+  onOpenFile: (filePath: string, line?: number) => void;
 
   // Actions
   onSend: (text: string, files: FileAttachment[]) => void;

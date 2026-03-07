@@ -104,6 +104,15 @@
   color: var(--vscode-errorForeground);
 }
 
+.titleLink {
+  cursor: pointer;
+}
+
+.titleLink:hover {
+  color: var(--vscode-textLink-foreground);
+  text-decoration: underline;
+}
+
 .chevron {
   display: flex;
   align-items: center;

@@ -1,5 +1,6 @@
 import type { ToolPart } from "@opencodegui/core";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useAppContext } from "../../../contexts/AppContext";
 import { useLocale } from "../../../locales";
 import { parseTodos } from "../../../utils/todo";
 import { CATEGORY_LABEL_KEYS, getCategory, type ToolCategory } from "../../../utils/tool-categories";
@@ -64,6 +65,7 @@ function ActionIcon({ category }: { category: ToolCategory }) {
 
 export function ToolPartView({ part }: Props) {
   const t = useLocale();
+  const { onOpenFile } = useAppContext();
   const [expanded, setExpanded] = useState(false);
   const { state } = part;
 
@@ -105,6 +107,27 @@ export function ToolPartView({ part }: Props) {
     return title;
   }, [isTodoTool, todos, title, t["tool.todos"]]);
 
+  // タイトルからファイルパスを抽出する（絶対パスの場合のみリンク化対象）
+  const titleFilePath = useMemo(() => {
+    // input にファイルパスがあればそれを使う
+    if (input) {
+      const fp = getFilePath(input);
+      if (fp?.startsWith("/")) return fp;
+    }
+    // タイトル自体が絶対パスの場合
+    if (title?.startsWith("/")) return title;
+    return null;
+  }, [input, title]);
+
+  const handleTitleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (!titleFilePath) return;
+      e.stopPropagation();
+      onOpenFile(titleFilePath);
+    },
+    [titleFilePath, onOpenFile],
+  );
+
   const statusClass: Record<string, string> = {
     running: styles.running,
     pending: styles.pending,
@@ -136,7 +159,15 @@ export function ToolPartView({ part }: Props) {
         <span className={`${styles.action} ${actionClass[category] ?? ""}`}>{actionLabel}</span>
         {displayTitle && (
           <span className={styles.title} title={displayTitle}>
-            {displayTitle}
+            {titleFilePath ? (
+              // biome-ignore lint/a11y/useKeyWithClickEvents: ツールタイトルのファイルパスリンク
+              // biome-ignore lint/a11y/noStaticElementInteractions: ツールタイトルのファイルパスリンク
+              <span className={styles.titleLink} onClick={handleTitleClick}>
+                {displayTitle}
+              </span>
+            ) : (
+              displayTitle
+            )}
           </span>
         )}
         <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>

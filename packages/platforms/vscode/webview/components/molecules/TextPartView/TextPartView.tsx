@@ -29,14 +29,71 @@ const codeRenderer: Partial<Renderer> = {
   },
 };
 
-// DOMPurify で SVG 要素を許可する設定
-const PURIFY_CONFIG: DOMPurify.Config = {
-  ADD_TAGS: ["svg", "path"],
-  ADD_ATTR: ["viewBox", "fill", "fill-rule", "clip-rule", "d", "xmlns"],
+/**
+ * マークダウンリンクのカスタムレンダラー。
+ * href がローカル絶対パス（/始まり）の場合、data-file-path 属性を付与してクリックインターセプトの対象にする。
+ * 行番号は `#L{number}` フラグメントから抽出する。
+ */
+const linkRenderer: Partial<Renderer> = {
+  link({ href, text }: Tokens.Link): string {
+    if (href.startsWith("/")) {
+      // フラグメントから行番号を抽出する
+      const lineMatch = href.match(/#L(\d+)$/);
+      const filePath = lineMatch ? href.slice(0, lineMatch.index) : href;
+      const lineAttr = lineMatch ? ` data-file-line="${lineMatch[1]}"` : "";
+      const escapedPath = filePath.replace(/"/g, "&quot;");
+      return `<a href="#" data-file-path="${escapedPath}"${lineAttr}>${text}</a>`;
+    }
+    return `<a href="${href}">${text}</a>`;
+  },
 };
 
+// DOMPurify で SVG 要素とカスタム data 属性を許可する設定
+const PURIFY_CONFIG: DOMPurify.Config = {
+  ADD_TAGS: ["svg", "path"],
+  ADD_ATTR: ["viewBox", "fill", "fill-rule", "clip-rule", "d", "xmlns", "data-file-path", "data-file-line"],
+};
+
+/**
+ * 絶対ファイルパスの正規表現。
+ * コードブロック内やすでに HTML タグ内にあるパスを除外するため、HTML 後処理で使用する。
+ * パスは /[alphanumeric/._-]+ の形式で、拡張子を持つもののみマッチする。
+ */
+const ABSOLUTE_PATH_RE = /(?<!["\w/])(\/([\w.-]+\/)*[\w.-]+\.\w+)(?::(\d+))?/g;
+
+/**
+ * HTML 文字列中のコードブロック外にある絶対ファイルパスをリンク化する。
+ * <pre>, <code>, <a> タグの内部は変換しない。
+ */
+function linkifyAbsolutePaths(html: string): string {
+  // タグとテキストを分離して処理する
+  // HTML タグ内部のパスや、既にリンク内・コード内のパスは変換しない
+  let depth = 0;
+  const SKIP_OPEN = /<(pre|code|a)[\s>]/gi;
+  const SKIP_CLOSE = /<\/(pre|code|a)>/gi;
+
+  return html.replace(/(<[^>]+>)|([^<]+)/g, (_match, tag: string | undefined, text: string | undefined) => {
+    if (tag) {
+      // スキップ対象タグの深さ管理
+      SKIP_OPEN.lastIndex = 0;
+      SKIP_CLOSE.lastIndex = 0;
+      if (SKIP_OPEN.test(tag)) depth++;
+      else if (SKIP_CLOSE.test(tag)) depth = Math.max(0, depth - 1);
+      return tag;
+    }
+    if (!text || depth > 0) return text ?? "";
+    // テキストノード内の絶対パスをリンク化
+    return text.replace(ABSOLUTE_PATH_RE, (_m, filePath: string, _dir: string, lineNum: string | undefined) => {
+      const escapedPath = filePath.replace(/"/g, "&quot;");
+      const lineAttr = lineNum ? ` data-file-line="${lineNum}"` : "";
+      const display = lineNum ? `${filePath}:${lineNum}` : filePath;
+      return `<a href="#" data-file-path="${escapedPath}"${lineAttr}>${display}</a>`;
+    });
+  });
+}
+
 // marked インスタンス（グローバル状態を汚染しない）
-const markdownParser = new Marked({ breaks: true }, { renderer: codeRenderer });
+const markdownParser = new Marked({ breaks: true }, { renderer: { ...codeRenderer, ...linkRenderer } });
 
 type Props = {
   part: TextPart;
@@ -46,13 +103,28 @@ export function TextPartView({ part }: Props) {
   const html = useMemo(() => {
     const preprocessed = preprocessNestedCodeBlocks(part.text);
     const raw = markdownParser.parse(preprocessed, { async: false }) as string;
-    return DOMPurify.sanitize(raw, PURIFY_CONFIG);
+    const linked = linkifyAbsolutePaths(raw);
+    return DOMPurify.sanitize(linked, PURIFY_CONFIG);
   }, [part.text]);
 
   // イベント委譲: コンテナ要素に1つのクリックハンドラーを付けて
-  // .code-block-copy ボタンのクリックを検出する
+  // .code-block-copy ボタンと data-file-path リンクのクリックを検出する
   const handleClick = useCallback((e: React.MouseEvent<HTMLSpanElement>) => {
     const target = e.target as HTMLElement;
+
+    // ファイルパスリンクのクリック処理
+    const fileLink = target.closest<HTMLAnchorElement>("a[data-file-path]");
+    if (fileLink) {
+      e.preventDefault();
+      const filePath = fileLink.dataset.filePath;
+      if (filePath) {
+        const line = fileLink.dataset.fileLine ? Number(fileLink.dataset.fileLine) : undefined;
+        postMessage({ type: "openFile", filePath, line });
+      }
+      return;
+    }
+
+    // コピーボタンのクリック処理
     const btn = target.closest<HTMLButtonElement>(".code-block-copy");
     if (!btn) return;
 
@@ -72,6 +144,6 @@ export function TextPartView({ part }: Props) {
   }, []);
 
   // biome-ignore lint/security/noDangerouslySetInnerHtml: DOMPurify でサニタイズ済みの HTML を描画する
-  // biome-ignore lint/a11y/useKeyWithClickEvents: コピーボタンのイベント委譲
+  // biome-ignore lint/a11y/useKeyWithClickEvents: コピーボタンとファイルリンクのイベント委譲
   return <span className="markdown" onClick={handleClick} dangerouslySetInnerHTML={{ __html: html }} />;
 }
