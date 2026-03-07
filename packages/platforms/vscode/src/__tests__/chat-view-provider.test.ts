@@ -155,7 +155,13 @@ function setupProvider(
   const extensionUri = { fsPath: "/ext" };
   const ps = mockPlatformServices ?? createMockPlatformServices();
   const drm = mockDiffReviewManager ?? createMockDiffReviewManager();
-  const provider = new ChatViewProvider(extensionUri as never, mockAgent as never, ps as never, drm as never, difitAvailable);
+  const provider = new ChatViewProvider(
+    extensionUri as never,
+    mockAgent as never,
+    ps as never,
+    drm as never,
+    difitAvailable,
+  );
   const mock = createMockWebviewView();
   provider.resolveWebviewView(
     mock.webviewView as never,

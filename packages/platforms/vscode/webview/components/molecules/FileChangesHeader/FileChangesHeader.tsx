@@ -148,7 +148,12 @@ export function FileChangesHeader({ diffs, onOpenDiffEditor, difitAvailable }: P
       {expanded && (
         <div className={styles.list}>
           {diffs.map((diff) => (
-            <FileChangeItem key={diff.file} diff={diff} onOpenDiffEditor={onOpenDiffEditor} difitAvailable={difitAvailable} />
+            <FileChangeItem
+              key={diff.file}
+              diff={diff}
+              onOpenDiffEditor={onOpenDiffEditor}
+              difitAvailable={difitAvailable}
+            />
           ))}
         </div>
       )}

@@ -9,8 +9,8 @@ vi.mock("node:child_process", () => ({
   execFile: vi.fn(),
 }));
 
-import { EventEmitter, Readable, Writable } from "node:stream";
 import { spawn } from "node:child_process";
+import { EventEmitter, Readable, Writable } from "node:stream";
 import * as vscode from "vscode";
 import { DiffReviewManager, fileDiffsToUnifiedDiff } from "../diff-review-manager";
 
@@ -23,7 +23,11 @@ function createMockProcess() {
     kill: ReturnType<typeof vi.fn>;
     pid: number;
   };
-  proc.stdin = new Writable({ write(_chunk, _enc, cb) { cb(); } });
+  proc.stdin = new Writable({
+    write(_chunk, _enc, cb) {
+      cb();
+    },
+  });
   proc.stdout = new Readable({ read() {} });
   proc.stderr = new Readable({ read() {} });
   proc.kill = vi.fn();
@@ -119,17 +123,15 @@ describe("DiffReviewManager", () => {
     it("既存プロセスを kill してから新しいプロセスを起動すること", async () => {
       const proc1 = createMockProcess();
       const proc2 = createMockProcess();
-      vi.mocked(spawn).mockReturnValueOnce(proc1 as never).mockReturnValueOnce(proc2 as never);
+      vi.mocked(spawn)
+        .mockReturnValueOnce(proc1 as never)
+        .mockReturnValueOnce(proc2 as never);
 
-      const start1 = manager.start([
-        { file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 },
-      ]);
+      const start1 = manager.start([{ file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 }]);
       proc1.stdout.push("http://127.0.0.1:4966\n");
       await start1;
 
-      const start2 = manager.start([
-        { file: "b.ts", before: "", after: "y", additions: 1, deletions: 0 },
-      ]);
+      const start2 = manager.start([{ file: "b.ts", before: "", after: "y", additions: 1, deletions: 0 }]);
       proc2.stdout.push("http://127.0.0.1:4967\n");
       await start2;
 
@@ -141,9 +143,7 @@ describe("DiffReviewManager", () => {
       const mockProc = createMockProcess();
       vi.mocked(spawn).mockReturnValue(mockProc as never);
 
-      const startPromise = manager.start([
-        { file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 },
-      ]);
+      const startPromise = manager.start([{ file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 }]);
 
       mockProc.emit("close", 1);
 
@@ -155,9 +155,7 @@ describe("DiffReviewManager", () => {
       const mockProc = createMockProcess();
       vi.mocked(spawn).mockReturnValue(mockProc as never);
 
-      const startPromise = manager.start([
-        { file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 },
-      ]);
+      const startPromise = manager.start([{ file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 }]);
 
       mockProc.emit("error", new Error("ENOENT"));
 
@@ -175,9 +173,7 @@ describe("DiffReviewManager", () => {
       const mockProc = createMockProcess();
       vi.mocked(spawn).mockReturnValue(mockProc as never);
 
-      const startPromise = manager.start([
-        { file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 },
-      ]);
+      const startPromise = manager.start([{ file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 }]);
       mockProc.stdout.push("http://127.0.0.1:4966\n");
       await startPromise;
 
@@ -202,9 +198,7 @@ describe("DiffReviewManager", () => {
       const mockProc = createMockProcess();
       vi.mocked(spawn).mockReturnValue(mockProc as never);
 
-      const startPromise = manager.start([
-        { file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 },
-      ]);
+      const startPromise = manager.start([{ file: "a.ts", before: "", after: "x", additions: 1, deletions: 0 }]);
       mockProc.stdout.push("http://127.0.0.1:4966\n");
       await startPromise;
 

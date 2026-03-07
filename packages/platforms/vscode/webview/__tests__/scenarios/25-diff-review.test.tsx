@@ -65,9 +65,7 @@ describe("Diff Review 機能", () => {
 
   context("difitAvailable=true で FileChangesHeader を展開した場合", () => {
     beforeEach(async () => {
-      await setupWithDifitAndDiffs(true, [
-        { file: "src/app.ts", before: "a", after: "b", additions: 1, deletions: 1 },
-      ]);
+      await setupWithDifitAndDiffs(true, [{ file: "src/app.ts", before: "a", after: "b", additions: 1, deletions: 1 }]);
       const user = userEvent.setup();
       await user.click(screen.getByTitle("File changes"));
     });

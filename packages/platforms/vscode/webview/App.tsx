@@ -505,7 +505,11 @@ export function App() {
               />
               {todos.length > 0 && <TodoHeader todos={todos} />}
               {fileChanges.diffs.length > 0 && (
-                <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} difitAvailable={difitAvailable} />
+                <FileChangesHeader
+                  diffs={fileChanges.diffs}
+                  onOpenDiffEditor={handleOpenDiffEditor}
+                  difitAvailable={difitAvailable}
+                />
               )}
               {!isChildSession && (
                 <InputArea
