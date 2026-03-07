@@ -22,6 +22,7 @@ describe("MessageItem", () => {
   const defaultProps = {
     activeSessionId: "session-1",
     permissions: new Map(),
+    questions: new Map(),
     onEditAndResend: vi.fn(),
   };
 

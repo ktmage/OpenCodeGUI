@@ -48,6 +48,11 @@ export const zhCn: typeof en = {
   "permission.once": "仅一次",
   "permission.deny": "拒绝",
 
+  // QuestionView
+  "question.submit": "提交",
+  "question.reject": "拒绝",
+  "question.customPlaceholder": "输入自定义回答...",
+
   // SessionList
   "session.noSessions": "暂无会话",
   "session.untitled": "无标题",

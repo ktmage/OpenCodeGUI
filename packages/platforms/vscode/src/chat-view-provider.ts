@@ -140,6 +140,14 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
         await this.agent.replyPermission(message.sessionId, message.permissionId, message.response);
         break;
       }
+      case "replyQuestion": {
+        await this.agent.replyQuestion(message.requestId, message.answers);
+        break;
+      }
+      case "rejectQuestion": {
+        await this.agent.rejectQuestion(message.requestId);
+        break;
+      }
       case "abort": {
         await this.agent.abortSession(message.sessionId);
         break;

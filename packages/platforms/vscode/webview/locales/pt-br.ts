@@ -48,6 +48,11 @@ export const ptBr: typeof en = {
   "permission.once": "Apenas uma vez",
   "permission.deny": "Negar",
 
+  // QuestionView
+  "question.submit": "Enviar",
+  "question.reject": "Rejeitar",
+  "question.customPlaceholder": "Digite uma resposta personalizada...",
+
   // SessionList
   "session.noSessions": "Sem sessões",
   "session.untitled": "Sem título",

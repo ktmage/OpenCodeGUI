@@ -48,6 +48,11 @@ export const es: typeof en = {
   "permission.once": "Solo una vez",
   "permission.deny": "Denegar",
 
+  // QuestionView
+  "question.submit": "Enviar",
+  "question.reject": "Rechazar",
+  "question.customPlaceholder": "Escribir una respuesta personalizada...",
+
   // SessionList
   "session.noSessions": "Sin sesiones",
   "session.untitled": "Sin título",

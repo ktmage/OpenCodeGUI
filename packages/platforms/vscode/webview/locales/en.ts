@@ -46,6 +46,11 @@ export const en = {
   "permission.once": "Once",
   "permission.deny": "Deny",
 
+  // QuestionView
+  "question.submit": "Submit",
+  "question.reject": "Reject",
+  "question.customPlaceholder": "Type a custom answer...",
+
   // SessionList
   "session.noSessions": "No sessions",
   "session.untitled": "Untitled",
