@@ -22,8 +22,10 @@ type Props = {
   agents: AgentInfo[];
   selectedAgent: AgentInfo | null;
   onSelectAgent: (agent: AgentInfo) => void;
+  onClearAgent: () => void;
   isShellMode: boolean;
   onToggleShellMode: () => void;
+  onDisableShellMode: () => void;
 };
 
 export function FileAttachmentBar({
@@ -41,8 +43,10 @@ export function FileAttachmentBar({
   agents,
   selectedAgent,
   onSelectAgent,
+  onClearAgent,
   isShellMode,
   onToggleShellMode,
+  onDisableShellMode,
 }: Props) {
   const t = useLocale();
 
@@ -125,6 +129,26 @@ export function FileAttachmentBar({
           </div>
         )}
       </div>
+      {/* シェルモードチップ */}
+      {isShellMode && (
+        <div className={styles.shellChip} data-testid="shell-chip">
+          <TerminalIcon />
+          <span className={styles.shellChipName}>{t["input.shellMode"]}</span>
+          <button type="button" className={styles.shellChipClear} onClick={onDisableShellMode}>
+            <CloseIcon width={12} height={12} />
+          </button>
+        </div>
+      )}
+      {/* 選択済みエージェントチップ */}
+      {selectedAgent && (
+        <div className={styles.agentChip}>
+          <AgentIcon />
+          <span className={styles.agentChipName}>@{selectedAgent.name}</span>
+          <button type="button" className={styles.agentChipClear} onClick={onClearAgent}>
+            <CloseIcon width={12} height={12} />
+          </button>
+        </div>
+      )}
       {/* 添付されたファイルチップ (インライン) */}
       {attachedFiles.map((file) => {
         const ChipIcon = getFileIcon(file.fileName);

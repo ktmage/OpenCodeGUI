@@ -7,7 +7,7 @@ import { useLocale } from "../../../locales";
 import type { AllProvidersData, FileAttachment } from "../../../vscode-api";
 import { postMessage } from "../../../vscode-api";
 import { IconButton } from "../../atoms/IconButton";
-import { AgentIcon, ChevronRightIcon, CloseIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
+import { ChevronRightIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
 import { Popover } from "../../atoms/Popover";
 import { AgentPopup } from "../../molecules/AgentPopup";
 import { AgentSelector } from "../../molecules/AgentSelector";
@@ -536,26 +536,6 @@ export function InputArea({
         {/* コンテキストバー: エージェントチップ + クリップボタン + 添付ファイルチップ + quick-add を1行に */}
         <div className={styles.contextBar}>
           <div className={styles.contextBarLeft}>
-            {/* シェルモードチップ */}
-            {isShellMode && (
-              <div className={styles.shellChip} data-testid="shell-chip">
-                <TerminalIcon />
-                <span className={styles.shellChipName}>{t["input.shellMode"]}</span>
-                <button type="button" className={styles.shellChipClear} onClick={disableShellMode}>
-                  <CloseIcon width={12} height={12} />
-                </button>
-              </div>
-            )}
-            {/* 選択済みエージェントチップ（ファイルチップの先頭に表示） */}
-            {selectedAgent && (
-              <div className={styles.agentChip}>
-                <AgentIcon />
-                <span className={styles.agentChipName}>@{selectedAgent.name}</span>
-                <button type="button" className={styles.agentChipClear} onClick={clearAgent}>
-                  <CloseIcon width={12} height={12} />
-                </button>
-              </div>
-            )}
             <FileAttachmentBar
               attachedFiles={attachedFiles}
               activeEditorFile={activeEditorFile}
@@ -571,8 +551,10 @@ export function InputArea({
               agents={subagents}
               selectedAgent={selectedAgent}
               onSelectAgent={selectAgent}
+              onClearAgent={clearAgent}
               isShellMode={isShellMode}
               onToggleShellMode={toggleShellMode}
+              onDisableShellMode={disableShellMode}
             />
           </div>
         </div>
