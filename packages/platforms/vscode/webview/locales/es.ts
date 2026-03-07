@@ -106,6 +106,13 @@ export const es: typeof en = {
   "config.langPtBr": "Português (Brasil)",
   "config.langRu": "Русский",
 
+  // Sound notification
+  "config.sound": "Notificación de sonido",
+  "config.soundResponseComplete": "Respuesta completada",
+  "config.soundPermissionRequest": "Solicitud de permiso",
+  "config.soundError": "Error",
+  "config.soundVolume": "Volumen",
+
   // FileChangesHeader
   "fileChanges.title": "Cambios de archivos",
   "fileChanges.noChanges": "Sin cambios de archivos",

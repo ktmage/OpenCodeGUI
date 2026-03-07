@@ -79,6 +79,30 @@
   font-size: 12px;
 }
 
+.soundItem {
+  padding: 2px 0;
+}
+
+.volumeRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 2px 12px 4px 32px;
+}
+
+.volumeLabel {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  white-space: nowrap;
+}
+
+.volumeSlider {
+  flex: 1;
+  height: 4px;
+  accent-color: var(--vscode-focusBorder);
+  cursor: pointer;
+}
+
 .footer {
   display: flex;
   gap: 4px;

@@ -104,6 +104,13 @@ export const en = {
   "config.langPtBr": "Português (Brasil)",
   "config.langRu": "Русский",
 
+  // Sound notification
+  "config.sound": "Sound Notification",
+  "config.soundResponseComplete": "Response complete",
+  "config.soundPermissionRequest": "Permission request",
+  "config.soundError": "Error",
+  "config.soundVolume": "Volume",
+
   // FileChangesHeader
   "fileChanges.title": "File Changes",
   "fileChanges.noChanges": "No file changes",

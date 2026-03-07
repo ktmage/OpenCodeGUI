@@ -14,6 +14,7 @@ import { useMessages } from "./hooks/useMessages";
 import { usePermissions } from "./hooks/usePermissions";
 import { useProviders } from "./hooks/useProviders";
 import { useSession } from "./hooks/useSession";
+import { useSoundNotification } from "./hooks/useSoundNotification";
 import { LocaleProvider } from "./locales";
 import type { FileAttachment, HostToUIMessage } from "./vscode-api";
 import { postMessage } from "./vscode-api";
@@ -28,6 +29,7 @@ export function App() {
   const perm = usePermissions();
   const locale = useLocale();
   const fileChanges = useFileChanges();
+  const sound = useSoundNotification();
 
   // Extension Host → Webview メッセージでのみ更新される単純なステート
   const [openEditors, setOpenEditors] = useState<FileAttachment[]>([]);
@@ -65,6 +67,7 @@ export function App() {
       msg.handleMessageEvent(event);
       perm.handlePermissionEvent(event);
       fileChanges.handleFileChangeEvent(event);
+      sound.handleSoundEvent(event);
 
       const currentSession = activeSessionRef.current;
 
@@ -84,7 +87,13 @@ export function App() {
         postMessage({ type: "getChildSessions", sessionId: currentSession.id });
       }
     },
-    [session.handleSessionEvent, msg.handleMessageEvent, perm.handlePermissionEvent, fileChanges.handleFileChangeEvent],
+    [
+      session.handleSessionEvent,
+      msg.handleMessageEvent,
+      perm.handlePermissionEvent,
+      fileChanges.handleFileChangeEvent,
+      sound.handleSoundEvent,
+    ],
   );
 
   // Extension Host → Webview message listener
@@ -425,6 +434,8 @@ export function App() {
     onOpenTerminal: handleOpenTerminal,
     localeSetting: locale.localeSetting,
     onLocaleSettingChange: locale.handleLocaleSettingChange,
+    soundSettings: sound.soundSettings,
+    onSoundSettingChange: sound.handleSoundSettingChange,
     childSessions,
     onNavigateToChild: handleNavigateToChild,
     onNavigateToParent: handleNavigateToParent,
@@ -491,6 +502,8 @@ export function App() {
                   onOpenTerminal={handleOpenTerminal}
                   localeSetting={locale.localeSetting}
                   onLocaleSettingChange={locale.handleLocaleSettingChange}
+                  soundSettings={sound.soundSettings}
+                  onSoundSettingChange={sound.handleSoundSettingChange}
                   agents={agents}
                 />
               )}

@@ -106,6 +106,13 @@ export const ko: typeof en = {
   "config.langPtBr": "Português (Brasil)",
   "config.langRu": "Русский",
 
+  // Sound notification
+  "config.sound": "사운드 알림",
+  "config.soundResponseComplete": "응답 완료",
+  "config.soundPermissionRequest": "권한 요청",
+  "config.soundError": "오류",
+  "config.soundVolume": "볼륨",
+
   // FileChangesHeader
   "fileChanges.title": "파일 변경",
   "fileChanges.noChanges": "파일 변경 없음",

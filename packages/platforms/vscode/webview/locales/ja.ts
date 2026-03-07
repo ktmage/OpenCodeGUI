@@ -106,6 +106,13 @@ export const ja: typeof en = {
   "config.langPtBr": "Português (Brasil)",
   "config.langRu": "Русский",
 
+  // Sound notification
+  "config.sound": "サウンド通知",
+  "config.soundResponseComplete": "応答完了",
+  "config.soundPermissionRequest": "パーミッション要求",
+  "config.soundError": "エラー",
+  "config.soundVolume": "音量",
+
   // FileChangesHeader
   "fileChanges.title": "ファイル変更",
   "fileChanges.noChanges": "ファイル変更なし",

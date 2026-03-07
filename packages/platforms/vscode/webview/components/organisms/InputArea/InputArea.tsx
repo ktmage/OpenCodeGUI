@@ -1,4 +1,4 @@
-import type { AgentInfo, ProviderInfo } from "@opencodegui/core";
+import type { AgentInfo, ProviderInfo, SoundEventSetting, SoundEventType, SoundSettings } from "@opencodegui/core";
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import { useInputHistory } from "../../../hooks/useInputHistory";
@@ -35,6 +35,8 @@ type Props = {
   onOpenTerminal: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
+  soundSettings: SoundSettings;
+  onSoundSettingChange: (eventType: SoundEventType, setting: Partial<SoundEventSetting>) => void;
   agents: AgentInfo[];
 };
 
@@ -57,6 +59,8 @@ export function InputArea({
   onOpenTerminal,
   localeSetting,
   onLocaleSettingChange,
+  soundSettings,
+  onSoundSettingChange,
   agents,
 }: Props) {
   const t = useLocale();
@@ -621,6 +625,8 @@ export function InputArea({
                   onClose={close}
                   localeSetting={localeSetting}
                   onLocaleSettingChange={onLocaleSettingChange}
+                  soundSettings={soundSettings}
+                  onSoundSettingChange={onSoundSettingChange}
                 />
               )}
             />

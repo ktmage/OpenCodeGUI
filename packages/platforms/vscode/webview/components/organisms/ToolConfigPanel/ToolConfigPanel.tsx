@@ -1,3 +1,4 @@
+import type { SoundEventSetting, SoundEventType, SoundSettings } from "@opencodegui/core";
 import type { LocaleSetting } from "../../../locales";
 import { useLocale } from "../../../locales";
 import { IconButton } from "../../atoms/IconButton";
@@ -11,9 +12,19 @@ type Props = {
   onClose: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
+  soundSettings: SoundSettings;
+  onSoundSettingChange: (eventType: SoundEventType, setting: Partial<SoundEventSetting>) => void;
 };
 
-export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSetting, onLocaleSettingChange }: Props) {
+export function ToolConfigPanel({
+  paths,
+  onOpenConfigFile,
+  onClose,
+  localeSetting,
+  onLocaleSettingChange,
+  soundSettings,
+  onSoundSettingChange,
+}: Props) {
   const t = useLocale();
 
   return (
@@ -52,6 +63,47 @@ export function ToolConfigPanel({ paths, onOpenConfigFile, onClose, localeSettin
                   />
                   <span className={styles.toolName}>{labelMap[opt]}</span>
                 </label>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Sound Notification Setting */}
+        <div className={styles.section}>
+          <div className={styles.sectionTitle}>{t["config.sound"]}</div>
+          <div>
+            {(["responseComplete", "permissionRequest", "error"] as const).map((eventType) => {
+              const labelMap = {
+                responseComplete: t["config.soundResponseComplete"],
+                permissionRequest: t["config.soundPermissionRequest"],
+                error: t["config.soundError"],
+              } as const;
+              const enabled = soundSettings[eventType]?.enabled ?? true;
+              const volume = soundSettings[eventType]?.volume ?? 0.5;
+              return (
+                <div key={eventType} className={styles.soundItem}>
+                  <label className={styles.toggle}>
+                    <input
+                      type="checkbox"
+                      checked={enabled}
+                      onChange={(e) => onSoundSettingChange(eventType, { enabled: e.target.checked })}
+                    />
+                    <span className={styles.toolName}>{labelMap[eventType]}</span>
+                  </label>
+                  {enabled && (
+                    <div className={styles.volumeRow}>
+                      <span className={styles.volumeLabel}>{t["config.soundVolume"]}</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        value={Math.round(volume * 100)}
+                        onChange={(e) => onSoundSettingChange(eventType, { volume: Number(e.target.value) / 100 })}
+                        className={styles.volumeSlider}
+                      />
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>

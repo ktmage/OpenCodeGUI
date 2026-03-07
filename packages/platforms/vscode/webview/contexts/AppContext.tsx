@@ -1,4 +1,13 @@
-import type { ChatSession, FileDiff, Permission, ProviderInfo, TodoItem } from "@opencodegui/core";
+import type {
+  ChatSession,
+  FileDiff,
+  Permission,
+  ProviderInfo,
+  SoundEventSetting,
+  SoundEventType,
+  SoundSettings,
+  TodoItem,
+} from "@opencodegui/core";
 import { createContext, useContext } from "react";
 import type { MessageWithParts } from "../hooks/useMessages";
 import type { LocaleSetting } from "../locales";
@@ -53,6 +62,8 @@ export type AppContextValue = {
   onOpenTerminal: () => void;
   localeSetting: LocaleSetting;
   onLocaleSettingChange: (setting: LocaleSetting) => void;
+  soundSettings: SoundSettings;
+  onSoundSettingChange: (eventType: SoundEventType, setting: Partial<SoundEventSetting>) => void;
 
   // Child Sessions
   childSessions: ChatSession[];

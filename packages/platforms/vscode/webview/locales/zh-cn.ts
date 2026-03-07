@@ -106,6 +106,13 @@ export const zhCn: typeof en = {
   "config.langPtBr": "Português (Brasil)",
   "config.langRu": "Русский",
 
+  // Sound notification
+  "config.sound": "声音通知",
+  "config.soundResponseComplete": "响应完成",
+  "config.soundPermissionRequest": "权限请求",
+  "config.soundError": "错误",
+  "config.soundVolume": "音量",
+
   // FileChangesHeader
   "fileChanges.title": "文件更改",
   "fileChanges.noChanges": "无文件更改",

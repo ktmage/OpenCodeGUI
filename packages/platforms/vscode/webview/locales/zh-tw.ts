@@ -106,6 +106,13 @@ export const zhTw: typeof en = {
   "config.langPtBr": "Português (Brasil)",
   "config.langRu": "Русский",
 
+  // Sound notification
+  "config.sound": "聲音通知",
+  "config.soundResponseComplete": "回應完成",
+  "config.soundPermissionRequest": "權限請求",
+  "config.soundError": "錯誤",
+  "config.soundVolume": "音量",
+
   // FileChangesHeader
   "fileChanges.title": "檔案變更",
   "fileChanges.noChanges": "沒有檔案變更",
