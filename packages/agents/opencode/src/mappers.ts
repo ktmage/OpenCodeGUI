@@ -15,7 +15,6 @@ import type {
   FileDiff as SdkFileDiff,
   McpStatus as SdkMcpStatus,
   Path as SdkPath,
-  ToolListItem as SdkToolListItem,
   Session,
   Todo,
 } from "@opencode-ai/sdk";

@@ -85,6 +85,10 @@ export const es: typeof en = {
   "model.showAll": "Mostrar todos los proveedores",
   "model.hideDisconnected": "Ocultar proveedores desconectados",
 
+  // AgentSelector
+  "agent.selectAgent": "Seleccionar agente",
+  "agent.agents": "Agentes",
+
   // TodoHeader
   "todo.label": "Tareas",
   "todo.toggleList": "Alternar lista de tareas",
@@ -135,9 +139,9 @@ export const es: typeof en = {
 
   // Context menu sections
   "input.section.files": "Archivos",
-  "input.section.agents": "Agentes",
+  "input.section.agents": "Sub-agentes",
   "input.section.shell": "Modo Shell",
 
   // AgentMention
-  "input.noAgents": "No hay agentes disponibles",
+  "input.noAgents": "No hay sub-agentes disponibles",
 };

@@ -85,6 +85,10 @@ export const zhCn: typeof en = {
   "model.showAll": "显示所有提供者",
   "model.hideDisconnected": "隐藏未连接的提供者",
 
+  // AgentSelector
+  "agent.selectAgent": "选择代理",
+  "agent.agents": "代理",
+
   // TodoHeader
   "todo.label": "待办",
   "todo.toggleList": "切换待办列表",
@@ -135,9 +139,9 @@ export const zhCn: typeof en = {
 
   // Context menu sections
   "input.section.files": "文件",
-  "input.section.agents": "智能体",
+  "input.section.agents": "子智能体",
   "input.section.shell": "Shell 模式",
 
   // AgentMention
-  "input.noAgents": "没有可用的智能体",
+  "input.noAgents": "没有可用的子智能体",
 };

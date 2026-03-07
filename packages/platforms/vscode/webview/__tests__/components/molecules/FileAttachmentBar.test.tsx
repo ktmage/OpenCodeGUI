@@ -109,7 +109,7 @@ describe("FileAttachmentBar", () => {
         <FileAttachmentBar {...defaultProps} showFilePicker={true} pickerFiles={[file1]} agents={[agent1, agent2]} />,
       );
       expect(screen.getByText("Files")).toBeInTheDocument();
-      expect(screen.getByText("Agents")).toBeInTheDocument();
+      expect(screen.getByText("Sub-agents")).toBeInTheDocument();
       expect(screen.getByText("Shell Mode")).toBeInTheDocument();
     });
   });

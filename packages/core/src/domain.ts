@@ -459,6 +459,7 @@ export type SendMessageOptions = {
   model?: ModelRef;
   files?: FileAttachment[];
   agent?: string;
+  primaryAgent?: string;
 };
 
 // ============================================================

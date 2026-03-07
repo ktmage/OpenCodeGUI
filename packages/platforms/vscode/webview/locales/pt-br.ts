@@ -85,6 +85,10 @@ export const ptBr: typeof en = {
   "model.showAll": "Mostrar todos os provedores",
   "model.hideDisconnected": "Ocultar provedores desconectados",
 
+  // AgentSelector
+  "agent.selectAgent": "Selecionar agente",
+  "agent.agents": "Agentes",
+
   // TodoHeader
   "todo.label": "Tarefas",
   "todo.toggleList": "Alternar lista de tarefas",
@@ -135,9 +139,9 @@ export const ptBr: typeof en = {
 
   // Context menu sections
   "input.section.files": "Arquivos",
-  "input.section.agents": "Agentes",
+  "input.section.agents": "Sub-agentes",
   "input.section.shell": "Modo Shell",
 
   // AgentMention
-  "input.noAgents": "Nenhum agente disponível",
+  "input.noAgents": "Nenhum sub-agente disponível",
 };

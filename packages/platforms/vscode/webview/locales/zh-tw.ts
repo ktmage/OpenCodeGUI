@@ -85,6 +85,10 @@ export const zhTw: typeof en = {
   "model.showAll": "顯示所有提供者",
   "model.hideDisconnected": "隱藏未連線的提供者",
 
+  // AgentSelector
+  "agent.selectAgent": "選擇代理",
+  "agent.agents": "代理",
+
   // TodoHeader
   "todo.label": "待辦",
   "todo.toggleList": "切換待辦列表",
@@ -135,9 +139,9 @@ export const zhTw: typeof en = {
 
   // Context menu sections
   "input.section.files": "檔案",
-  "input.section.agents": "智慧代理",
+  "input.section.agents": "子代理",
   "input.section.shell": "Shell 模式",
 
   // AgentMention
-  "input.noAgents": "沒有可用的智慧代理",
+  "input.noAgents": "沒有可用的子代理",
 };

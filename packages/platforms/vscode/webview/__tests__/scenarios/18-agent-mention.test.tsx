@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { postMessage } from "../../vscode-api";
@@ -77,12 +77,13 @@ describe("エージェントメンション", () => {
       const user = userEvent.setup();
       const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
       await user.type(textarea, "@");
+      const popup = within(screen.getByTestId("agent-popup"));
       // subagent の general と explore が表示される
-      expect(screen.getByText("general")).toBeInTheDocument();
-      expect(screen.getByText("explore")).toBeInTheDocument();
-      // primary の build と plan は表示されない
-      expect(screen.queryByText("build")).not.toBeInTheDocument();
-      expect(screen.queryByText("plan")).not.toBeInTheDocument();
+      expect(popup.getByText("general")).toBeInTheDocument();
+      expect(popup.getByText("explore")).toBeInTheDocument();
+      // primary の build と plan はポップアップ内に表示されない
+      expect(popup.queryByText("build")).not.toBeInTheDocument();
+      expect(popup.queryByText("plan")).not.toBeInTheDocument();
     });
 
     // filters agents by query

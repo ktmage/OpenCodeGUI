@@ -85,6 +85,10 @@ export const ja: typeof en = {
   "model.showAll": "すべてのプロバイダーを表示",
   "model.hideDisconnected": "未接続のプロバイダーを非表示",
 
+  // AgentSelector
+  "agent.selectAgent": "エージェントを選択",
+  "agent.agents": "エージェント",
+
   // TodoHeader
   "todo.label": "ToDo",
   "todo.toggleList": "ToDoリストを切り替え",
@@ -135,9 +139,9 @@ export const ja: typeof en = {
 
   // Context menu sections
   "input.section.files": "ファイル",
-  "input.section.agents": "エージェント",
+  "input.section.agents": "サブエージェント",
   "input.section.shell": "シェルモード",
 
   // AgentMention
-  "input.noAgents": "利用可能なエージェントがありません",
+  "input.noAgents": "利用可能なサブエージェントがありません",
 };

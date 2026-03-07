@@ -70,7 +70,7 @@ describe("統合コンテキストメニュー", () => {
       const clipButton = screen.getByTitle("Add context");
       await user.click(clipButton);
       expect(screen.getByText("Files")).toBeInTheDocument();
-      expect(screen.getByText("Agents")).toBeInTheDocument();
+      expect(screen.getByText("Sub-agents")).toBeInTheDocument();
       expect(screen.getByText("Shell Mode")).toBeInTheDocument();
     });
   });
