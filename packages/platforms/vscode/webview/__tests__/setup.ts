@@ -1,5 +1,7 @@
-import "@testing-library/jest-dom/vitest";
-import { beforeEach, describe, vi } from "vitest";
+import * as matchers from "@testing-library/jest-dom/matchers";
+import { beforeEach, describe, expect, vi } from "vitest";
+
+expect.extend(matchers);
 
 // --- RSpec スタイルの context エイリアス ---
 // ネストされた describe を意味的に区別するために使用する。
