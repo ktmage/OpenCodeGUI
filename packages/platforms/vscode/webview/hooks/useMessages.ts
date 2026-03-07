@@ -1,5 +1,5 @@
 import type { AgentEvent, ChatMessage, MessagePart } from "@opencodegui/core";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export type MessageWithParts = { info: ChatMessage; parts: MessagePart[] };
 
@@ -42,7 +42,6 @@ function removeMessage(prev: MessageWithParts[], messageID: string): MessageWith
  * メッセージの実体はサーバー側が保持しているが、AI の応答中はテキストやツール呼び出しの
  * パートが SSE で細かく差分配信されるため、Webview 側でも配列を保持して差分マージすることで
  * ストリーミング表示をリアルタイムに実現している。
- * また、この配列から inputTokens（コンテキスト使用量）や latestTodos を導出している。
  */
 export function useMessages() {
   const [messages, setMessages] = useState<MessageWithParts[]>([]);
@@ -59,19 +58,6 @@ export function useMessages() {
   }, []);
 
   const isShellMessage = useCallback((messageId: string) => shellMessageIds.has(messageId), [shellMessageIds]);
-
-  // messages から StepFinishPart のトークン使用量を導出する（圧縮でメッセージが減ると自動的に反映される）
-  const inputTokens = useMemo(() => {
-    let total = 0;
-    for (const m of messages) {
-      for (const p of m.parts) {
-        if (p.type === "step-finish" && p.tokens) {
-          total += p.tokens.input;
-        }
-      }
-    }
-    return total;
-  }, [messages]);
 
   const consumePrefill = useCallback(() => {
     setPrefillText("");
@@ -110,7 +96,6 @@ export function useMessages() {
     setMessages,
     prefillText,
     setPrefillText,
-    inputTokens,
     consumePrefill,
     handleMessageEvent,
     markPendingShell,
