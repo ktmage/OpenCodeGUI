@@ -126,6 +126,8 @@ export const ru: typeof en = {
   "fileChanges.title": "Изменения файлов",
   "fileChanges.noChanges": "Нет изменений файлов",
   "fileChanges.openDiff": "Открыть в редакторе различий",
+  "fileChanges.diffReview": "Diff Review",
+  "fileChanges.openReview": "Открыть в Diff Review",
   "fileChanges.toggle": "Изменения файлов",
 
   // Share

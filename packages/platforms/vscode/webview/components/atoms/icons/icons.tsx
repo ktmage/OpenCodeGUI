@@ -15,7 +15,7 @@ import {
   VscEye,
   VscEyeClosed,
   VscFile,
-  VscFolderOpened,
+  VscDiff,
   VscInfo,
   VscLinkExternal,
   VscListUnordered,
@@ -195,9 +195,9 @@ export function ToolIcon({ width = 14, height: _h, ...props }: IconProps) {
 
 // ─── Visibility ───────────────────────────────────────────────────────
 
-/** Codicon: folder-opened — file changes icon */
+/** Codicon: diff — file changes icon */
 export function DiffIcon({ width = 16, height: _h, ...props }: IconProps) {
-  return <VscFolderOpened {...adapt({ width, ...props }, 16)} />;
+  return <VscDiff {...adapt({ width, ...props }, 16)} />;
 }
 
 /** Codicon: link-external — open file in editor */

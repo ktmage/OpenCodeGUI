@@ -126,6 +126,8 @@ export const ptBr: typeof en = {
   "fileChanges.title": "Alterações de arquivos",
   "fileChanges.noChanges": "Sem alterações de arquivos",
   "fileChanges.openDiff": "Abrir no editor de diferenças",
+  "fileChanges.diffReview": "Diff Review",
+  "fileChanges.openReview": "Abrir no Diff Review",
   "fileChanges.toggle": "Alterações de arquivos",
 
   // Share

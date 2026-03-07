@@ -126,6 +126,8 @@ export const ko: typeof en = {
   "fileChanges.title": "파일 변경",
   "fileChanges.noChanges": "파일 변경 없음",
   "fileChanges.openDiff": "차이 편집기에서 열기",
+  "fileChanges.diffReview": "Diff Review",
+  "fileChanges.openReview": "Diff Review에서 열기",
   "fileChanges.toggle": "파일 변경",
 
   // Share

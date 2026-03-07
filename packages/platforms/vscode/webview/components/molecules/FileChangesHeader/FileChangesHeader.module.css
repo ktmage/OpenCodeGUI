@@ -37,7 +37,6 @@
 .stats {
   display: flex;
   gap: 4px;
-  flex: 1;
   font-size: 11px;
   font-family: var(--vscode-editor-font-family, monospace);
 }
@@ -48,6 +47,17 @@
   flex-shrink: 0;
   color: var(--vscode-descriptionForeground);
   transition: transform 0.15s;
+}
+
+.reviewButton {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.bar:hover .reviewButton {
+  opacity: 1;
 }
 
 .chevron.expanded {

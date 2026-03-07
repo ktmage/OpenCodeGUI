@@ -2,6 +2,7 @@ import type { FileDiff } from "@opencodegui/core";
 import { useState } from "react";
 import { useLocale } from "../../../locales";
 import { getFileIcon } from "../../../utils/file-icons";
+import { postMessage } from "../../../vscode-api";
 import { IconButton } from "../../atoms/IconButton";
 import { ChevronRightIcon, DiffIcon, ExternalLinkIcon } from "../../atoms/icons";
 import { DiffView } from "../DiffView";
@@ -10,6 +11,7 @@ import styles from "./FileChangesHeader.module.css";
 type Props = {
   diffs: FileDiff[];
   onOpenDiffEditor: (filePath: string, before: string, after: string) => void;
+  difitAvailable: boolean;
 };
 
 /** ファイルパスから basename を取得 */
@@ -35,9 +37,11 @@ function getFileStatus(diff: FileDiff): "added" | "deleted" | "modified" {
 function FileChangeItem({
   diff,
   onOpenDiffEditor,
+  difitAvailable,
 }: {
   diff: FileDiff;
   onOpenDiffEditor: (filePath: string, before: string, after: string) => void;
+  difitAvailable: boolean;
 }) {
   const t = useLocale();
   const [expanded, setExpanded] = useState(false);
@@ -86,6 +90,18 @@ function FileChangeItem({
         >
           <ExternalLinkIcon />
         </IconButton>
+        {difitAvailable && (
+          <IconButton
+            className={styles.openButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              postMessage({ type: "openDiffReview", focusFile: diff.file });
+            }}
+            title={t["fileChanges.openReview"]}
+          >
+            <DiffIcon width={12} height={12} />
+          </IconButton>
+        )}
       </div>
       {expanded && (
         <div className={styles.diffBody}>
@@ -96,7 +112,7 @@ function FileChangeItem({
   );
 }
 
-export function FileChangesHeader({ diffs, onOpenDiffEditor }: Props) {
+export function FileChangesHeader({ diffs, onOpenDiffEditor, difitAvailable }: Props) {
   const t = useLocale();
   const [expanded, setExpanded] = useState(false);
 
@@ -113,6 +129,18 @@ export function FileChangesHeader({ diffs, onOpenDiffEditor }: Props) {
           {totalAdditions > 0 && <span className={styles.statAdd}>+{totalAdditions}</span>}
           {totalDeletions > 0 && <span className={styles.statRemove}>−{totalDeletions}</span>}
         </span>
+        {difitAvailable && (
+          <IconButton
+            className={styles.reviewButton}
+            onClick={(e) => {
+              e.stopPropagation();
+              postMessage({ type: "openDiffReview" });
+            }}
+            title={t["fileChanges.diffReview"]}
+          >
+            <DiffIcon width={12} height={12} />
+          </IconButton>
+        )}
         <span className={`${styles.chevron} ${expanded ? styles.expanded : ""}`}>
           <ChevronRightIcon />
         </span>
@@ -120,7 +148,7 @@ export function FileChangesHeader({ diffs, onOpenDiffEditor }: Props) {
       {expanded && (
         <div className={styles.list}>
           {diffs.map((diff) => (
-            <FileChangeItem key={diff.file} diff={diff} onOpenDiffEditor={onOpenDiffEditor} />
+            <FileChangeItem key={diff.file} diff={diff} onOpenDiffEditor={onOpenDiffEditor} difitAvailable={difitAvailable} />
           ))}
         </div>
       )}

@@ -126,6 +126,8 @@ export const zhTw: typeof en = {
   "fileChanges.title": "檔案變更",
   "fileChanges.noChanges": "沒有檔案變更",
   "fileChanges.openDiff": "在差異編輯器中開啟",
+  "fileChanges.diffReview": "Diff Review",
+  "fileChanges.openReview": "在 Diff Review 中開啟",
   "fileChanges.toggle": "檔案變更",
 
   // Share

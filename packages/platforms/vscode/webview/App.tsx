@@ -41,6 +41,7 @@ export function App() {
   const [childSessions, setChildSessions] = useState<ChatSession[]>([]);
   const [agents, setAgents] = useState<AgentInfo[]>([]);
   const [selectedPrimaryAgent, setSelectedPrimaryAgent] = useState<string | null>(null);
+  const [difitAvailable, setDifitAvailable] = useState(false);
   const [openCodePaths, setOpenCodePaths] = useState<{
     home?: string;
     config: string;
@@ -203,6 +204,10 @@ export function App() {
             const first = data.agents.find((a: AgentInfo) => a.mode === "primary" || a.mode === "all");
             return first?.name ?? null;
           });
+          break;
+        }
+        case "difitAvailable": {
+          setDifitAvailable(data.available);
           break;
         }
       }
@@ -434,6 +439,7 @@ export function App() {
     openEditors,
     workspaceFiles,
     fileDiffs: fileChanges.diffs,
+    difitAvailable,
     onOpenDiffEditor: handleOpenDiffEditor,
     onSend: handleSend,
     onShellExecute: handleShellExecute,
@@ -494,7 +500,7 @@ export function App() {
               />
               {todos.length > 0 && <TodoHeader todos={todos} />}
               {fileChanges.diffs.length > 0 && (
-                <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} />
+                <FileChangesHeader diffs={fileChanges.diffs} onOpenDiffEditor={handleOpenDiffEditor} difitAvailable={difitAvailable} />
               )}
               {!isChildSession && (
                 <InputArea

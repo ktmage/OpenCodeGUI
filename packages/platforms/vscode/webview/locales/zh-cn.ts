@@ -126,6 +126,8 @@ export const zhCn: typeof en = {
   "fileChanges.title": "文件更改",
   "fileChanges.noChanges": "无文件更改",
   "fileChanges.openDiff": "在差异编辑器中打开",
+  "fileChanges.diffReview": "Diff Review",
+  "fileChanges.openReview": "在 Diff Review 中打开",
   "fileChanges.toggle": "文件更改",
 
   // Share

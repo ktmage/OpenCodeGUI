@@ -49,6 +49,7 @@ export type AppContextValue = {
 
   // File Changes
   fileDiffs: FileDiff[];
+  difitAvailable: boolean;
   onOpenDiffEditor: (filePath: string, before: string, after: string) => void;
 
   // Actions

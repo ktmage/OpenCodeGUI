@@ -124,6 +124,8 @@ export const en = {
   "fileChanges.title": "File Changes",
   "fileChanges.noChanges": "No file changes",
   "fileChanges.openDiff": "Open in diff editor",
+  "fileChanges.diffReview": "Diff Review",
+  "fileChanges.openReview": "Open in Diff Review",
   "fileChanges.toggle": "File changes",
 
   // Share
