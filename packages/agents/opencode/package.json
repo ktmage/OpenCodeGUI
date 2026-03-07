@@ -1,0 +1,24 @@
+{
+  "name": "@opencodegui/agent-opencode",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:all": "vitest run"
+  },
+  "dependencies": {
+    "@opencode-ai/sdk": "^1.2.10",
+    "@opencodegui/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^4.0.18"
+  }
+}
