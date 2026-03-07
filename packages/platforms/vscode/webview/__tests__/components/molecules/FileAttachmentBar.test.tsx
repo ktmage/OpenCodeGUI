@@ -29,8 +29,10 @@ const defaultProps = {
   agents: [] as any[],
   selectedAgent: null,
   onSelectAgent: vi.fn(),
+  onClearAgent: vi.fn(),
   isShellMode: false,
   onToggleShellMode: vi.fn(),
+  onDisableShellMode: vi.fn(),
 };
 
 describe("FileAttachmentBar", () => {
