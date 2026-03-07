@@ -215,3 +215,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 This project uses only the VS Code Icons (vsc prefix) from react-icons.
 VS Code Icons are sourced from [vscode-codicons](https://github.com/microsoft/vscode-codicons)
 and licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+
+---
+
+## External Tools (not bundled)
+
+The following tools are not included in the distributed package but are
+invoked as external CLI commands when available on the user's system.
+
+### difit
+
+- **License:** MIT
+- **Source:** https://github.com/yoshiko-pg/difit
+
+Used for the session diff review feature. OpenCodeGUI spawns `difit` as a
+child process and opens its web UI in the system browser. Users must install
+difit separately (`npm install -g difit`).
