@@ -97,6 +97,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           model: message.model,
           files: message.files,
           agent: message.agent,
+          primaryAgent: message.primaryAgent,
         });
         break;
       }

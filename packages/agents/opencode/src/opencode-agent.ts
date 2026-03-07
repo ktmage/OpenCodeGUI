@@ -266,6 +266,7 @@ export class OpenCodeAgent implements IAgent {
       body: {
         parts,
         model: options?.model,
+        agent: options?.primaryAgent,
       },
     });
   }

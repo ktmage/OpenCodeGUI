@@ -58,6 +58,7 @@ export type UIToHostMessage =
       model?: ModelRef;
       files?: FileAttachment[];
       agent?: string;
+      primaryAgent?: string;
     }
   | {
       type: "editAndResend";
