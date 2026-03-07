@@ -10,6 +10,7 @@ import { IconButton } from "../../atoms/IconButton";
 import { AgentIcon, ChevronRightIcon, CloseIcon, GearIcon, SendIcon, StopIcon, TerminalIcon } from "../../atoms/icons";
 import { Popover } from "../../atoms/Popover";
 import { AgentPopup } from "../../molecules/AgentPopup";
+import { AgentSelector } from "../../molecules/AgentSelector";
 import { FileAttachmentBar } from "../../molecules/FileAttachmentBar";
 import { HashFilePopup } from "../../molecules/HashFilePopup";
 import { ModelSelector } from "../../molecules/ModelSelector";
@@ -17,7 +18,7 @@ import { ToolConfigPanel } from "../../organisms/ToolConfigPanel";
 import styles from "./InputArea.module.css";
 
 type Props = {
-  onSend: (text: string, files: FileAttachment[], agent?: string) => void;
+  onSend: (text: string, files: FileAttachment[], agent?: string, primaryAgent?: string) => void;
   onShellExecute: (command: string) => void;
   onAbort: () => void;
   isBusy: boolean;
@@ -25,6 +26,8 @@ type Props = {
   allProvidersData: AllProvidersData | null;
   selectedModel: { providerID: string; modelID: string } | null;
   onModelSelect: (model: { providerID: string; modelID: string }) => void;
+  selectedPrimaryAgent: string | null;
+  onPrimaryAgentSelect: (agentName: string) => void;
   openEditors: FileAttachment[];
   activeEditorFile: FileAttachment | null;
   workspaceFiles: FileAttachment[];
@@ -49,6 +52,8 @@ export function InputArea({
   allProvidersData,
   selectedModel,
   onModelSelect,
+  selectedPrimaryAgent,
+  onPrimaryAgentSelect,
   openEditors,
   activeEditorFile,
   workspaceFiles,
@@ -240,7 +245,7 @@ export function InputArea({
     if (isShellMode) {
       onShellExecute(trimmed);
     } else {
-      onSend(trimmed, attachedFiles, selectedAgent?.name);
+      onSend(trimmed, attachedFiles, selectedAgent?.name, selectedPrimaryAgent ?? undefined);
     }
     setText("");
     setAttachedFiles([]);
@@ -249,7 +254,7 @@ export function InputArea({
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
-  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name, isShellMode, inputHistory]);
+  }, [text, attachedFiles, onSend, onShellExecute, selectedAgent?.name, isShellMode, inputHistory, selectedPrimaryAgent]);
 
   // # トリガーのファイル候補
   const hashFiles = hashQuery
@@ -608,6 +613,11 @@ export function InputArea({
               allProvidersData={allProvidersData}
               selectedModel={selectedModel}
               onSelect={onModelSelect}
+            />
+            <AgentSelector
+              agents={agents}
+              selectedAgent={selectedPrimaryAgent}
+              onSelect={onPrimaryAgentSelect}
             />
             <Popover
               trigger={({ open, toggle }) => (

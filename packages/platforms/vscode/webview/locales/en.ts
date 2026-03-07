@@ -78,6 +78,10 @@ export const en = {
   "model.showAll": "Show all providers",
   "model.hideDisconnected": "Hide disconnected providers",
 
+  // AgentSelector
+  "agent.selectAgent": "Select agent",
+  "agent.agents": "Agents",
+
   // TodoHeader
   "todo.label": "To Do",
   "todo.toggleList": "Toggle to-do list",
@@ -128,11 +132,11 @@ export const en = {
 
   // Context menu sections
   "input.section.files": "Files",
-  "input.section.agents": "Agents",
+  "input.section.agents": "Sub-agents",
   "input.section.shell": "Shell Mode",
 
   // AgentMention
-  "input.noAgents": "No agents available",
+  "input.noAgents": "No sub-agents available",
 } as const;
 
 export type LocaleKeys = keyof typeof en;

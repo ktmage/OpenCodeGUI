@@ -80,6 +80,10 @@ export const ru: typeof en = {
   "model.showAll": "Показать всех провайдеров",
   "model.hideDisconnected": "Скрыть отключённых провайдеров",
 
+  // AgentSelector
+  "agent.selectAgent": "Выбрать агента",
+  "agent.agents": "Агенты",
+
   // TodoHeader
   "todo.label": "Задачи",
   "todo.toggleList": "Переключить список задач",
@@ -130,9 +134,9 @@ export const ru: typeof en = {
 
   // Context menu sections
   "input.section.files": "Файлы",
-  "input.section.agents": "Агенты",
+  "input.section.agents": "Субагенты",
   "input.section.shell": "Режим Shell",
 
   // AgentMention
-  "input.noAgents": "Нет доступных агентов",
+  "input.noAgents": "Нет доступных субагентов",
 };

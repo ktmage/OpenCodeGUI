@@ -38,6 +38,7 @@ export function App() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [childSessions, setChildSessions] = useState<ChatSession[]>([]);
   const [agents, setAgents] = useState<AgentInfo[]>([]);
+  const [selectedPrimaryAgent, setSelectedPrimaryAgent] = useState<string | null>(null);
   const [openCodePaths, setOpenCodePaths] = useState<{
     home?: string;
     config: string;
@@ -192,6 +193,14 @@ export function App() {
         }
         case "agents": {
           setAgents(data.agents);
+          // 初回: まだプライマリエージェントが未選択なら最初の primary を選ぶ
+          setSelectedPrimaryAgent((prev) => {
+            if (prev) return prev;
+            const first = data.agents.find(
+              (a: AgentInfo) => a.mode === "primary" || a.mode === "all",
+            );
+            return first?.name ?? null;
+          });
           break;
         }
       }
@@ -218,7 +227,7 @@ export function App() {
   // Cross-cutting action handlers (span multiple hooks)
 
   const handleSend = useCallback(
-    (text: string, files: FileAttachment[], agent?: string) => {
+    (text: string, files: FileAttachment[], agent?: string, primaryAgent?: string) => {
       if (!session.activeSession) return;
       postMessage({
         type: "sendMessage",
@@ -227,6 +236,7 @@ export function App() {
         model: prov.selectedModel ?? undefined,
         files: files.length > 0 ? files : undefined,
         agent,
+        primaryAgent,
       });
     },
     [session.activeSession, prov.selectedModel],
@@ -492,6 +502,8 @@ export function App() {
                   allProvidersData={prov.allProvidersData}
                   selectedModel={prov.selectedModel}
                   onModelSelect={prov.handleModelSelect}
+                  selectedPrimaryAgent={selectedPrimaryAgent}
+                  onPrimaryAgentSelect={setSelectedPrimaryAgent}
                   openEditors={openEditors}
                   activeEditorFile={activeEditorFile}
                   workspaceFiles={workspaceFiles}

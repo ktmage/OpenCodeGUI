@@ -80,6 +80,10 @@ export const ko: typeof en = {
   "model.showAll": "모든 제공자 표시",
   "model.hideDisconnected": "연결 안 된 제공자 숨기기",
 
+  // AgentSelector
+  "agent.selectAgent": "에이전트 선택",
+  "agent.agents": "에이전트",
+
   // TodoHeader
   "todo.label": "할 일",
   "todo.toggleList": "할 일 목록 전환",
@@ -130,9 +134,9 @@ export const ko: typeof en = {
 
   // Context menu sections
   "input.section.files": "파일",
-  "input.section.agents": "에이전트",
+  "input.section.agents": "서브 에이전트",
   "input.section.shell": "셸 모드",
 
   // AgentMention
-  "input.noAgents": "사용 가능한 에이전트가 없습니다",
+  "input.noAgents": "사용 가능한 서브 에이전트가 없습니다",
 };
