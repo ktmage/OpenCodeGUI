@@ -48,6 +48,11 @@ export const zhTw: typeof en = {
   "permission.once": "僅一次",
   "permission.deny": "拒絕",
 
+  // QuestionView
+  "question.submit": "提交",
+  "question.reject": "拒絕",
+  "question.customPlaceholder": "輸入自訂回答...",
+
   // SessionList
   "session.noSessions": "沒有工作階段",
   "session.untitled": "無標題",

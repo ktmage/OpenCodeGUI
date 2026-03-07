@@ -1,4 +1,4 @@
-import type { Permission } from "@opencodegui/core";
+import type { Permission, QuestionRequest } from "@opencodegui/core";
 import type { MessageWithParts } from "../../../App";
 import { useAutoScroll } from "../../../hooks/useAutoScroll";
 import { useLocale } from "../../../locales";
@@ -12,6 +12,7 @@ type Props = {
   sessionBusy: boolean;
   activeSessionId: string;
   permissions: Map<string, Permission>;
+  questions: Map<string, QuestionRequest>;
   onEditAndResend: (messageId: string, text: string) => void;
   onRevertToCheckpoint: (assistantMessageId: string, userText: string | null) => void;
   onForkFromCheckpoint: (messageId: string) => void;
@@ -22,6 +23,7 @@ export function MessagesArea({
   sessionBusy,
   activeSessionId,
   permissions,
+  questions,
   onEditAndResend,
   onRevertToCheckpoint,
   onForkFromCheckpoint,
@@ -44,6 +46,7 @@ export function MessagesArea({
               message={msg}
               activeSessionId={activeSessionId}
               permissions={permissions}
+              questions={questions}
               onEditAndResend={onEditAndResend}
             />
             {showCheckpoint && (

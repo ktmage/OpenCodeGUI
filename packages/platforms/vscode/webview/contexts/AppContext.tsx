@@ -1,4 +1,4 @@
-import type { ChatSession, FileDiff, Permission, ProviderInfo, TodoItem } from "@opencodegui/core";
+import type { ChatSession, FileDiff, Permission, ProviderInfo, QuestionRequest, TodoItem } from "@opencodegui/core";
 import { createContext, useContext } from "react";
 import type { MessageWithParts } from "../hooks/useMessages";
 import type { LocaleSetting } from "../locales";
@@ -29,6 +29,9 @@ export type AppContextValue = {
 
   // Permissions
   permissions: Map<string, Permission>;
+
+  // Questions
+  questions: Map<string, QuestionRequest>;
 
   // Files
   openEditors: FileAttachment[];

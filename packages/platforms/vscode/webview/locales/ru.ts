@@ -48,6 +48,11 @@ export const ru: typeof en = {
   "permission.once": "Однократно",
   "permission.deny": "Отклонить",
 
+  // QuestionView
+  "question.submit": "Отправить",
+  "question.reject": "Отклонить",
+  "question.customPlaceholder": "Введите свой ответ...",
+
   // SessionList
   "session.noSessions": "Нет сессий",
   "session.untitled": "Без названия",
