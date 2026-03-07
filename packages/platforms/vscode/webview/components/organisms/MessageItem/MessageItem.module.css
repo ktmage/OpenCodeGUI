@@ -244,26 +244,37 @@
   background-color: var(--vscode-toolbar-hoverBackground);
 }
 
-/* --- File path link icon --- */
+/* --- File path chip --- */
 
-.content :global(a[data-file-path]) {
+.content :global(a.file-chip) {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  border-radius: 3px;
   text-decoration: none;
+  color: var(--vscode-foreground);
+  background-color: color-mix(in srgb, var(--vscode-textLink-foreground) 10%, transparent);
+  transition: background-color 0.15s;
+  vertical-align: baseline;
+}
+
+.content :global(a.file-chip:hover) {
+  background-color: color-mix(in srgb, var(--vscode-textLink-foreground) 20%, transparent);
   color: var(--vscode-textLink-foreground);
+  text-decoration: none;
 }
 
-.content :global(a[data-file-path]:hover) {
-  text-decoration: underline;
+.content :global(.file-chip-icon) {
+  flex-shrink: 0;
 }
 
-.content :global(.file-link-icon) {
-  margin-left: 2px;
-  vertical-align: middle;
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-
-.content :global(a[data-file-path]:hover) :global(.file-link-icon) {
-  opacity: 1;
+.content :global(.file-chip-label) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 0.9em;
 }
 
 /* --- Reasoning part (Thinking) --- */

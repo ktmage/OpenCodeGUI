@@ -2,13 +2,13 @@ import type { ToolPart } from "@opencodegui/core";
 import { useCallback, useMemo, useState } from "react";
 import { useAppContext } from "../../../contexts/AppContext";
 import { useLocale } from "../../../locales";
+import { getFileIcon } from "../../../utils/file-icons";
 import { parseTodos } from "../../../utils/todo";
 import { CATEGORY_LABEL_KEYS, getCategory, type ToolCategory } from "../../../utils/tool-categories";
 import {
   ChevronRightIcon,
   EditActionIcon,
   ErrorCircleIcon,
-  ExternalLinkIcon,
   ReadActionIcon,
   RunActionIcon,
   SearchActionIcon,
@@ -163,9 +163,13 @@ export function ToolPartView({ part }: Props) {
             {titleFilePath ? (
               // biome-ignore lint/a11y/useKeyWithClickEvents: ツールタイトルのファイルパスリンク
               // biome-ignore lint/a11y/noStaticElementInteractions: ツールタイトルのファイルパスリンク
-              <span className={styles.titleLink} onClick={handleTitleClick}>
-                {displayTitle}
-                <ExternalLinkIcon className={styles.titleLinkIcon} />
+              <span className={styles.fileChip} onClick={handleTitleClick}>
+                {(() => {
+                  const fileName = titleFilePath.split("/").pop() || titleFilePath;
+                  const FileTypeIcon = getFileIcon(fileName);
+                  return <FileTypeIcon width={14} height={14} className={styles.fileChipIcon} />;
+                })()}
+                <span className={styles.fileChipLabel}>{displayTitle}</span>
               </span>
             ) : (
               displayTitle

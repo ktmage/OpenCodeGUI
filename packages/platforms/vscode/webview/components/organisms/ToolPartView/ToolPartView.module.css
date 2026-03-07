@@ -104,26 +104,30 @@
   color: var(--vscode-errorForeground);
 }
 
-.titleLink {
-  cursor: pointer;
+.fileChip {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  padding: 0 6px;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: color-mix(in srgb, var(--vscode-textLink-foreground) 10%, transparent);
+  transition: background-color 0.15s;
 }
 
-.titleLink:hover {
+.fileChip:hover {
+  background-color: color-mix(in srgb, var(--vscode-textLink-foreground) 20%, transparent);
   color: var(--vscode-textLink-foreground);
-  text-decoration: underline;
 }
 
-.titleLinkIcon {
+.fileChipIcon {
   flex-shrink: 0;
-  opacity: 0;
-  transition: opacity 0.15s;
 }
 
-.titleLink:hover .titleLinkIcon {
-  opacity: 1;
+.fileChipLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .chevron {

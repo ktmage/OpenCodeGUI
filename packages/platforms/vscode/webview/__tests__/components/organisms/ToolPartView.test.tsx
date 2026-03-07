@@ -130,7 +130,7 @@ describe("ToolPartView", () => {
         },
       } as any);
       const { container } = render(<ToolPartView part={part} />, { wrapper });
-      expect(container.querySelector(".titleLink")).toBeInTheDocument();
+      expect(container.querySelector(".fileChip")).toBeInTheDocument();
     });
 
     // calls onOpenFile when file path link is clicked
@@ -145,7 +145,7 @@ describe("ToolPartView", () => {
         },
       } as any);
       const { container } = render(<ToolPartView part={part} />, { wrapper });
-      fireEvent.click(container.querySelector(".titleLink")!);
+      fireEvent.click(container.querySelector(".fileChip")!);
       expect(mockOnOpenFile).toHaveBeenCalledWith("/home/user/project/src/main.ts");
     });
   });
@@ -163,7 +163,7 @@ describe("ToolPartView", () => {
         },
       } as any);
       const { container } = render(<ToolPartView part={part} />, { wrapper });
-      expect(container.querySelector(".titleLink")).not.toBeInTheDocument();
+      expect(container.querySelector(".fileChip")).not.toBeInTheDocument();
     });
   });
 });

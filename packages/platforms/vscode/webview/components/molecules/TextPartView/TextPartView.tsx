@@ -2,14 +2,38 @@ import type { TextPart } from "@opencodegui/core";
 import DOMPurify from "dompurify";
 import hljs from "highlight.js/lib/common";
 import { Marked, type Renderer, type Tokens } from "marked";
-import { useCallback, useMemo } from "react";
+import { createElement, useCallback, useMemo } from "react";
+import { flushSync } from "react-dom";
+import { createRoot } from "react-dom/client";
+import { getFileIcon } from "../../../utils/file-icons";
 import { preprocessNestedCodeBlocks } from "../../../utils/markdown";
 import { postMessage } from "../../../vscode-api";
 
 // --- SVG アイコン (VSC アイコン相当) ---
 const COPY_ICON = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4 4l1-1h5.414L14 6.586V14l-1 1H5l-1-1V4zm9 3l-3-3H5v10h8V7z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M3 1L2 2v10l1 1V2h6.414l-1-1H3z"/></svg>`;
 const CHECK_ICON = `<svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.431 3.323l-8.47 10-.79-.036-3.35-4.77.818-.574 2.978 4.24 8.051-9.506.763.646z"/></svg>`;
-const OPEN_FILE_ICON = `<svg class="file-link-icon" width="12" height="12" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M1.5 1H6v1H2v12h12v-4h1v4.5l-.5.5h-13l-.5-.5v-13l.5-.5z"/><path d="M15 1.5V8h-1V2.707L7.243 9.465l-.707-.708L13.293 2H8V1h6.5l.5.5z"/></svg>`;
+
+/** ファイルパスから拡張子に応じたアイコンの HTML 文字列を生成する（結果はキャッシュ） */
+const fileIconHtmlCache = new Map<string, string>();
+function getFileIconHtml(filePath: string): string {
+  const fileName = filePath.split("/").pop() || filePath;
+  const FileTypeIcon = getFileIcon(fileName);
+  const key = FileTypeIcon.name;
+
+  const cached = fileIconHtmlCache.get(key);
+  if (cached) return cached;
+
+  const container = document.createElement("span");
+  const root = createRoot(container);
+  flushSync(() => {
+    root.render(createElement(FileTypeIcon, { width: 12, height: 12, className: "file-chip-icon" }));
+  });
+  const html = container.innerHTML;
+  root.unmount();
+
+  fileIconHtmlCache.set(key, html);
+  return html;
+}
 
 /**
  * コードブロック用カスタムレンダラー。
@@ -43,7 +67,8 @@ const linkRenderer: Partial<Renderer> = {
       const filePath = lineMatch ? href.slice(0, lineMatch.index) : href;
       const lineAttr = lineMatch ? ` data-file-line="${lineMatch[1]}"` : "";
       const escapedPath = filePath.replace(/"/g, "&quot;");
-      return `<a href="#" data-file-path="${escapedPath}"${lineAttr}>${text}${OPEN_FILE_ICON}</a>`;
+      const iconHtml = getFileIconHtml(filePath);
+      return `<a href="#" class="file-chip" data-file-path="${escapedPath}"${lineAttr}>${iconHtml}<span class="file-chip-label">${text}</span></a>`;
     }
     return `<a href="${href}">${text}</a>`;
   },
@@ -51,8 +76,42 @@ const linkRenderer: Partial<Renderer> = {
 
 // DOMPurify で SVG 要素とカスタム data 属性を許可する設定
 const PURIFY_CONFIG: DOMPurify.Config = {
-  ADD_TAGS: ["svg", "path"],
-  ADD_ATTR: ["viewBox", "fill", "fill-rule", "clip-rule", "d", "xmlns", "data-file-path", "data-file-line"],
+  ADD_TAGS: ["svg", "path", "rect", "circle", "ellipse", "polygon", "text", "linearGradient", "stop", "defs"],
+  ADD_ATTR: [
+    "viewBox",
+    "fill",
+    "fill-rule",
+    "clip-rule",
+    "d",
+    "xmlns",
+    "data-file-path",
+    "data-file-line",
+    "rx",
+    "ry",
+    "r",
+    "cx",
+    "cy",
+    "stroke",
+    "stroke-width",
+    "stroke-linecap",
+    "stroke-linejoin",
+    "transform",
+    "opacity",
+    "points",
+    "text-anchor",
+    "font-weight",
+    "font-size",
+    "font-family",
+    "dominant-baseline",
+    "x1",
+    "x2",
+    "y1",
+    "y2",
+    "offset",
+    "stop-color",
+    "gradientUnits",
+    "aria-hidden",
+  ],
 };
 
 /**
@@ -88,7 +147,8 @@ function linkifyAbsolutePaths(html: string): string {
       const escapedPath = filePath.replace(/"/g, "&quot;");
       const lineAttr = lineNum ? ` data-file-line="${lineNum}"` : "";
       const display = lineNum ? `${filePath}:${lineNum}` : filePath;
-      return `<a href="#" data-file-path="${escapedPath}"${lineAttr}>${display}${OPEN_FILE_ICON}</a>`;
+      const iconHtml = getFileIconHtml(filePath);
+      return `<a href="#" class="file-chip" data-file-path="${escapedPath}"${lineAttr}>${iconHtml}<span class="file-chip-label">${display}</span></a>`;
     });
   });
 }
