@@ -267,6 +267,9 @@
 
 .content :global(.file-chip-icon) {
   flex-shrink: 0;
+  display: block;
+  width: 12px;
+  height: 12px;
 }
 
 .content :global(.file-chip-label) {
