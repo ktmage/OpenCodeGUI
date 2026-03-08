@@ -44,6 +44,7 @@ export const ru: typeof en = {
   "header.redo": "Повторить",
 
   // PermissionView
+  "permission.title": "Разрешения",
   "permission.allow": "Разрешить",
   "permission.once": "Однократно",
   "permission.deny": "Отклонить",

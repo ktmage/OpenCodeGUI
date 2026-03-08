@@ -28,6 +28,7 @@ import {
   VscSend,
   VscSettingsGear,
   VscShare,
+  VscShield,
   VscTerminal,
   VscTrash,
 } from "react-icons/vsc";
@@ -227,6 +228,11 @@ export function BackIcon({ width = 16, height: _h, ...props }: IconProps) {
 /** Codicon: share — share session */
 export function ShareIcon({ width = 16, height: _h, ...props }: IconProps) {
   return <VscShare {...adapt({ width, ...props }, 16)} />;
+}
+
+/** Codicon: shield — permission request */
+export function ShieldIcon({ width = 14, height: _h, ...props }: IconProps) {
+  return <VscShield {...adapt({ width, ...props }, 14)} />;
 }
 
 /** Codicon: link-external — unshare / shared state */

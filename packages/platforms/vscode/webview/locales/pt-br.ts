@@ -44,6 +44,7 @@ export const ptBr: typeof en = {
   "header.redo": "Refazer",
 
   // PermissionView
+  "permission.title": "Permissões",
   "permission.allow": "Permitir",
   "permission.once": "Apenas uma vez",
   "permission.deny": "Negar",

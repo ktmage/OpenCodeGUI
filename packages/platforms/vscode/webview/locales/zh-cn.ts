@@ -44,6 +44,7 @@ export const zhCn: typeof en = {
   "header.redo": "重做",
 
   // PermissionView
+  "permission.title": "权限",
   "permission.allow": "允许",
   "permission.once": "仅一次",
   "permission.deny": "拒绝",

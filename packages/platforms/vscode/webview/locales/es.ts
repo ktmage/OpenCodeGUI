@@ -44,6 +44,7 @@ export const es: typeof en = {
   "header.redo": "Rehacer",
 
   // PermissionView
+  "permission.title": "Permisos",
   "permission.allow": "Permitir",
   "permission.once": "Solo una vez",
   "permission.deny": "Denegar",

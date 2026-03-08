@@ -44,6 +44,7 @@ export const ja: typeof en = {
   "header.redo": "やり直し",
 
   // PermissionView
+  "permission.title": "パーミッション",
   "permission.allow": "許可",
   "permission.once": "一度だけ",
   "permission.deny": "拒否",
