@@ -207,6 +207,7 @@ describe("シェルコマンド実行", () => {
       // ツールパート（bash の実行結果）
       const shellPart = createToolPart("bash", {
         messageID: "shell-m1",
+        sessionID: "s1",
         state: {
           status: "completed",
           title: "ls",
@@ -216,7 +217,7 @@ describe("シェルコマンド実行", () => {
       } as any);
       await sendExtMessage({
         type: "event",
-        event: { type: "message.part.updated", properties: { part: shellPart } } as any,
+        event: { type: "message.part.updated", properties: { sessionID: "s1", part: shellPart } } as any,
       });
     });
 
@@ -268,6 +269,7 @@ describe("シェルコマンド実行", () => {
 
       const shellPart = createToolPart("bash", {
         messageID: "err-m1",
+        sessionID: "s1",
         state: {
           status: "error",
           title: "bad-cmd",
@@ -277,7 +279,7 @@ describe("シェルコマンド実行", () => {
       } as any);
       await sendExtMessage({
         type: "event",
-        event: { type: "message.part.updated", properties: { part: shellPart } } as any,
+        event: { type: "message.part.updated", properties: { sessionID: "s1", part: shellPart } } as any,
       });
     });
 
@@ -316,6 +318,7 @@ describe("シェルコマンド実行", () => {
 
       const shellPart = createToolPart("bash", {
         messageID: "run-m1",
+        sessionID: "s1",
         state: {
           status: "running",
           title: "sleep 30",
@@ -324,7 +327,7 @@ describe("シェルコマンド実行", () => {
       } as any);
       await sendExtMessage({
         type: "event",
-        event: { type: "message.part.updated", properties: { part: shellPart } } as any,
+        event: { type: "message.part.updated", properties: { sessionID: "s1", part: shellPart } } as any,
       });
     });
 

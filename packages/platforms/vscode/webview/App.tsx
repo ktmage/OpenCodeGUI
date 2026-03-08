@@ -25,7 +25,13 @@ export type { MessageWithParts } from "./hooks/useMessages";
 
 export function App() {
   const session = useSession();
-  const msg = useMessages();
+  // handleEvent / useMessages 内で activeSession を参照するために ref で追跡する。
+  // これにより handleEvent の依存配列から session.activeSession（オブジェクト参照）を除外でき、
+  // session.updated イベントのたびに useEffect が再登録される問題を防ぐ。
+  const activeSessionRef = useRef(session.activeSession);
+  activeSessionRef.current = session.activeSession;
+
+  const msg = useMessages(activeSessionRef);
   const prov = useProviders();
   const perm = usePermissions();
   const quest = useQuestions();
@@ -48,11 +54,6 @@ export function App() {
     state: string;
     directory: string;
   } | null>(null);
-  // handleEvent 内で activeSession を参照するために ref で追跡する。
-  // これにより handleEvent の依存配列から session.activeSession（オブジェクト参照）を除外でき、
-  // session.updated イベントのたびに useEffect が再登録される問題を防ぐ。
-  const activeSessionRef = useRef(session.activeSession);
-  activeSessionRef.current = session.activeSession;
 
   const handleOpenConfigFile = useCallback((filePath: string) => {
     postMessage({ type: "openConfigFile", filePath });
