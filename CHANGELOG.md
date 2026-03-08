@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-03-08
+
+### Fixed
+
+- Marketplace store page not displaying README after monorepo migration (#100)
+
 ## [0.5.0] - 2026-03-08
 
 ### Added
