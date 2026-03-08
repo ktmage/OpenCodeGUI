@@ -270,12 +270,12 @@ export type AgentEvent =
       properties: { sessionID: string; partID: string };
     }
   | {
-      type: "permission.updated";
+      type: "permission.asked";
       properties: Permission;
     }
   | {
       type: "permission.replied";
-      properties: { sessionID: string; permissionID: string };
+      properties: { sessionID: string; requestID: string; reply: PermissionResponse };
     }
   | {
       type: "todo.updated";
@@ -313,15 +313,15 @@ export type ModelRef = {
 
 export type Permission = {
   id: string;
-  type: string;
-  pattern?: string;
   sessionID: string;
-  messageID: string;
-  callID?: string;
-  title: string;
-  metadata: unknown;
-  time: { created: number };
-  description?: string;
+  permission: string;
+  patterns: string[];
+  metadata: Record<string, unknown>;
+  always: string[];
+  tool?: {
+    messageID: string;
+    callID: string;
+  };
 };
 
 export type PermissionResponse = "once" | "always" | "reject";

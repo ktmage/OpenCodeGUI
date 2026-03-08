@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.2] - 2026-03-08
+
+### Added
+
+- Compact inline permission queue UI matching TodoHeader/FileChangesHeader design (#92)
+- ShieldIcon for permission header bar
+- `permission.title` locale key for all 8 languages
+
+### Changed
+
+- Migrated opencode agent from SDK v1 to v2 (`@opencode-ai/sdk/v2`) for compatibility with opencode server v1.2.20 (#92)
+- Permission UI moved from inline message display to dedicated queue above InputArea
+
+### Fixed
+
+- Permission requests not displayed in Webview UI, causing session hang (#91, #92)
+- Child session permissions not visible due to messageID-based filtering
+
 ## [0.4.1] - 2026-03-08
 
 ### Added

@@ -1,6 +1,6 @@
 /**
  * OpenCodeAgent のユニットテスト。
- * @opencode-ai/sdk をモックし、各パブリックメソッドが正しいパラメータで SDK を呼び出し、
+ * @opencode-ai/sdk/v2 をモックし、各パブリックメソッドが正しいパラメータで SDK を呼び出し、
  * mapper を通してドメイン型に変換されることを検証する。
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -37,7 +37,13 @@ function createMockSdkClient() {
     provider: {
       list: vi.fn().mockResolvedValue({ data: { all: [], default: {}, connected: [] } }),
     },
-    postSessionIdPermissionsPermissionId: vi.fn().mockResolvedValue(undefined),
+    permission: {
+      reply: vi.fn().mockResolvedValue(undefined),
+    },
+    question: {
+      reply: vi.fn().mockResolvedValue(undefined),
+      reject: vi.fn().mockResolvedValue(undefined),
+    },
     app: {
       agents: vi.fn().mockResolvedValue({ data: [] }),
     },
@@ -73,7 +79,7 @@ vi.mock("node:fs/promises", () => ({
   mkdir: vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("@opencode-ai/sdk", () => ({
+vi.mock("@opencode-ai/sdk/v2", () => ({
   createOpencodeServer: vi.fn().mockImplementation(() =>
     Promise.resolve({
       url: "http://localhost:12345",
@@ -84,7 +90,7 @@ vi.mock("@opencode-ai/sdk", () => ({
 }));
 
 import * as fs from "node:fs/promises";
-import { createOpencodeClient, createOpencodeServer } from "@opencode-ai/sdk";
+import { createOpencodeClient, createOpencodeServer } from "@opencode-ai/sdk/v2";
 // テスト対象
 import { OpenCodeAgent } from "../opencode-agent";
 
@@ -211,7 +217,7 @@ describe("OpenCodeAgent", () => {
       await agent.createSession("My Session");
 
       expect(mockClient.session.create).toHaveBeenCalledWith({
-        body: { title: "My Session" },
+        title: "My Session",
       });
     });
 
@@ -221,31 +227,31 @@ describe("OpenCodeAgent", () => {
       await agent.createSession();
 
       expect(mockClient.session.create).toHaveBeenCalledWith({
-        body: { title: undefined },
+        title: undefined,
       });
     });
   });
 
   describe("getSession()", () => {
-    it("should call client.session.get() with correct path", async () => {
+    it("should call client.session.get() with correct sessionID", async () => {
       await agent.connect();
 
       await agent.getSession("sess-1");
 
       expect(mockClient.session.get).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
+        sessionID: "sess-1",
       });
     });
   });
 
   describe("deleteSession()", () => {
-    it("should call client.session.delete() with correct path", async () => {
+    it("should call client.session.delete() with correct sessionID", async () => {
       await agent.connect();
 
       await agent.deleteSession("sess-1");
 
       expect(mockClient.session.delete).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
+        sessionID: "sess-1",
       });
     });
   });
@@ -257,8 +263,8 @@ describe("OpenCodeAgent", () => {
       await agent.forkSession("sess-1", "msg-5");
 
       expect(mockClient.session.fork).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: { messageID: "msg-5" },
+        sessionID: "sess-1",
+        messageID: "msg-5",
       });
     });
 
@@ -268,8 +274,8 @@ describe("OpenCodeAgent", () => {
       await agent.forkSession("sess-1");
 
       expect(mockClient.session.fork).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: { messageID: undefined },
+        sessionID: "sess-1",
+        messageID: undefined,
       });
     });
   });
@@ -285,7 +291,7 @@ describe("OpenCodeAgent", () => {
       await agent.getMessages("sess-1");
 
       expect(mockClient.session.messages).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
+        sessionID: "sess-1",
       });
     });
   });
@@ -297,11 +303,10 @@ describe("OpenCodeAgent", () => {
       await agent.sendMessage("sess-1", "Hello");
 
       expect(mockClient.session.promptAsync).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: {
-          parts: [{ type: "text", text: "Hello" }],
-          model: undefined,
-        },
+        sessionID: "sess-1",
+        parts: [{ type: "text", text: "Hello" }],
+        model: undefined,
+        agent: undefined,
       });
     });
 
@@ -312,11 +317,10 @@ describe("OpenCodeAgent", () => {
       await agent.sendMessage("sess-1", "Hello", { model });
 
       expect(mockClient.session.promptAsync).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: {
-          parts: [{ type: "text", text: "Hello" }],
-          model,
-        },
+        sessionID: "sess-1",
+        parts: [{ type: "text", text: "Hello" }],
+        model,
+        agent: undefined,
       });
     });
 
@@ -328,8 +332,8 @@ describe("OpenCodeAgent", () => {
       await agent.sendMessage("sess-1", "Check this", { files });
 
       const call = mockClient.session.promptAsync.mock.calls[0][0];
-      expect(call.body.parts).toHaveLength(2);
-      expect(call.body.parts[1]).toEqual({
+      expect(call.parts).toHaveLength(2);
+      expect(call.parts[1]).toEqual({
         type: "file",
         mime: "text/plain",
         url: "file:///workspace/project/src/index.ts",
@@ -344,7 +348,7 @@ describe("OpenCodeAgent", () => {
       await agent.sendMessage("sess-1", "Check", { files });
 
       const call = mockClient.session.promptAsync.mock.calls[0][0];
-      expect(call.body.parts[1]).toEqual({
+      expect(call.parts[1]).toEqual({
         type: "file",
         mime: "text/plain",
         url: "file:///absolute/path/file.ts",
@@ -358,8 +362,8 @@ describe("OpenCodeAgent", () => {
       await agent.sendMessage("sess-1", "Hello", { agent: "code-reviewer" });
 
       const call = mockClient.session.promptAsync.mock.calls[0][0];
-      expect(call.body.parts).toHaveLength(2);
-      expect(call.body.parts[1]).toEqual({ type: "agent", name: "code-reviewer" });
+      expect(call.parts).toHaveLength(2);
+      expect(call.parts[1]).toEqual({ type: "agent", name: "code-reviewer" });
     });
 
     it("should include all parts when files and agent are provided", async () => {
@@ -371,11 +375,11 @@ describe("OpenCodeAgent", () => {
       await agent.sendMessage("sess-1", "Review", { model, files, agent: "reviewer" });
 
       const call = mockClient.session.promptAsync.mock.calls[0][0];
-      expect(call.body.parts).toHaveLength(3);
-      expect(call.body.parts[0]).toEqual({ type: "text", text: "Review" });
-      expect(call.body.parts[1].type).toBe("file");
-      expect(call.body.parts[2]).toEqual({ type: "agent", name: "reviewer" });
-      expect(call.body.model).toEqual(model);
+      expect(call.parts).toHaveLength(3);
+      expect(call.parts[0]).toEqual({ type: "text", text: "Review" });
+      expect(call.parts[1].type).toBe("file");
+      expect(call.parts[2]).toEqual({ type: "agent", name: "reviewer" });
+      expect(call.model).toEqual(model);
     });
   });
 
@@ -386,7 +390,7 @@ describe("OpenCodeAgent", () => {
       await agent.abortSession("sess-1");
 
       expect(mockClient.session.abort).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
+        sessionID: "sess-1",
       });
     });
   });
@@ -403,8 +407,10 @@ describe("OpenCodeAgent", () => {
       await agent.executeShell("sess-1", "ls -la", model);
 
       expect(mockClient.session.shell).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: { agent: "default", command: "ls -la", model },
+        sessionID: "sess-1",
+        agent: "default",
+        command: "ls -la",
+        model,
       });
     });
 
@@ -414,8 +420,10 @@ describe("OpenCodeAgent", () => {
       await agent.executeShell("sess-1", "pwd");
 
       expect(mockClient.session.shell).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: { agent: "default", command: "pwd", model: undefined },
+        sessionID: "sess-1",
+        agent: "default",
+        command: "pwd",
+        model: undefined,
       });
     });
   });
@@ -453,14 +461,14 @@ describe("OpenCodeAgent", () => {
   // ============================================================
 
   describe("replyPermission()", () => {
-    it("should call with correct session, permission, and response", async () => {
+    it("should call permission.reply with correct requestID and reply", async () => {
       await agent.connect();
 
       await agent.replyPermission("sess-1", "perm-1", "always");
 
-      expect(mockClient.postSessionIdPermissionsPermissionId).toHaveBeenCalledWith({
-        path: { id: "sess-1", permissionID: "perm-1" },
-        body: { response: "always" },
+      expect(mockClient.permission.reply).toHaveBeenCalledWith({
+        requestID: "perm-1",
+        reply: "always",
       });
     });
   });
@@ -477,7 +485,7 @@ describe("OpenCodeAgent", () => {
 
       const result = await agent.getChildSessions("sess-1");
 
-      expect(mockClient.session.children).toHaveBeenCalledWith({ path: { id: "sess-1" } });
+      expect(mockClient.session.children).toHaveBeenCalledWith({ sessionID: "sess-1" });
       expect(result).toEqual(children);
     });
   });
@@ -494,7 +502,7 @@ describe("OpenCodeAgent", () => {
 
       const result = await agent.getSessionTodos("sess-1");
 
-      expect(mockClient.session.todo).toHaveBeenCalledWith({ path: { id: "sess-1" } });
+      expect(mockClient.session.todo).toHaveBeenCalledWith({ sessionID: "sess-1" });
       expect(result).toEqual(todos);
     });
   });
@@ -511,7 +519,7 @@ describe("OpenCodeAgent", () => {
 
       const result = await agent.shareSession("sess-1");
 
-      expect(mockClient.session.share).toHaveBeenCalledWith({ path: { id: "sess-1" } });
+      expect(mockClient.session.share).toHaveBeenCalledWith({ sessionID: "sess-1" });
       expect(result).toEqual(session);
     });
   });
@@ -524,7 +532,7 @@ describe("OpenCodeAgent", () => {
 
       const result = await agent.unshareSession("sess-1");
 
-      expect(mockClient.session.unshare).toHaveBeenCalledWith({ path: { id: "sess-1" } });
+      expect(mockClient.session.unshare).toHaveBeenCalledWith({ sessionID: "sess-1" });
       expect(result).toEqual(session);
     });
   });
@@ -558,7 +566,7 @@ describe("OpenCodeAgent", () => {
 
       const result = await agent.getSessionDiff("sess-1");
 
-      expect(mockClient.session.diff).toHaveBeenCalledWith({ path: { id: "sess-1" } });
+      expect(mockClient.session.diff).toHaveBeenCalledWith({ sessionID: "sess-1" });
       expect(result).toEqual(diffs);
     });
   });
@@ -574,8 +582,8 @@ describe("OpenCodeAgent", () => {
       await agent.revertSession("sess-1", "msg-3");
 
       expect(mockClient.session.revert).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: { messageID: "msg-3" },
+        sessionID: "sess-1",
+        messageID: "msg-3",
       });
     });
   });
@@ -587,7 +595,7 @@ describe("OpenCodeAgent", () => {
       await agent.unrevertSession("sess-1");
 
       expect(mockClient.session.unrevert).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
+        sessionID: "sess-1",
       });
     });
   });
@@ -604,8 +612,9 @@ describe("OpenCodeAgent", () => {
       await agent.summarizeSession("sess-1", model);
 
       expect(mockClient.session.summarize).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: model,
+        sessionID: "sess-1",
+        providerID: "openai",
+        modelID: "gpt-4",
       });
     });
 
@@ -615,8 +624,9 @@ describe("OpenCodeAgent", () => {
       await agent.summarizeSession("sess-1");
 
       expect(mockClient.session.summarize).toHaveBeenCalledWith({
-        path: { id: "sess-1" },
-        body: undefined,
+        sessionID: "sess-1",
+        providerID: undefined,
+        modelID: undefined,
       });
     });
   });
@@ -644,7 +654,7 @@ describe("OpenCodeAgent", () => {
 
       await agent.connectMcp("my-server");
 
-      expect(mockClient.mcp.connect).toHaveBeenCalledWith({ path: { name: "my-server" } });
+      expect(mockClient.mcp.connect).toHaveBeenCalledWith({ name: "my-server" });
     });
   });
 
@@ -654,7 +664,7 @@ describe("OpenCodeAgent", () => {
 
       await agent.disconnectMcp("my-server");
 
-      expect(mockClient.mcp.disconnect).toHaveBeenCalledWith({ path: { name: "my-server" } });
+      expect(mockClient.mcp.disconnect).toHaveBeenCalledWith({ name: "my-server" });
     });
   });
 
@@ -692,13 +702,13 @@ describe("OpenCodeAgent", () => {
   });
 
   describe("updateConfig()", () => {
-    it("should call config.update() with partial config", async () => {
+    it("should call config.update() with config param", async () => {
       await agent.connect();
 
       await agent.updateConfig({ model: "gpt-4" } as never);
 
       expect(mockClient.config.update).toHaveBeenCalledWith({
-        body: { model: "gpt-4" },
+        config: { model: "gpt-4" },
       });
     });
   });

@@ -31,7 +31,6 @@ const defaultProps = {
   messages: [userMsg, assistantMsg],
   sessionBusy: false,
   activeSessionId: "session-1",
-  permissions: new Map(),
   questions: new Map(),
   onEditAndResend: vi.fn(),
   onRevertToCheckpoint: vi.fn(),

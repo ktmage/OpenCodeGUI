@@ -1,10 +1,4 @@
-import type {
-  Permission,
-  QuestionRequest,
-  ReasoningPart as ReasoningPartType,
-  TextPart,
-  ToolPart,
-} from "@opencodegui/core";
+import type { QuestionRequest, ReasoningPart as ReasoningPartType, TextPart, ToolPart } from "@opencodegui/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { MessageWithParts } from "../../../App";
 import { useAppContext } from "../../../contexts/AppContext";
@@ -13,7 +7,6 @@ import { ActionButton } from "../../atoms/ActionButton";
 import { ChevronRightIcon, EditIcon, InfoCircleIcon, SpinnerIcon } from "../../atoms/icons";
 import { ShellResultView } from "../../molecules/ShellResultView";
 import { TextPartView } from "../../molecules/TextPartView";
-import { PermissionView } from "../PermissionView";
 import { QuestionView } from "../QuestionView";
 import { isTaskToolPart, type SubtaskPart, SubtaskPartView } from "../SubtaskPartView";
 import { ToolPartView } from "../ToolPartView";
@@ -22,12 +15,11 @@ import styles from "./MessageItem.module.css";
 type Props = {
   message: MessageWithParts;
   activeSessionId: string;
-  permissions: Map<string, Permission>;
   questions: Map<string, QuestionRequest>;
   onEditAndResend?: (messageId: string, text: string) => void;
 };
 
-export function MessageItem({ message, activeSessionId, permissions, questions, onEditAndResend }: Props) {
+export function MessageItem({ message, activeSessionId, questions, onEditAndResend }: Props) {
   const t = useLocale();
   const { isShellMessage, childSessions, onNavigateToChild } = useAppContext();
   const { info, parts } = message;
@@ -37,9 +29,6 @@ export function MessageItem({ message, activeSessionId, permissions, questions, 
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState("");
   const editRef = useRef<HTMLTextAreaElement>(null);
-
-  // このメッセージに紐づくパーミッションリクエストを取得する
-  const messagePermissions = Array.from(permissions.values()).filter((p) => p.messageID === info.id);
 
   // このメッセージに紐づく質問リクエストを取得する
   // QuestionRequest.tool.messageID でメッセージと紐付ける
@@ -191,9 +180,6 @@ export function MessageItem({ message, activeSessionId, permissions, questions, 
               }
             })
           )}
-          {messagePermissions.map((perm) => (
-            <PermissionView key={perm.id} permission={perm} activeSessionId={activeSessionId} />
-          ))}
           {messageQuestions.map((q) => (
             <QuestionView key={q.id} question={q} />
           ))}

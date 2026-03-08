@@ -10,7 +10,7 @@
 
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import { createOpencodeClient, createOpencodeServer, type Event, type OpencodeClient } from "@opencode-ai/sdk";
+import { createOpencodeClient, createOpencodeServer, type Event, type OpencodeClient } from "@opencode-ai/sdk/v2";
 import type {
   AgentCapabilities,
   AgentEvent,
@@ -120,7 +120,7 @@ export class OpenCodeAgent implements IAgent {
     // Abort existing stream before resubscribing
     this.sseAbortController?.abort();
     this.sseAbortController = new AbortController();
-    const result = await client.event.subscribe({
+    const result = await client.event.subscribe(undefined, {
       signal: this.sseAbortController.signal,
     });
     // Read SSE stream and dispatch to listeners
@@ -153,7 +153,7 @@ export class OpenCodeAgent implements IAgent {
   async createSession(title?: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.create({
-      body: { title },
+      title,
     });
     return mapSession(response.data!);
   }
@@ -161,7 +161,7 @@ export class OpenCodeAgent implements IAgent {
   async getSession(id: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.get({
-      path: { id },
+      sessionID: id,
     });
     return mapSession(response.data!);
   }
@@ -171,15 +171,15 @@ export class OpenCodeAgent implements IAgent {
   async deleteSession(id: string): Promise<void> {
     const client = this.requireClient();
     await client.session.delete({
-      path: { id },
+      sessionID: id,
     });
   }
 
   async forkSession(sessionId: string, messageId?: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.fork({
-      path: { id: sessionId },
-      body: { messageID: messageId },
+      sessionID: sessionId,
+      messageID: messageId,
     });
     return mapSession(response.data!);
   }
@@ -187,8 +187,8 @@ export class OpenCodeAgent implements IAgent {
   async revertSession(sessionId: string, messageId: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.revert({
-      path: { id: sessionId },
-      body: { messageID: messageId },
+      sessionID: sessionId,
+      messageID: messageId,
     });
     return mapSession(response.data!);
   }
@@ -196,7 +196,7 @@ export class OpenCodeAgent implements IAgent {
   async unrevertSession(sessionId: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.unrevert({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapSession(response.data!);
   }
@@ -204,15 +204,16 @@ export class OpenCodeAgent implements IAgent {
   async summarizeSession(sessionId: string, model?: ModelRef): Promise<void> {
     const client = this.requireClient();
     await client.session.summarize({
-      path: { id: sessionId },
-      body: model,
+      sessionID: sessionId,
+      providerID: model?.providerID,
+      modelID: model?.modelID,
     });
   }
 
   async shareSession(sessionId: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.share({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapSession(response.data!);
   }
@@ -220,7 +221,7 @@ export class OpenCodeAgent implements IAgent {
   async unshareSession(sessionId: string): Promise<ChatSession> {
     const client = this.requireClient();
     const response = await client.session.unshare({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapSession(response.data!);
   }
@@ -230,7 +231,7 @@ export class OpenCodeAgent implements IAgent {
   async getMessages(sessionId: string): Promise<ChatMessageWithParts[]> {
     const client = this.requireClient();
     const response = await client.session.messages({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapMessagesWithParts(response.data!);
   }
@@ -264,19 +265,17 @@ export class OpenCodeAgent implements IAgent {
     }
 
     await client.session.promptAsync({
-      path: { id: sessionId },
-      body: {
-        parts,
-        model: options?.model,
-        agent: options?.primaryAgent,
-      },
+      sessionID: sessionId,
+      parts,
+      model: options?.model,
+      agent: options?.primaryAgent,
     });
   }
 
   async abortSession(sessionId: string): Promise<void> {
     const client = this.requireClient();
     await client.session.abort({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
   }
 
@@ -285,8 +284,10 @@ export class OpenCodeAgent implements IAgent {
   async executeShell(sessionId: string, command: string, model?: ModelRef): Promise<void> {
     const client = this.requireClient();
     await client.session.shell({
-      path: { id: sessionId },
-      body: { agent: "default", command, model },
+      sessionID: sessionId,
+      agent: "default",
+      command,
+      model,
     });
   }
 
@@ -322,7 +323,7 @@ export class OpenCodeAgent implements IAgent {
   async getChildSessions(sessionId: string): Promise<ChatSession[]> {
     const client = this.requireClient();
     const response = await client.session.children({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapSessions(response.data!);
   }
@@ -331,38 +332,27 @@ export class OpenCodeAgent implements IAgent {
 
   async replyPermission(sessionId: string, permissionId: string, response: PermissionResponse): Promise<void> {
     const client = this.requireClient();
-    await client.postSessionIdPermissionsPermissionId({
-      path: { id: sessionId, permissionID: permissionId },
-      body: { response },
+    await client.permission.reply({
+      requestID: permissionId,
+      reply: response as "once" | "always" | "reject",
     });
   }
 
   // --- Questions ---
-  // question API は SDK の v2 クライアントにのみ存在するため、
-  // サーバー URL に直接 HTTP リクエストを送信する。
 
   async replyQuestion(requestId: string, answers: QuestionAnswer[]): Promise<void> {
-    const baseUrl = this.getServerUrl();
-    if (!baseUrl) throw new Error("OpenCode server is not running.");
-    const response = await fetch(`${baseUrl}/question/${encodeURIComponent(requestId)}/reply`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers }),
+    const client = this.requireClient();
+    await client.question.reply({
+      requestID: requestId,
+      answers,
     });
-    if (!response.ok) {
-      throw new Error(`Failed to reply question: ${response.status} ${response.statusText}`);
-    }
   }
 
   async rejectQuestion(requestId: string): Promise<void> {
-    const baseUrl = this.getServerUrl();
-    if (!baseUrl) throw new Error("OpenCode server is not running.");
-    const response = await fetch(`${baseUrl}/question/${encodeURIComponent(requestId)}/reject`, {
-      method: "POST",
+    const client = this.requireClient();
+    await client.question.reject({
+      requestID: requestId,
     });
-    if (!response.ok) {
-      throw new Error(`Failed to reject question: ${response.status} ${response.statusText}`);
-    }
   }
 
   // --- Session metadata ---
@@ -370,7 +360,7 @@ export class OpenCodeAgent implements IAgent {
   async getSessionDiff(sessionId: string): Promise<FileDiff[]> {
     const client = this.requireClient();
     const response = await client.session.diff({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapFileDiffs(response.data!);
   }
@@ -378,7 +368,7 @@ export class OpenCodeAgent implements IAgent {
   async getSessionTodos(sessionId: string): Promise<TodoItem[]> {
     const client = this.requireClient();
     const response = await client.session.todo({
-      path: { id: sessionId },
+      sessionID: sessionId,
     });
     return mapTodos(response.data!);
   }
@@ -393,7 +383,7 @@ export class OpenCodeAgent implements IAgent {
 
   async updateConfig(config: Partial<AppConfig>): Promise<void> {
     const client = this.requireClient();
-    await client.config.update({ body: config });
+    await client.config.update({ config: config as Record<string, unknown> });
   }
 
   async getPath(): Promise<AppPaths> {
@@ -412,12 +402,12 @@ export class OpenCodeAgent implements IAgent {
 
   async connectMcp(server: string): Promise<void> {
     const client = this.requireClient();
-    await client.mcp.connect({ path: { name: server } });
+    await client.mcp.connect({ name: server });
   }
 
   async disconnectMcp(server: string): Promise<void> {
     const client = this.requireClient();
-    await client.mcp.disconnect({ path: { name: server } });
+    await client.mcp.disconnect({ name: server });
   }
 
   // --- Tools ---

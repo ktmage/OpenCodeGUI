@@ -2,7 +2,7 @@
   "name": "opencodegui",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "publisher": "ktmage",
   "license": "MIT",
   "repository": {

@@ -17,7 +17,7 @@ import type {
   Path as SdkPath,
   Session,
   Todo,
-} from "@opencode-ai/sdk";
+} from "@opencode-ai/sdk/v2";
 
 import type {
   AgentEvent,

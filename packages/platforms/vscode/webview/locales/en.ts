@@ -42,6 +42,7 @@ export const en = {
   "header.redo": "Redo",
 
   // PermissionView
+  "permission.title": "Permissions",
   "permission.allow": "Allow",
   "permission.once": "Once",
   "permission.deny": "Deny",

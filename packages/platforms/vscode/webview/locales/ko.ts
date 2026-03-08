@@ -44,6 +44,7 @@ export const ko: typeof en = {
   "header.redo": "다시 실행",
 
   // PermissionView
+  "permission.title": "권한",
   "permission.allow": "허용",
   "permission.once": "한 번만",
   "permission.deny": "거부",

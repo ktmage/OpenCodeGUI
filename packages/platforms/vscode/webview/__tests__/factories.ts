@@ -115,9 +115,11 @@ export function createSubtaskPart(agent: string, description: string, overrides:
 export function createPermission(overrides: Partial<Permission> = {}): Permission {
   return {
     id: `perm-${++partSeq}`,
-    title: "Allow file write?",
-    messageID: "msg-1",
+    permission: "edit",
+    patterns: [],
     sessionID: "session-1",
+    metadata: {},
+    always: [],
     ...overrides,
   } as Permission;
 }

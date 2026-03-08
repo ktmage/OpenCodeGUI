@@ -24,30 +24,43 @@ async function setupWithPermission() {
   return session;
 }
 
+/** v2 形式の permission.asked イベントプロパティを作成するヘルパー */
+function permissionAskedProps(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "perm-1",
+    permission: "edit",
+    patterns: ["src/main.ts"],
+    sessionID: "s1",
+    metadata: {},
+    always: [],
+    ...overrides,
+  };
+}
+
 // Permissions
 describe("パーミッション", () => {
-  // permission.updated event shows PermissionView
-  context("permission.updated イベントを受信した場合", () => {
+  // permission.asked event shows PermissionView in queue
+  context("permission.asked イベントを受信した場合", () => {
     beforeEach(async () => {
       await setupWithPermission();
 
       await sendExtMessage({
         type: "event",
         event: {
-          type: "permission.updated",
-          properties: {
-            id: "perm-1",
-            title: "Allow file write to src/main.ts?",
-            messageID: "m1",
-            sessionID: "s1",
-          },
+          type: "permission.asked",
+          properties: permissionAskedProps(),
         } as any,
       });
     });
 
-    // Shows the permission title
-    it("パーミッションタイトルが表示されること", () => {
-      expect(screen.getByText("Allow file write to src/main.ts?")).toBeInTheDocument();
+    // Shows the permission type as title
+    it("パーミッションタイプがタイトルとして表示されること", () => {
+      expect(screen.getByText("Edit")).toBeInTheDocument();
+    });
+
+    // Shows patterns as description
+    it("パターンが表示されること", () => {
+      expect(screen.getByText("src/main.ts")).toBeInTheDocument();
     });
 
     // Shows Allow button
@@ -66,16 +79,16 @@ describe("パーミッション", () => {
     });
   });
 
-  // Allow button sends replyPermission with "always"
+  // Allow button sends replyPermission with "always" using permission.sessionID
   it("Allow ボタンで replyPermission に always が送信されること", async () => {
-    const session = await setupWithPermission();
+    await setupWithPermission();
     const user = userEvent.setup();
 
     await sendExtMessage({
       type: "event",
       event: {
-        type: "permission.updated",
-        properties: { id: "perm-1", title: "Allow?", messageID: "m1", sessionID: "s1" },
+        type: "permission.asked",
+        properties: permissionAskedProps(),
       } as any,
     });
 
@@ -83,7 +96,7 @@ describe("パーミッション", () => {
 
     expect(postMessage).toHaveBeenCalledWith({
       type: "replyPermission",
-      sessionId: session.id,
+      sessionId: "s1",
       permissionId: "perm-1",
       response: "always",
     });
@@ -91,14 +104,14 @@ describe("パーミッション", () => {
 
   // Once button sends replyPermission with "once"
   it("Once ボタンで replyPermission に once が送信されること", async () => {
-    const session = await setupWithPermission();
+    await setupWithPermission();
     const user = userEvent.setup();
 
     await sendExtMessage({
       type: "event",
       event: {
-        type: "permission.updated",
-        properties: { id: "perm-1", title: "Allow?", messageID: "m1", sessionID: "s1" },
+        type: "permission.asked",
+        properties: permissionAskedProps(),
       } as any,
     });
 
@@ -106,7 +119,7 @@ describe("パーミッション", () => {
 
     expect(postMessage).toHaveBeenCalledWith({
       type: "replyPermission",
-      sessionId: session.id,
+      sessionId: "s1",
       permissionId: "perm-1",
       response: "once",
     });
@@ -114,14 +127,14 @@ describe("パーミッション", () => {
 
   // Deny button sends replyPermission with "reject"
   it("Deny ボタンで replyPermission に reject が送信されること", async () => {
-    const session = await setupWithPermission();
+    await setupWithPermission();
     const user = userEvent.setup();
 
     await sendExtMessage({
       type: "event",
       event: {
-        type: "permission.updated",
-        properties: { id: "perm-1", title: "Allow?", messageID: "m1", sessionID: "s1" },
+        type: "permission.asked",
+        properties: permissionAskedProps(),
       } as any,
     });
 
@@ -129,7 +142,7 @@ describe("パーミッション", () => {
 
     expect(postMessage).toHaveBeenCalledWith({
       type: "replyPermission",
-      sessionId: session.id,
+      sessionId: "s1",
       permissionId: "perm-1",
       response: "reject",
     });
@@ -143,21 +156,72 @@ describe("パーミッション", () => {
     await sendExtMessage({
       type: "event",
       event: {
-        type: "permission.updated",
-        properties: { id: "perm-1", title: "Allow write?", messageID: "m1", sessionID: "s1" },
+        type: "permission.asked",
+        properties: permissionAskedProps(),
       } as any,
     });
-    expect(screen.getByText("Allow write?")).toBeInTheDocument();
+    expect(screen.getByText("Edit")).toBeInTheDocument();
 
     // パーミッション応答
     await sendExtMessage({
       type: "event",
       event: {
         type: "permission.replied",
-        properties: { permissionID: "perm-1" },
+        properties: { sessionID: "s1", requestID: "perm-1", reply: "always" },
       } as any,
     });
 
-    expect(screen.queryByText("Allow write?")).not.toBeInTheDocument();
+    expect(screen.queryByText("Edit")).not.toBeInTheDocument();
+  });
+
+  // 子セッションのパーミッションは permission.sessionID で応答される
+  context("子セッションのパーミッションの場合", () => {
+    it("permission.sessionID（子セッション ID）で応答すること", async () => {
+      await setupWithPermission();
+      const user = userEvent.setup();
+
+      // 子セッション ID を持つパーミッション
+      await sendExtMessage({
+        type: "event",
+        event: {
+          type: "permission.asked",
+          properties: permissionAskedProps({
+            id: "perm-child",
+            sessionID: "child-session-42",
+          }),
+        } as any,
+      });
+
+      await user.click(screen.getByText("Allow"));
+
+      expect(postMessage).toHaveBeenCalledWith({
+        type: "replyPermission",
+        sessionId: "child-session-42",
+        permissionId: "perm-child",
+        response: "always",
+      });
+    });
+  });
+
+  // messageID が存在しないメッセージでもパーミッションが表示される（旧バグの回帰テスト）
+  // v2 では tool.messageID はオプショナルなので、tool フィールドなしでもキュー表示される
+  context("tool フィールドがない場合", () => {
+    it("パーミッションキューに表示されること", async () => {
+      await setupWithPermission();
+
+      await sendExtMessage({
+        type: "event",
+        event: {
+          type: "permission.asked",
+          properties: permissionAskedProps({
+            id: "perm-orphan",
+            permission: "external_directory",
+            patterns: ["/outside/project"],
+          }),
+        } as any,
+      });
+
+      expect(screen.getByText("External Directory")).toBeInTheDocument();
+    });
   });
 });

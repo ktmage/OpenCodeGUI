@@ -13,14 +13,14 @@ describe("usePermissions", () => {
     });
   });
 
-  // permission.updated
-  context("permission.updated イベントを受信した場合", () => {
+  // permission.asked
+  context("permission.asked イベントを受信した場合", () => {
     // adds permission to the map
     it("permissions に追加されること", () => {
       const { result } = renderHook(() => usePermissions());
       const event = {
-        type: "permission.updated",
-        properties: { id: "perm1", title: "allow bash" },
+        type: "permission.asked",
+        properties: { id: "perm1", permission: "bash", patterns: ["*"] },
       } as unknown as AgentEvent;
       act(() => result.current.handlePermissionEvent(event));
       expect(result.current.permissions.has("perm1")).toBe(true);
@@ -29,8 +29,8 @@ describe("usePermissions", () => {
     // stores the permission data
     it("permission のデータが保持されること", () => {
       const { result } = renderHook(() => usePermissions());
-      const permission = { id: "perm1", title: "allow bash" };
-      const event = { type: "permission.updated", properties: permission } as unknown as AgentEvent;
+      const permission = { id: "perm1", permission: "bash", patterns: ["*"] };
+      const event = { type: "permission.asked", properties: permission } as unknown as AgentEvent;
       act(() => result.current.handlePermissionEvent(event));
       expect(result.current.permissions.get("perm1")).toEqual(permission);
     });
@@ -43,14 +43,14 @@ describe("usePermissions", () => {
       const { result } = renderHook(() => usePermissions());
       // first add
       const addEvent = {
-        type: "permission.updated",
-        properties: { id: "perm1", title: "allow bash" },
+        type: "permission.asked",
+        properties: { id: "perm1", permission: "bash", patterns: ["*"] },
       } as unknown as AgentEvent;
       act(() => result.current.handlePermissionEvent(addEvent));
       // then reply
       const replyEvent = {
         type: "permission.replied",
-        properties: { permissionID: "perm1" },
+        properties: { requestID: "perm1" },
       } as unknown as AgentEvent;
       act(() => result.current.handlePermissionEvent(replyEvent));
       expect(result.current.permissions.has("perm1")).toBe(false);
