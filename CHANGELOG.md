@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-03-08
+
+### Fixed
+
+- Include LICENSE, CHANGELOG.md, and THIRD_PARTY_NOTICES.md in the extension package for Marketplace compliance
+
 ## [0.5.1] - 2026-03-08
 
 ### Fixed

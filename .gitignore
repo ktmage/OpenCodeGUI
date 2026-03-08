@@ -14,6 +14,11 @@ Thumbs.db
 # VS Code extension package
 *.vsix
 
+# Root files copied into extension dir for packaging
+packages/platforms/vscode/LICENSE
+packages/platforms/vscode/CHANGELOG.md
+packages/platforms/vscode/THIRD_PARTY_NOTICES.md
+
 # Environment
 .env
 .env.*
