@@ -96,10 +96,10 @@ describe("メッセージング", () => {
     });
 
     // message.part.updated でテキストパートを追加
-    const newPart = createTextPart("New response", { messageID: "m2" });
+    const newPart = createTextPart("New response", { messageID: "m2", sessionID: "s1" });
     await sendExtMessage({
       type: "event",
-      event: { type: "message.part.updated", properties: { part: newPart } } as any,
+      event: { type: "message.part.updated", properties: { sessionID: "s1", part: newPart } } as any,
     });
 
     expect(screen.getByText("New response")).toBeInTheDocument();
@@ -194,7 +194,7 @@ describe("メッセージング", () => {
 
       await sendExtMessage({
         type: "event",
-        event: { type: "message.removed", properties: { messageID: "m2" } } as any,
+        event: { type: "message.removed", properties: { sessionID: "s1", messageID: "m2" } } as any,
       });
     });
 
@@ -255,10 +255,10 @@ describe("メッセージング", () => {
         messages: [{ info: msg, parts: [part] }],
       });
 
-      const orphanPart = createTextPart("Orphan", { messageID: "nonexistent" });
+      const orphanPart = createTextPart("Orphan", { messageID: "nonexistent", sessionID: "s1" });
       await sendExtMessage({
         type: "event",
-        event: { type: "message.part.updated", properties: { part: orphanPart } } as any,
+        event: { type: "message.part.updated", properties: { sessionID: "s1", part: orphanPart } } as any,
       });
     });
 
