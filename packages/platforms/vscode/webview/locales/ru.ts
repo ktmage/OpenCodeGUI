@@ -119,6 +119,7 @@ export const ru: typeof en = {
   "config.sound": "Звуковое уведомление",
   "config.soundResponseComplete": "Ответ завершён",
   "config.soundPermissionRequest": "Запрос разрешения",
+  "config.soundQuestionAsked": "Вопрос",
   "config.soundError": "Ошибка",
   "config.soundVolume": "Громкость",
 

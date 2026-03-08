@@ -119,6 +119,7 @@ export const ja: typeof en = {
   "config.sound": "サウンド通知",
   "config.soundResponseComplete": "応答完了",
   "config.soundPermissionRequest": "パーミッション要求",
+  "config.soundQuestionAsked": "質問",
   "config.soundError": "エラー",
   "config.soundVolume": "音量",
 

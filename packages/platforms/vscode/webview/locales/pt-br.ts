@@ -119,6 +119,7 @@ export const ptBr: typeof en = {
   "config.sound": "Notificação sonora",
   "config.soundResponseComplete": "Resposta concluída",
   "config.soundPermissionRequest": "Solicitação de permissão",
+  "config.soundQuestionAsked": "Pergunta",
   "config.soundError": "Erro",
   "config.soundVolume": "Volume",
 

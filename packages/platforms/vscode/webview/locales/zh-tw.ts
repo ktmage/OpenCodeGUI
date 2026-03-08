@@ -119,6 +119,7 @@ export const zhTw: typeof en = {
   "config.sound": "聲音通知",
   "config.soundResponseComplete": "回應完成",
   "config.soundPermissionRequest": "權限請求",
+  "config.soundQuestionAsked": "提問",
   "config.soundError": "錯誤",
   "config.soundVolume": "音量",
 

@@ -119,6 +119,7 @@ export const es: typeof en = {
   "config.sound": "Notificación de sonido",
   "config.soundResponseComplete": "Respuesta completada",
   "config.soundPermissionRequest": "Solicitud de permiso",
+  "config.soundQuestionAsked": "Pregunta",
   "config.soundError": "Error",
   "config.soundVolume": "Volumen",
 
