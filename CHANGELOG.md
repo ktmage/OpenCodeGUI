@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-03-08
+
+### Added
+
+- Explicit OpenCode skill selection in the chat input via context menu and `/` autocomplete (#98)
+- Scroll-to-bottom button for the messages area when viewing older messages (#95)
+
+### Changed
+
+- Chat input now loads skill metadata from OpenCode and prepends the selected skill as a synthetic slash command before sending
+
 ## [0.4.2] - 2026-03-08
 
 ### Added
@@ -129,7 +140,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Todo display
 - i18n support (English, Japanese)
 
-[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.4.1...HEAD
+[Unreleased]: https://github.com/ktmage/opencode-gui/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/ktmage/opencode-gui/compare/v0.4.2...v0.5.0
 [0.4.1]: https://github.com/ktmage/opencode-gui/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/ktmage/opencode-gui/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/ktmage/opencode-gui/compare/v0.2.0...v0.3.0
