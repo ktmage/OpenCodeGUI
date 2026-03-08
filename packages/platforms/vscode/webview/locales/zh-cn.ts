@@ -119,6 +119,7 @@ export const zhCn: typeof en = {
   "config.sound": "声音通知",
   "config.soundResponseComplete": "响应完成",
   "config.soundPermissionRequest": "权限请求",
+  "config.soundQuestionAsked": "提问",
   "config.soundError": "错误",
   "config.soundVolume": "音量",
 

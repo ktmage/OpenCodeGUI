@@ -119,6 +119,7 @@ export const ko: typeof en = {
   "config.sound": "사운드 알림",
   "config.soundResponseComplete": "응답 완료",
   "config.soundPermissionRequest": "권한 요청",
+  "config.soundQuestionAsked": "질문",
   "config.soundError": "오류",
   "config.soundVolume": "볼륨",
 

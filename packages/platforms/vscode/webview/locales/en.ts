@@ -117,6 +117,7 @@ export const en = {
   "config.sound": "Sound Notification",
   "config.soundResponseComplete": "Response complete",
   "config.soundPermissionRequest": "Permission request",
+  "config.soundQuestionAsked": "Question asked",
   "config.soundError": "Error",
   "config.soundVolume": "Volume",
 

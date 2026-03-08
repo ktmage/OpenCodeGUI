@@ -16,7 +16,7 @@ export interface IBridge {
   setPersistedState(state: UIPersistedState): void;
 }
 
-export type SoundEventType = "responseComplete" | "permissionRequest" | "error";
+export type SoundEventType = "responseComplete" | "permissionRequest" | "questionAsked" | "error";
 
 export type SoundEventSetting = {
   enabled?: boolean;
