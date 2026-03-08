@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.3] - 2026-03-08
+
+### Fixed
+
+- Demo GIF not displaying on Marketplace due to relative image path after monorepo migration
+
 ## [0.5.2] - 2026-03-08
 
 ### Fixed

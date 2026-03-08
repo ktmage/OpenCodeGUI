@@ -25,7 +25,7 @@ Use all OpenCode features from a familiar sidebar chat UI.
 
 ### Demo
 
-![Demo](media/demo.gif)
+![Demo](https://raw.githubusercontent.com/ktmage/opencode-gui/master/packages/platforms/vscode/media/demo.gif)
 
 ### Features
 
@@ -99,7 +99,7 @@ OpenCode の全機能をサイドバーのチャット UI から操作できま�
 
 ### デモ
 
-![デモ](media/demo.gif)
+![デモ](https://raw.githubusercontent.com/ktmage/opencode-gui/master/packages/platforms/vscode/media/demo.gif)
 
 ### 機能
 
