@@ -29,6 +29,7 @@ import type {
   ProviderInfo,
   QuestionAnswer,
   SendMessageOptions,
+  SkillInfo,
   TodoItem,
   ToolListItem,
 } from "@opencodegui/core";
@@ -44,6 +45,7 @@ import {
   mapProviders,
   mapSession,
   mapSessions,
+  mapSkills,
   mapTodos,
   mapToolIds,
 } from "./mappers";
@@ -239,10 +241,16 @@ export class OpenCodeAgent implements IAgent {
   async sendMessage(sessionId: string, text: string, options?: SendMessageOptions): Promise<void> {
     const client = this.requireClient();
     const parts: Array<
-      | { type: "text"; text: string }
+      | { type: "text"; text: string; synthetic?: boolean }
       | { type: "file"; mime: string; url: string; filename: string }
       | { type: "agent"; name: string }
-    > = [{ type: "text", text }];
+    > = [];
+
+    if (options?.skill) {
+      parts.push({ type: "text", text: `/${options.skill}`, synthetic: true });
+    }
+
+    parts.push({ type: "text", text });
 
     if (options?.files) {
       for (const file of options.files) {
@@ -318,6 +326,12 @@ export class OpenCodeAgent implements IAgent {
     const client = this.requireClient();
     const response = await client.app.agents();
     return mapAgents(response.data!);
+  }
+
+  async getSkills(): Promise<SkillInfo[]> {
+    const client = this.requireClient();
+    const response = await client.app.skills();
+    return mapSkills(response.data!);
   }
 
   async getChildSessions(sessionId: string): Promise<ChatSession[]> {

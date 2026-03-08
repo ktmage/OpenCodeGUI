@@ -1,9 +1,9 @@
-import type { AgentInfo } from "@opencodegui/core";
+import type { AgentInfo, SkillInfo } from "@opencodegui/core";
 import { useLocale } from "../../../locales";
 import { getFileIcon } from "../../../utils/file-icons";
 import type { FileAttachment } from "../../../vscode-api";
 import { IconButton } from "../../atoms/IconButton";
-import { AgentIcon, ClipIcon, CloseIcon, PlusIcon, TerminalIcon } from "../../atoms/icons";
+import { AgentIcon, ClipIcon, CloseIcon, GearIcon, PlusIcon, TerminalIcon } from "../../atoms/icons";
 import { ListItem } from "../../atoms/ListItem";
 import styles from "./FileAttachmentBar.module.css";
 
@@ -23,6 +23,10 @@ type Props = {
   selectedAgent: AgentInfo | null;
   onSelectAgent: (agent: AgentInfo) => void;
   onClearAgent: () => void;
+  skills: SkillInfo[];
+  selectedSkill: SkillInfo | null;
+  onSelectSkill: (skill: SkillInfo) => void;
+  onClearSkill: () => void;
   isShellMode: boolean;
   onToggleShellMode: () => void;
   onDisableShellMode: () => void;
@@ -44,6 +48,10 @@ export function FileAttachmentBar({
   selectedAgent,
   onSelectAgent,
   onClearAgent,
+  skills,
+  selectedSkill,
+  onSelectSkill,
+  onClearSkill,
   isShellMode,
   onToggleShellMode,
   onDisableShellMode,
@@ -116,6 +124,28 @@ export function FileAttachmentBar({
               </div>
             </div>
 
+            {/* スキルセクション */}
+            <div className={isShellMode ? styles.sectionDisabled : undefined}>
+              <div className={styles.sectionDivider} />
+              <div className={styles.sectionHeader}>{t["input.section.skills"]}</div>
+              <div className={styles.pickerList}>
+                {skills.length > 0 ? (
+                  skills.map((skill) => (
+                    <ListItem
+                      key={skill.name}
+                      title={skill.name}
+                      description={skill.description}
+                      icon={<GearIcon width={14} height={14} />}
+                      onClick={() => onSelectSkill(skill)}
+                      focused={selectedSkill?.name === skill.name}
+                    />
+                  ))
+                ) : (
+                  <div className={styles.pickerEmpty}>{t["input.noSkills"]}</div>
+                )}
+              </div>
+            </div>
+
             {/* シェルモードセクション */}
             <div className={styles.sectionDivider} />
             <div className={styles.sectionHeader}>{t["input.section.shell"]}</div>
@@ -145,6 +175,15 @@ export function FileAttachmentBar({
           <AgentIcon />
           <span className={styles.agentChipName}>@{selectedAgent.name}</span>
           <button type="button" className={styles.agentChipClear} onClick={onClearAgent}>
+            <CloseIcon width={12} height={12} />
+          </button>
+        </div>
+      )}
+      {selectedSkill && (
+        <div className={styles.skillChip}>
+          <GearIcon width={14} height={14} />
+          <span className={styles.skillChipName}>/{selectedSkill.name}</span>
+          <button type="button" className={styles.skillChipClear} onClick={onClearSkill}>
             <CloseIcon width={12} height={12} />
           </button>
         </div>

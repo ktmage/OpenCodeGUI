@@ -32,6 +32,7 @@ import type {
   McpStatus,
   MessagePart,
   ProviderInfo,
+  SkillInfo,
   TodoItem,
   ToolListItem,
 } from "@opencodegui/core";
@@ -127,6 +128,14 @@ export function mapAgent(agent: Agent): AgentInfo {
 
 export function mapAgents(agents: Agent[]): AgentInfo[] {
   return agents.map(mapAgent);
+}
+
+export function mapSkills(skills: Array<{ name: string; description: string; location: string }>): SkillInfo[] {
+  return skills.map((skill) => ({
+    name: skill.name,
+    description: skill.description,
+    location: skill.location,
+  }));
 }
 
 // ============================================================

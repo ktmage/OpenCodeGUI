@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { postMessage } from "../../vscode-api";
 import { createAllProvidersData, createProvider, createSession } from "../factories";
 import { renderApp, sendExtMessage } from "../helpers";
@@ -21,6 +21,12 @@ describe("初期化", () => {
       renderApp();
 
       expect(postMessage).toHaveBeenCalledWith({ type: "getOpenEditors" });
+    });
+
+    it("getSkills を送信すること", () => {
+      renderApp();
+
+      expect(postMessage).toHaveBeenCalledWith({ type: "getSkills" });
     });
   });
 
