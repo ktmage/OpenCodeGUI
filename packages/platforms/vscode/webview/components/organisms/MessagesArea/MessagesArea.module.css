@@ -4,6 +4,7 @@
   overflow-y: auto;
   overscroll-behavior-x: none;
   padding: 12px;
+  position: relative;
 }
 
 .root::-webkit-scrollbar {
@@ -65,4 +66,16 @@
 .checkpointButton:hover {
   color: var(--vscode-foreground);
   background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.scrollButtonSlot {
+  position: sticky;
+  bottom: 12px;
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 14px;
+  margin-top: -44px;
+  margin-bottom: 12px;
+  pointer-events: none;
+  z-index: 1;
 }

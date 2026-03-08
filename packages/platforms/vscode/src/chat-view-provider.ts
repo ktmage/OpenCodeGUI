@@ -103,6 +103,7 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
           files: message.files,
           agent: message.agent,
           primaryAgent: message.primaryAgent,
+          skill: message.skill,
         });
         break;
       }
@@ -264,6 +265,11 @@ export class ChatViewProvider implements vscode.WebviewViewProvider {
       case "getAgents": {
         const agents = await this.agent.getAgents();
         this.postMessage({ type: "agents", agents });
+        break;
+      }
+      case "getSkills": {
+        const skills = await this.agent.getSkills();
+        this.postMessage({ type: "skills", skills });
         break;
       }
       case "shareSession": {

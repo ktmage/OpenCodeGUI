@@ -438,6 +438,12 @@ export type AgentInfo = {
   color?: string;
 };
 
+export type SkillInfo = {
+  name: string;
+  description?: string;
+  location?: string;
+};
+
 // ============================================================
 // App Config & Paths
 // ============================================================
@@ -460,6 +466,7 @@ export type SendMessageOptions = {
   files?: FileAttachment[];
   agent?: string;
   primaryAgent?: string;
+  skill?: string;
 };
 
 // ============================================================

@@ -1,10 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
-import { describe, expect, it, vi } from "vitest";
+import "@testing-library/jest-dom/vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import type { MessageWithParts } from "../../../App";
 import { MessagesArea } from "../../../components/organisms/MessagesArea";
 import { AppContextProvider, type AppContextValue } from "../../../contexts/AppContext";
+import * as autoScrollHook from "../../../hooks/useAutoScroll";
 import { createMessage, createTextPart } from "../../factories";
 
 /** AppContext 必須の値を最小限で提供するラッパー */
@@ -39,6 +41,10 @@ const defaultProps = {
 
 describe("MessagesArea", () => {
   const wrapper = createContextWrapper();
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   // when rendered with messages
   context("メッセージがある場合", () => {
@@ -134,6 +140,42 @@ describe("MessagesArea", () => {
       const { container } = render(<MessagesArea {...defaultProps} />, { wrapper });
       const scrollContainer = container.querySelector(".root") as HTMLElement;
       expect(scrollContainer).toBeInTheDocument();
+    });
+
+    it("最下部から離れているときにスクロールボタンを表示すること", () => {
+      const handleScroll = vi.fn();
+      const scrollToBottom = vi.fn();
+
+      vi.spyOn(autoScrollHook, "useAutoScroll").mockReturnValue({
+        containerRef: { current: null },
+        bottomRef: { current: null },
+        handleScroll,
+        isNearBottom: false,
+        scrollToBottom,
+      });
+
+      render(<MessagesArea {...defaultProps} />, { wrapper });
+
+      expect(screen.getByLabelText("Scroll to bottom")).toBeInTheDocument();
+    });
+
+    it("スクロールボタンクリックで scrollToBottom を呼ぶこと", async () => {
+      const handleScroll = vi.fn();
+      const scrollToBottom = vi.fn();
+
+      vi.spyOn(autoScrollHook, "useAutoScroll").mockReturnValue({
+        containerRef: { current: null },
+        bottomRef: { current: null },
+        handleScroll,
+        isNearBottom: false,
+        scrollToBottom,
+      });
+
+      render(<MessagesArea {...defaultProps} />, { wrapper });
+
+      await userEvent.click(screen.getByLabelText("Scroll to bottom"));
+
+      expect(scrollToBottom).toHaveBeenCalledWith();
     });
   });
 });

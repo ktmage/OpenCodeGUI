@@ -22,6 +22,7 @@ import type {
   ProviderInfo,
   QuestionAnswer,
   SendMessageOptions,
+  SkillInfo,
   TodoItem,
   ToolListItem,
 } from "./domain";
@@ -100,6 +101,7 @@ export interface IAgent {
 
   // --- Agent list (capabilities.subAgent) ---
   getAgents(): Promise<AgentInfo[]>;
+  getSkills(): Promise<SkillInfo[]>;
   getChildSessions(sessionId: string): Promise<ChatSession[]>;
 
   // --- Permissions (capabilities.permission) ---

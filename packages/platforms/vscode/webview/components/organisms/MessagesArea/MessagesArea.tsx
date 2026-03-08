@@ -3,6 +3,7 @@ import type { MessageWithParts } from "../../../App";
 import { useAutoScroll } from "../../../hooks/useAutoScroll";
 import { useLocale } from "../../../locales";
 import { ForkIcon, RevertIcon } from "../../atoms/icons";
+import { ScrollToBottomButton } from "../../atoms/ScrollToBottomButton";
 import { StreamingIndicator } from "../../atoms/StreamingIndicator";
 import { MessageItem } from "../MessageItem";
 import styles from "./MessagesArea.module.css";
@@ -27,7 +28,7 @@ export function MessagesArea({
   onForkFromCheckpoint,
 }: Props) {
   const t = useLocale();
-  const { containerRef, bottomRef, handleScroll } = useAutoScroll(messages);
+  const { containerRef, bottomRef, handleScroll, isNearBottom, scrollToBottom } = useAutoScroll(messages);
 
   return (
     <div ref={containerRef} className={styles.root} onScroll={handleScroll}>
@@ -85,6 +86,13 @@ export function MessagesArea({
           </div>
         );
       })}
+      <div className={styles.scrollButtonSlot}>
+        <ScrollToBottomButton
+          visible={!isNearBottom}
+          ariaLabel={t["scrollToBottom.ariaLabel"]}
+          onClick={() => scrollToBottom()}
+        />
+      </div>
       {sessionBusy && <StreamingIndicator />}
       <div ref={bottomRef} />
     </div>

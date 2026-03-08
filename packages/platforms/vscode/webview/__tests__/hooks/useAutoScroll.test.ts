@@ -17,6 +17,16 @@ describe("useAutoScroll", () => {
       const { result } = renderHook(() => useAutoScroll([]));
       expect(typeof result.current.handleScroll).toBe("function");
     });
+
+    it("isNearBottom がデフォルトで true であること", () => {
+      const { result } = renderHook(() => useAutoScroll([]));
+      expect(result.current.isNearBottom).toBe(true);
+    });
+
+    it("scrollToBottom コールバックを返すこと", () => {
+      const { result } = renderHook(() => useAutoScroll([]));
+      expect(typeof result.current.scrollToBottom).toBe("function");
+    });
   });
 
   // on mount
@@ -97,6 +107,7 @@ describe("useAutoScroll", () => {
       rerender({ messages: ["msg1", "msg2"] });
 
       expect(scrollIntoViewMock).not.toHaveBeenCalled();
+      expect(result.current.isNearBottom).toBe(false);
     });
   });
 
@@ -136,6 +147,24 @@ describe("useAutoScroll", () => {
 
       // メッセージ更新
       rerender({ messages: ["msg1", "msg2", "msg3"] });
+
+      expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: "smooth" });
+      expect(result.current.isNearBottom).toBe(true);
+    });
+  });
+
+  context("scrollToBottom を明示的に呼び出した場合", () => {
+    it("scrollIntoView が呼ばれること", () => {
+      const scrollIntoViewMock = vi.fn();
+      const { result } = renderHook(() => useAutoScroll([]));
+
+      const bottomEl = document.createElement("div");
+      bottomEl.scrollIntoView = scrollIntoViewMock;
+      (result.current.bottomRef as React.MutableRefObject<HTMLDivElement | null>).current = bottomEl;
+
+      act(() => {
+        result.current.scrollToBottom();
+      });
 
       expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: "smooth" });
     });

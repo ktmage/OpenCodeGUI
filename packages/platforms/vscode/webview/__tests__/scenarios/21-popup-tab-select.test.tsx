@@ -27,6 +27,19 @@ const testAgents = [
   },
 ] as any;
 
+const testSkills = [
+  {
+    name: "coding-guidelines",
+    description: "Coding skill",
+    location: "/skills/coding-guidelines",
+  },
+  {
+    name: "manage-task-plan",
+    description: "Task plan skill",
+    location: "/skills/manage-task-plan",
+  },
+] as any;
+
 /** ファイル候補付きセットアップ */
 async function setupWithFiles() {
   renderApp();
@@ -47,6 +60,7 @@ async function setupWithFiles() {
     ],
   });
   await sendExtMessage({ type: "agents", agents: testAgents });
+  await sendExtMessage({ type: "skills", skills: testSkills });
   vi.mocked(postMessage).mockClear();
 }
 
@@ -257,6 +271,30 @@ describe("ポップアップの Tab 選択", () => {
       expect(popup?.querySelectorAll(":scope > div")[1]?.getAttribute("data-focused")).toBe("true");
       await user.keyboard("{ArrowUp}");
       expect(popup?.querySelectorAll(":scope > div")[0]?.getAttribute("data-focused")).toBe("true");
+    });
+  });
+
+  context("/ ポップアップで Tab を押した場合", () => {
+    it("先頭のスキルにフォーカスが当たること", async () => {
+      const user = userEvent.setup();
+      const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+      await user.type(textarea, "/");
+      await user.keyboard("{Tab}");
+      const popup = document.querySelector("[data-testid='skill-popup']");
+      const items = popup?.querySelectorAll(":scope > div");
+      expect(items?.[0]?.getAttribute("data-focused")).toBe("true");
+    });
+  });
+
+  context("/ ポップアップで Enter を押した場合", () => {
+    it("スキルが選択されポップアップが閉じること", async () => {
+      const user = userEvent.setup();
+      const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+      await user.type(textarea, "/");
+      await user.keyboard("{Tab}");
+      await user.keyboard("{Enter}");
+      expect(screen.queryByTestId("skill-popup")).not.toBeInTheDocument();
+      expect(screen.getByText("/coding-guidelines")).toBeInTheDocument();
     });
   });
 });

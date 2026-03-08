@@ -1,6 +1,6 @@
-import type { en } from "./en";
+import type { LocaleSchema } from "./en";
 
-export const zhCn: typeof en = {
+export const zhCn: LocaleSchema = {
   // ChatHeader
   "header.sessions": "会话列表",
   "header.title.fallback": "OpenCode",
@@ -38,6 +38,7 @@ export const zhCn: typeof en = {
   "checkpoint.revertTitle": "回退到此处",
   "checkpoint.retryFromHere": "从此处重试",
   "checkpoint.forkFromHere": "从此处分支",
+  "scrollToBottom.ariaLabel": "滚动到底部",
 
   // Undo/Redo
   "header.undo": "撤销",

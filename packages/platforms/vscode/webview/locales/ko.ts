@@ -1,6 +1,6 @@
-import type { en } from "./en";
+import type { LocaleSchema } from "./en";
 
-export const ko: typeof en = {
+export const ko: LocaleSchema = {
   // ChatHeader
   "header.sessions": "세션 목록",
   "header.title.fallback": "OpenCode",
@@ -38,6 +38,7 @@ export const ko: typeof en = {
   "checkpoint.revertTitle": "이 지점으로 되돌리기",
   "checkpoint.retryFromHere": "여기서 다시 시도",
   "checkpoint.forkFromHere": "여기서 분기",
+  "scrollToBottom.ariaLabel": "맨 아래로 스크롤",
 
   // Undo/Redo
   "header.undo": "실행 취소",

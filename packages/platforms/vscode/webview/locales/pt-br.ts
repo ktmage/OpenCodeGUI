@@ -1,6 +1,6 @@
-import type { en } from "./en";
+import type { LocaleSchema } from "./en";
 
-export const ptBr: typeof en = {
+export const ptBr: LocaleSchema = {
   // ChatHeader
   "header.sessions": "Sessões",
   "header.title.fallback": "OpenCode",
@@ -38,6 +38,7 @@ export const ptBr: typeof en = {
   "checkpoint.revertTitle": "Reverter para este ponto",
   "checkpoint.retryFromHere": "Tentar novamente daqui",
   "checkpoint.forkFromHere": "Ramificar daqui",
+  "scrollToBottom.ariaLabel": "Rolar até o fim",
 
   // Undo/Redo
   "header.undo": "Desfazer",

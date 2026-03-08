@@ -1,0 +1,29 @@
+.root {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    background-color 0.18s ease;
+  background-color: var(--vscode-editorWidget-background);
+  border-color: var(--vscode-editorWidget-border, var(--vscode-panel-border));
+  box-shadow: 0 6px 16px rgb(0 0 0 / 20%);
+}
+
+.visible {
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.root:hover {
+  background-color: var(--vscode-toolbar-hoverBackground);
+}
+
+.root:focus-visible {
+  outline: 1px solid var(--vscode-focusBorder);
+  outline-offset: 1px;
+}

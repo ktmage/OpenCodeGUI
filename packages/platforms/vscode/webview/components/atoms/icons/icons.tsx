@@ -2,6 +2,7 @@ import type { SVGProps } from "react";
 import type { IconBaseProps } from "react-icons";
 import {
   VscAdd,
+  VscArrowDown,
   VscArrowLeft,
   VscArrowRight,
   VscAttach,
@@ -255,4 +256,9 @@ export function UndoIcon({ width = 16, height: _h, ...props }: IconProps) {
 /** Codicon: arrow-right — Redo */
 export function RedoIcon({ width = 16, height: _h, ...props }: IconProps) {
   return <VscArrowRight {...adapt({ width, ...props }, 16)} />;
+}
+
+/** Codicon: arrow-down — scroll to bottom */
+export function ChevronDownIcon({ width = 16, height: _h, ...props }: IconProps) {
+  return <VscArrowDown {...adapt({ width, ...props }, 16)} />;
 }

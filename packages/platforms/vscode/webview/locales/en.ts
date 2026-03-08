@@ -36,6 +36,7 @@ export const en = {
   "checkpoint.revertTitle": "Revert to this point",
   "checkpoint.retryFromHere": "Retry from here",
   "checkpoint.forkFromHere": "Fork from here",
+  "scrollToBottom.ariaLabel": "Scroll to bottom",
 
   // Undo/Redo
   "header.undo": "Undo",
@@ -142,10 +143,16 @@ export const en = {
   // Context menu sections
   "input.section.files": "Files",
   "input.section.agents": "Sub-agents",
+  "input.section.skills": "Skills",
   "input.section.shell": "Shell Mode",
 
   // AgentMention
   "input.noAgents": "No sub-agents available",
+  "input.noSkills": "No skills available",
 } as const;
+
+export type LocaleSchema = {
+  [K in keyof typeof en]: (typeof en)[K] extends (...args: infer Args) => string ? (...args: Args) => string : string;
+};
 
 export type LocaleKeys = keyof typeof en;

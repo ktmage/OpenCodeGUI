@@ -58,6 +58,7 @@ function createMockAgent(): {
     getProviders: vi.fn().mockResolvedValue({ providers: [], default: {} }),
     listAllProviders: vi.fn().mockResolvedValue({ all: [], default: {}, connected: [] }),
     getAgents: vi.fn().mockResolvedValue([]),
+    getSkills: vi.fn().mockResolvedValue([]),
     getChildSessions: vi.fn().mockResolvedValue([]),
     replyPermission: vi.fn().mockResolvedValue(undefined),
     getSessionDiff: vi.fn().mockResolvedValue([]),
@@ -499,12 +500,14 @@ describe("ChatViewProvider", () => {
         model: { providerID: "anthropic", modelID: "claude-4" },
         files: [{ filePath: "a.ts", fileName: "a.ts" }],
         agent: "reviewer",
+        skill: "coding-guidelines",
       });
 
       expect(mockAgent.sendMessage).toHaveBeenCalledWith("sess-1", "Hello", {
         model: { providerID: "anthropic", modelID: "claude-4" },
         files: [{ filePath: "a.ts", fileName: "a.ts" }],
         agent: "reviewer",
+        skill: "coding-guidelines",
       });
     });
   });
@@ -906,6 +909,18 @@ describe("ChatViewProvider", () => {
       await sendMessage({ type: "getAgents" });
 
       expect(postMessage).toHaveBeenCalledWith({ type: "agents", agents });
+    });
+  });
+
+  describe("getSkills", () => {
+    it("should send skills message", async () => {
+      const skills = [{ name: "coding-guidelines" }];
+      mockAgent.getSkills.mockResolvedValue(skills as never);
+
+      const { postMessage, sendMessage } = setupProvider(mockAgent);
+      await sendMessage({ type: "getSkills" });
+
+      expect(postMessage).toHaveBeenCalledWith({ type: "skills", skills });
     });
   });
 

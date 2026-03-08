@@ -20,6 +20,7 @@ import type {
   PermissionResponse,
   ProviderInfo,
   QuestionAnswer,
+  SkillInfo,
   TodoItem,
 } from "./domain";
 
@@ -59,6 +60,7 @@ export type UIToHostMessage =
       files?: FileAttachment[];
       agent?: string;
       primaryAgent?: string;
+      skill?: string;
     }
   | {
       type: "editAndResend";
@@ -105,6 +107,7 @@ export type UIToHostMessage =
   | { type: "getSessionTodos"; sessionId: string }
   | { type: "getChildSessions"; sessionId: string }
   | { type: "getAgents" }
+  | { type: "getSkills" }
 
   // --- Model config ---
   | { type: "setModel"; model: string }
@@ -193,6 +196,7 @@ export type HostToUIMessage =
 
   // --- Agent list ---
   | { type: "agents"; agents: AgentInfo[] }
+  | { type: "skills"; skills: SkillInfo[] }
 
   // --- Platform data ---
   | { type: "openEditors"; files: FileAttachment[] }

@@ -1,6 +1,6 @@
-import type { en } from "./en";
+import type { LocaleSchema } from "./en";
 
-export const ja: typeof en = {
+export const ja: LocaleSchema = {
   // ChatHeader
   "header.sessions": "セッション一覧",
   "header.title.fallback": "OpenCode",
@@ -38,6 +38,7 @@ export const ja: typeof en = {
   "checkpoint.revertTitle": "ここまで巻き戻す",
   "checkpoint.retryFromHere": "ここからやり直す",
   "checkpoint.forkFromHere": "ここから分岐",
+  "scrollToBottom.ariaLabel": "一番下までスクロール",
 
   // Undo/Redo
   "header.undo": "元に戻す",
@@ -144,8 +145,10 @@ export const ja: typeof en = {
   // Context menu sections
   "input.section.files": "ファイル",
   "input.section.agents": "サブエージェント",
+  "input.section.skills": "スキル",
   "input.section.shell": "シェルモード",
 
   // AgentMention
   "input.noAgents": "利用可能なサブエージェントがありません",
+  "input.noSkills": "利用可能なスキルがありません",
 };

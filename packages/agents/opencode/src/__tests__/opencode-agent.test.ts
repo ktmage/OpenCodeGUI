@@ -46,6 +46,7 @@ function createMockSdkClient() {
     },
     app: {
       agents: vi.fn().mockResolvedValue({ data: [] }),
+      skills: vi.fn().mockResolvedValue({ data: [] }),
     },
     mcp: {
       status: vi.fn().mockResolvedValue({ data: {} }),
@@ -366,6 +367,17 @@ describe("OpenCodeAgent", () => {
       expect(call.parts[1]).toEqual({ type: "agent", name: "code-reviewer" });
     });
 
+    it("should prepend synthetic skill command when skill is provided", async () => {
+      await agent.connect();
+
+      await agent.sendMessage("sess-1", "Hello", { skill: "coding-guidelines" } as never);
+
+      const call = mockClient.session.promptAsync.mock.calls[0][0];
+      expect(call.parts).toHaveLength(2);
+      expect(call.parts[0]).toEqual({ type: "text", text: "/coding-guidelines", synthetic: true });
+      expect(call.parts[1]).toEqual({ type: "text", text: "Hello" });
+    });
+
     it("should include all parts when files and agent are provided", async () => {
       await agent.connect();
       agent.workspaceFolder = "/ws";
@@ -681,6 +693,22 @@ describe("OpenCodeAgent", () => {
       expect(mockClient.tool.ids).toHaveBeenCalled();
       // mapToolIds wraps each string into { id }
       expect(result).toEqual([{ id: "tool-1" }, { id: "tool-2" }]);
+    });
+  });
+
+  describe("getSkills()", () => {
+    it("should call app.skills() and return mapped skills", async () => {
+      mockClient.app.skills.mockResolvedValue({
+        data: [{ name: "coding-guidelines", description: "desc", location: "/skills/coding-guidelines" }],
+      });
+      await agent.connect();
+
+      const result = await agent.getSkills();
+
+      expect(mockClient.app.skills).toHaveBeenCalled();
+      expect(result).toEqual([
+        { name: "coding-guidelines", description: "desc", location: "/skills/coding-guidelines" },
+      ]);
     });
   });
 
