@@ -4,7 +4,7 @@ import { useCallback, useState } from "react";
 /**
  * ツール実行時の許可リクエスト（Allow / Once / Deny）の状態管理フック。
  *
- * AI がツールを使おうとすると permission.updated で許可リクエストが届き、
+ * AI がツールを使おうとすると permission.asked で許可リクエストが届き、
  * ユーザーが回答すると permission.replied で解消される。
  * Map が空でなければ未回答のリクエストがあり、PermissionView が表示される。
  */
@@ -19,10 +19,10 @@ export function usePermissions() {
     });
   }, []);
 
-  const removePermission = useCallback((permissionID: string) => {
+  const removePermission = useCallback((requestID: string) => {
     setPermissions((prev) => {
       const next = new Map(prev);
-      next.delete(permissionID);
+      next.delete(requestID);
       return next;
     });
   }, []);
@@ -30,11 +30,11 @@ export function usePermissions() {
   const handlePermissionEvent = useCallback(
     (event: AgentEvent) => {
       switch (event.type) {
-        case "permission.updated":
+        case "permission.asked":
           addPermission(event.properties);
           break;
         case "permission.replied":
-          removePermission(event.properties.permissionID);
+          removePermission(event.properties.requestID);
           break;
       }
     },

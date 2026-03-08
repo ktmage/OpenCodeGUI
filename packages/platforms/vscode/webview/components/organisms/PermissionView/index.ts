@@ -1,1 +1,1 @@
-export { PermissionView } from "./PermissionView";
+export { PermissionQueue, PermissionView } from "./PermissionView";

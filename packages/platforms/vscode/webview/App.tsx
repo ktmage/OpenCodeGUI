@@ -6,6 +6,7 @@ import { TodoHeader } from "./components/molecules/TodoHeader";
 import { ChatHeader } from "./components/organisms/ChatHeader";
 import { InputArea } from "./components/organisms/InputArea";
 import { MessagesArea } from "./components/organisms/MessagesArea";
+import { PermissionQueue } from "./components/organisms/PermissionView";
 import { SessionList } from "./components/organisms/SessionList";
 import { AppContextProvider, type AppContextValue } from "./contexts/AppContext";
 import { useFileChanges } from "./hooks/useFileChanges";
@@ -498,7 +499,6 @@ export function App() {
                 messages={msg.messages}
                 sessionBusy={session.sessionBusy}
                 activeSessionId={session.activeSession.id}
-                permissions={perm.permissions}
                 questions={quest.questions}
                 onEditAndResend={handleEditAndResend}
                 onRevertToCheckpoint={handleRevertToCheckpoint}
@@ -512,6 +512,7 @@ export function App() {
                   difitAvailable={difitAvailable}
                 />
               )}
+              <PermissionQueue permissions={perm.permissions} />
               {!isChildSession && (
                 <InputArea
                   onSend={handleSend}

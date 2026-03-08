@@ -1,18 +1,100 @@
+/* ── Queue root ── */
+
 .root {
-  margin: 8px 0;
-  padding: 10px;
-  border: 1px solid var(--vscode-inputValidation-warningBorder);
-  border-radius: 4px;
-  background-color: var(--vscode-inputValidation-warningBackground);
+  border-top: 1px solid var(--vscode-panel-border);
+  background-color: var(--vscode-sideBar-background);
 }
 
-.title {
-  font-size: 12px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
+/* ── Header bar (matches TodoHeader / FileChangesHeader) ── */
 
-.actions {
+.bar {
   display: flex;
+  align-items: center;
   gap: 6px;
+  padding: 6px 12px;
+  user-select: none;
+  font-size: 12px;
+}
+
+.bar:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--vscode-editorWarning-foreground, #ff9800);
+}
+
+.label {
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--vscode-foreground);
+}
+
+.count {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  font-family: var(--vscode-editor-font-family, monospace);
+}
+
+.chevron {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--vscode-descriptionForeground);
+  transition: transform 0.15s;
+}
+
+.chevron.expanded {
+  transform: rotate(90deg);
+}
+
+/* ── Body: permission items ── */
+
+.body {
+  padding: 0 12px 8px 12px;
+}
+
+/* ── Single permission item row ── */
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.item + .item {
+  border-top: 1px solid color-mix(in srgb, var(--vscode-panel-border) 50%, transparent);
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.itemType {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--vscode-foreground);
+}
+
+.itemDetail {
+  font-size: 11px;
+  color: var(--vscode-descriptionForeground);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.itemActions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
 }
