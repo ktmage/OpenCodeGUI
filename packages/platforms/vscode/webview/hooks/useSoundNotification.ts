@@ -28,6 +28,12 @@ const TONE_PATTERNS: Record<SoundEventType, ToneStep[]> = {
     { frequency: 880, duration: 0.08 },
     { frequency: 880, duration: 0.08 },
   ],
+  // 上昇する 3 音（質問・選択を連想させる）
+  questionAsked: [
+    { frequency: 660, duration: 0.08 },
+    { frequency: 784, duration: 0.08 },
+    { frequency: 880, duration: 0.1 },
+  ],
   // 下降する 2 音（エラーを連想させる）
   error: [
     { frequency: 440, duration: 0.12 },
@@ -89,6 +95,9 @@ export function useSoundNotification() {
         }
         case "permission.updated":
           eventType = "permissionRequest";
+          break;
+        case "question.asked":
+          eventType = "questionAsked";
           break;
         case "session.error":
           eventType = "error";

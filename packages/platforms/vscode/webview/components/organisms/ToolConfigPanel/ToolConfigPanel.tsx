@@ -72,10 +72,11 @@ export function ToolConfigPanel({
         <div className={styles.section}>
           <div className={styles.sectionTitle}>{t["config.sound"]}</div>
           <div>
-            {(["responseComplete", "permissionRequest", "error"] as const).map((eventType) => {
+            {(["responseComplete", "permissionRequest", "questionAsked", "error"] as const).map((eventType) => {
               const labelMap = {
                 responseComplete: t["config.soundResponseComplete"],
                 permissionRequest: t["config.soundPermissionRequest"],
+                questionAsked: t["config.soundQuestionAsked"],
                 error: t["config.soundError"],
               } as const;
               const enabled = soundSettings[eventType]?.enabled ?? true;
