@@ -27,11 +27,20 @@ const testAgents = [
   },
 ] as any;
 
+const testSkills = [
+  {
+    name: "coding-guidelines",
+    description: "Code with project guidelines",
+    location: "/skills/coding-guidelines",
+  },
+] as any;
+
 /** エージェント付きセットアップ */
 async function setupWithAgents() {
   renderApp();
   await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
   await sendExtMessage({ type: "agents", agents: testAgents });
+  await sendExtMessage({ type: "skills", skills: testSkills });
   vi.mocked(postMessage).mockClear();
 }
 
@@ -40,6 +49,7 @@ async function setupWithFiles() {
   renderApp();
   await sendExtMessage({ type: "activeSession", session: createSession({ id: "s1" }) });
   await sendExtMessage({ type: "agents", agents: testAgents });
+  await sendExtMessage({ type: "skills", skills: testSkills });
   // openEditors はファイルピッカー表示時に使う
   await sendExtMessage({
     type: "openEditors",
@@ -64,13 +74,14 @@ describe("統合コンテキストメニュー", () => {
       await setupWithAgents();
     });
 
-    // shows file, agent, and shell sections
-    it("ファイル・エージェント・シェルモードの 3 セクションが表示されること", async () => {
+    // shows file, agent, skill, and shell sections
+    it("ファイル・エージェント・スキル・シェルモードの 4 セクションが表示されること", async () => {
       const user = userEvent.setup();
       const clipButton = screen.getByTitle("Add context");
       await user.click(clipButton);
       expect(screen.getByText("Files")).toBeInTheDocument();
       expect(screen.getByText("Sub-agents")).toBeInTheDocument();
+      expect(screen.getByText("Skills")).toBeInTheDocument();
       expect(screen.getByText("Shell Mode")).toBeInTheDocument();
     });
   });
@@ -101,6 +112,34 @@ describe("統合コンテキストメニュー", () => {
           type: "sendMessage",
           text: "Fix the bug",
           agent: "general",
+        }),
+      );
+    });
+  });
+
+  context("統合メニューからスキルを選択した場合", () => {
+    beforeEach(async () => {
+      await setupWithAgents();
+    });
+
+    it("スキルチップが contextBar に表示されること", async () => {
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Add context"));
+      await user.click(screen.getByText("coding-guidelines"));
+      expect(screen.getByText("/coding-guidelines")).toBeInTheDocument();
+    });
+
+    it("送信時に skill が含まれること", async () => {
+      const user = userEvent.setup();
+      await user.click(screen.getByTitle("Add context"));
+      await user.click(screen.getByText("coding-guidelines"));
+      const textarea = screen.getByPlaceholderText("Ask OpenCode... (type # to attach files)");
+      await user.type(textarea, "Fix the bug{Enter}");
+      expect(postMessage).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "sendMessage",
+          text: "Fix the bug",
+          skill: "coding-guidelines",
         }),
       );
     });

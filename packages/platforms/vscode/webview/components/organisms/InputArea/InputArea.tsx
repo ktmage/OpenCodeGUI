@@ -1,4 +1,11 @@
-import type { AgentInfo, ProviderInfo, SoundEventSetting, SoundEventType, SoundSettings } from "@opencodegui/core";
+import type {
+  AgentInfo,
+  ProviderInfo,
+  SkillInfo,
+  SoundEventSetting,
+  SoundEventType,
+  SoundSettings,
+} from "@opencodegui/core";
 import { type KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import { useInputHistory } from "../../../hooks/useInputHistory";
@@ -14,11 +21,12 @@ import { AgentSelector } from "../../molecules/AgentSelector";
 import { FileAttachmentBar } from "../../molecules/FileAttachmentBar";
 import { HashFilePopup } from "../../molecules/HashFilePopup";
 import { ModelSelector } from "../../molecules/ModelSelector";
+import { SkillPopup } from "../../molecules/SkillPopup";
 import { ToolConfigPanel } from "../../organisms/ToolConfigPanel";
 import styles from "./InputArea.module.css";
 
 type Props = {
-  onSend: (text: string, files: FileAttachment[], agent?: string, primaryAgent?: string) => void;
+  onSend: (text: string, files: FileAttachment[], agent?: string, primaryAgent?: string, skill?: string) => void;
   onShellExecute: (command: string) => void;
   onAbort: () => void;
   isBusy: boolean;
@@ -41,6 +49,7 @@ type Props = {
   soundSettings: SoundSettings;
   onSoundSettingChange: (eventType: SoundEventType, setting: Partial<SoundEventSetting>) => void;
   agents: AgentInfo[];
+  skills: SkillInfo[];
 };
 
 export function InputArea({
@@ -67,6 +76,7 @@ export function InputArea({
   soundSettings,
   onSoundSettingChange,
   agents,
+  skills,
 }: Props) {
   const t = useLocale();
   const [text, setText] = useState("");
@@ -85,16 +95,24 @@ export function InputArea({
     startIndex: -1,
   });
   const [atQuery, setAtQuery] = useState("");
+  const [slashTrigger, setSlashTrigger] = useState<{ active: boolean; startIndex: number }>({
+    active: false,
+    startIndex: -1,
+  });
+  const [slashQuery, setSlashQuery] = useState("");
   const [selectedAgent, setSelectedAgent] = useState<AgentInfo | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState<SkillInfo | null>(null);
   const [isShellMode, setIsShellMode] = useState(false);
   // ポップアップ内のフォーカス位置（-1 = フォーカスなし）
   const [hashFocusedIndex, setHashFocusedIndex] = useState(-1);
   const [atFocusedIndex, setAtFocusedIndex] = useState(-1);
+  const [slashFocusedIndex, setSlashFocusedIndex] = useState(-1);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const composingRef = useRef(false);
   const filePickerRef = useRef<HTMLDivElement>(null);
   const hashPopupRef = useRef<HTMLDivElement>(null);
   const agentPopupRef = useRef<HTMLDivElement>(null);
+  const skillPopupRef = useRef<HTMLDivElement>(null);
   const inputHistory = useInputHistory();
   // 履歴テキスト適用時は onChange が走るが resetNavigation を呼ばないようにするフラグ
   const applyingHistoryRef = useRef(false);
@@ -183,6 +201,16 @@ export function InputArea({
     atTrigger.active,
   );
 
+  useClickOutside(
+    [skillPopupRef, textareaRef],
+    () => {
+      setSlashTrigger({ active: false, startIndex: -1 });
+      setSlashQuery("");
+      setSlashFocusedIndex(-1);
+    },
+    slashTrigger.active,
+  );
+
   // # トリガー: ワークスペースファイルを検索する
   useEffect(() => {
     if (hashTrigger.active) {
@@ -195,6 +223,7 @@ export function InputArea({
     setIsShellMode(true);
     setAttachedFiles([]);
     setSelectedAgent(null);
+    setSelectedSkill(null);
   }, []);
 
   // シェルモード OFF
@@ -237,6 +266,29 @@ export function InputArea({
     setSelectedAgent(null);
   }, []);
 
+  const selectSkill = useCallback(
+    (skill: SkillInfo) => {
+      setSelectedSkill(skill);
+      setIsShellMode(false);
+      if (slashTrigger.active) {
+        setText((prev) => {
+          const before = prev.slice(0, slashTrigger.startIndex);
+          const after = prev.slice(slashTrigger.startIndex + 1 + slashQuery.length);
+          return before + after;
+        });
+      }
+      setSlashTrigger({ active: false, startIndex: -1 });
+      setSlashQuery("");
+      setSlashFocusedIndex(-1);
+      textareaRef.current?.focus();
+    },
+    [slashQuery, slashTrigger],
+  );
+
+  const clearSkill = useCallback(() => {
+    setSelectedSkill(null);
+  }, []);
+
   const handleSend = useCallback(() => {
     const trimmed = text.trim();
     if (!trimmed) return;
@@ -245,11 +297,12 @@ export function InputArea({
     if (isShellMode) {
       onShellExecute(trimmed);
     } else {
-      onSend(trimmed, attachedFiles, selectedAgent?.name, selectedPrimaryAgent ?? undefined);
+      onSend(trimmed, attachedFiles, selectedAgent?.name, selectedPrimaryAgent ?? undefined, selectedSkill?.name);
     }
     setText("");
     setAttachedFiles([]);
     setSelectedAgent(null);
+    setSelectedSkill(null);
     setIsShellMode(false);
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -260,6 +313,7 @@ export function InputArea({
     onSend,
     onShellExecute,
     selectedAgent?.name,
+    selectedSkill?.name,
     isShellMode,
     inputHistory,
     selectedPrimaryAgent,
@@ -284,6 +338,9 @@ export function InputArea({
   const filteredAgents = atQuery
     ? subagents.filter((a) => a.name.toLowerCase().includes(atQuery.toLowerCase())).slice(0, 10)
     : subagents.slice(0, 10);
+  const filteredSkills = slashQuery
+    ? skills.filter((skill) => skill.name.toLowerCase().includes(slashQuery.toLowerCase())).slice(0, 10)
+    : skills.slice(0, 10);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -299,6 +356,12 @@ export function InputArea({
         setAtTrigger({ active: false, startIndex: -1 });
         setAtQuery("");
         setAtFocusedIndex(-1);
+        return;
+      }
+      if (e.key === "Escape" && slashTrigger.active) {
+        setSlashTrigger({ active: false, startIndex: -1 });
+        setSlashQuery("");
+        setSlashFocusedIndex(-1);
         return;
       }
 
@@ -342,6 +405,24 @@ export function InputArea({
           e.preventDefault();
           selectAgent(filteredAgents[atFocusedIndex]);
           setAtFocusedIndex(-1);
+          return;
+        }
+      }
+
+      if (slashTrigger.active && filteredSkills.length > 0) {
+        if (e.key === "Tab" || e.key === "ArrowDown") {
+          e.preventDefault();
+          setSlashFocusedIndex((prev) => (prev + 1) % filteredSkills.length);
+          return;
+        }
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSlashFocusedIndex((prev) => (prev <= 0 ? filteredSkills.length - 1 : prev - 1));
+          return;
+        }
+        if (e.key === "Enter" && !e.shiftKey && !composingRef.current && slashFocusedIndex >= 0) {
+          e.preventDefault();
+          selectSkill(filteredSkills[slashFocusedIndex]);
           return;
         }
       }
@@ -417,6 +498,11 @@ export function InputArea({
           setAtQuery("");
           setAtFocusedIndex(-1);
         }
+        if (slashTrigger.active) {
+          setSlashTrigger({ active: false, startIndex: -1 });
+          setSlashQuery("");
+          setSlashFocusedIndex(-1);
+        }
         handleSend();
       }
     },
@@ -427,10 +513,14 @@ export function InputArea({
       atTrigger.active,
       hashFocusedIndex,
       atFocusedIndex,
+      slashTrigger.active,
+      slashFocusedIndex,
       hashFiles,
       filteredAgents,
+      filteredSkills,
       addFile,
       selectAgent,
+      selectSkill,
       text,
       inputHistory,
     ],
@@ -478,6 +568,14 @@ export function InputArea({
           setAtQuery("");
           return;
         }
+        if (
+          addedChar === "/" &&
+          (cursorPos === 1 || newText[cursorPos - 2] === " " || newText[cursorPos - 2] === "\n")
+        ) {
+          setSlashTrigger({ active: true, startIndex: cursorPos - 1 });
+          setSlashQuery("");
+          return;
+        }
       }
 
       // # トリガーがアクティブなら、クエリを更新する
@@ -508,8 +606,20 @@ export function InputArea({
           setAtFocusedIndex(-1);
         }
       }
+
+      if (slashTrigger.active) {
+        const queryPart = newText.slice(slashTrigger.startIndex + 1, cursorPos);
+        if (/\s/.test(queryPart) || cursorPos <= slashTrigger.startIndex) {
+          setSlashTrigger({ active: false, startIndex: -1 });
+          setSlashQuery("");
+          setSlashFocusedIndex(-1);
+        } else {
+          setSlashQuery(queryPart);
+          setSlashFocusedIndex(-1);
+        }
+      }
     },
-    [text, hashTrigger, atTrigger, isShellMode, enableShellMode, inputHistory],
+    [text, hashTrigger, atTrigger, slashTrigger, isShellMode, enableShellMode, inputHistory],
   );
 
   const handleInput = useCallback(() => {
@@ -552,6 +662,10 @@ export function InputArea({
               selectedAgent={selectedAgent}
               onSelectAgent={selectAgent}
               onClearAgent={clearAgent}
+              skills={skills}
+              selectedSkill={selectedSkill}
+              onSelectSkill={selectSkill}
+              onClearSkill={clearSkill}
               isShellMode={isShellMode}
               onToggleShellMode={toggleShellMode}
               onDisableShellMode={disableShellMode}
@@ -593,6 +707,14 @@ export function InputArea({
               onSelectAgent={selectAgent}
               agentPopupRef={agentPopupRef}
               focusedIndex={atFocusedIndex}
+            />
+          )}
+          {slashTrigger.active && (
+            <SkillPopup
+              skills={filteredSkills}
+              onSelectSkill={selectSkill}
+              skillPopupRef={skillPopupRef}
+              focusedIndex={slashFocusedIndex}
             />
           )}
         </div>

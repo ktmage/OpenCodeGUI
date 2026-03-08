@@ -1,4 +1,4 @@
-import type { AgentEvent, AgentInfo, ChatSession, TodoItem } from "@opencodegui/core";
+import type { AgentEvent, AgentInfo, ChatSession, SkillInfo, TodoItem } from "@opencodegui/core";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { EmptyState } from "./components/molecules/EmptyState";
 import { FileChangesHeader } from "./components/molecules/FileChangesHeader";
@@ -47,6 +47,7 @@ export function App() {
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [childSessions, setChildSessions] = useState<ChatSession[]>([]);
   const [agents, setAgents] = useState<AgentInfo[]>([]);
+  const [skills, setSkills] = useState<SkillInfo[]>([]);
   const [selectedPrimaryAgent, setSelectedPrimaryAgent] = useState<string | null>(null);
   const [difitAvailable, setDifitAvailable] = useState(false);
   const [openCodePaths, setOpenCodePaths] = useState<{
@@ -208,6 +209,10 @@ export function App() {
           });
           break;
         }
+        case "skills": {
+          setSkills(data.skills);
+          break;
+        }
         case "difitAvailable": {
           setDifitAvailable(data.available);
           break;
@@ -218,6 +223,7 @@ export function App() {
     postMessage({ type: "ready" });
     postMessage({ type: "getOpenEditors" });
     postMessage({ type: "getAgents" });
+    postMessage({ type: "getSkills" });
     return () => window.removeEventListener("message", handler);
   }, [
     session.activeSession?.id,
@@ -236,7 +242,7 @@ export function App() {
   // Cross-cutting action handlers (span multiple hooks)
 
   const handleSend = useCallback(
-    (text: string, files: FileAttachment[], agent?: string, primaryAgent?: string) => {
+    (text: string, files: FileAttachment[], agent?: string, primaryAgent?: string, skill?: string) => {
       if (!session.activeSession) return;
       postMessage({
         type: "sendMessage",
@@ -246,6 +252,7 @@ export function App() {
         files: files.length > 0 ? files : undefined,
         agent,
         primaryAgent,
+        skill,
       });
     },
     [session.activeSession, prov.selectedModel],
@@ -538,6 +545,7 @@ export function App() {
                   soundSettings={sound.soundSettings}
                   onSoundSettingChange={sound.handleSoundSettingChange}
                   agents={agents}
+                  skills={skills}
                 />
               )}
             </>

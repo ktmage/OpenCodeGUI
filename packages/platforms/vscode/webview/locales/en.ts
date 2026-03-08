@@ -143,10 +143,12 @@ export const en = {
   // Context menu sections
   "input.section.files": "Files",
   "input.section.agents": "Sub-agents",
+  "input.section.skills": "Skills",
   "input.section.shell": "Shell Mode",
 
   // AgentMention
   "input.noAgents": "No sub-agents available",
+  "input.noSkills": "No skills available",
 } as const;
 
 export type LocaleSchema = {

@@ -152,7 +152,7 @@ export function createAllProvidersData(
   connected: string[] = [],
   all: Array<{ id: string; name: string; models: Record<string, unknown> }> = [],
   defaultModel: Record<string, string> = {},
-) {
+): any {
   return {
     connected,
     all: all.map((p) => ({

@@ -145,8 +145,10 @@ export const ja: LocaleSchema = {
   // Context menu sections
   "input.section.files": "ファイル",
   "input.section.agents": "サブエージェント",
+  "input.section.skills": "スキル",
   "input.section.shell": "シェルモード",
 
   // AgentMention
   "input.noAgents": "利用可能なサブエージェントがありません",
+  "input.noSkills": "利用可能なスキルがありません",
 };

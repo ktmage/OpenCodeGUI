@@ -30,6 +30,10 @@ const defaultProps = {
   selectedAgent: null,
   onSelectAgent: vi.fn(),
   onClearAgent: vi.fn(),
+  skills: [] as any[],
+  selectedSkill: null,
+  onSelectSkill: vi.fn(),
+  onClearSkill: vi.fn(),
   isShellMode: false,
   onToggleShellMode: vi.fn(),
   onDisableShellMode: vi.fn(),
@@ -105,13 +109,20 @@ describe("FileAttachmentBar", () => {
       expect(container.querySelector(".pickerDropdown")).toBeInTheDocument();
     });
 
-    // renders three sections: Files, Agents, Shell Mode
-    it("3 つのセクション（Files, Agents, Shell Mode）を表示すること", () => {
+    // renders four sections: Files, Agents, Skills, Shell Mode
+    it("4 つのセクション（Files, Agents, Skills, Shell Mode）を表示すること", () => {
       render(
-        <FileAttachmentBar {...defaultProps} showFilePicker={true} pickerFiles={[file1]} agents={[agent1, agent2]} />,
+        <FileAttachmentBar
+          {...defaultProps}
+          showFilePicker={true}
+          pickerFiles={[file1]}
+          agents={[agent1, agent2]}
+          skills={[{ name: "coding-guidelines", description: "guides" }] as any}
+        />,
       );
       expect(screen.getByText("Files")).toBeInTheDocument();
       expect(screen.getByText("Sub-agents")).toBeInTheDocument();
+      expect(screen.getByText("Skills")).toBeInTheDocument();
       expect(screen.getByText("Shell Mode")).toBeInTheDocument();
     });
   });
@@ -161,7 +172,7 @@ describe("FileAttachmentBar", () => {
         />,
       );
       const disabledSections = container.querySelectorAll(".sectionDisabled");
-      expect(disabledSections.length).toBe(2);
+      expect(disabledSections.length).toBe(3);
     });
 
     // toggle track has toggleOn class
